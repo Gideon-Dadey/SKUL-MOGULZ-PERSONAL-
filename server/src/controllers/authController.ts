@@ -188,8 +188,13 @@ export const updateProfile = async (req: any, res: Response) => {
             user.headline = req.body.headline || user.headline;
             user.location = req.body.location || user.location;
             user.skills = req.body.interests || req.body.skills || user.skills;
-            // Avatar update would normally involve file upload, but for now we'll accept a URL
-            if (req.body.avatar) user.avatar = req.body.avatar;
+            // Avatar update: handle file upload or URL
+            if (req.file) {
+                const filePath = req.file.path.replace(/\\/g, '/');
+                user.avatar = `/${filePath}`;
+            } else if (req.body.avatar) {
+                user.avatar = req.body.avatar;
+            }
 
             const updatedUser = await user.save();
 
