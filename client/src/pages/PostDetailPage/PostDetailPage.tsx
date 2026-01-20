@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, MessageCircle, Share2, Bookmark, Send, MoreHorizontal, ThumbsUp } from 'lucide-react';
+import { ArrowLeft, Heart, MessageCircle, Share2, Send, MoreHorizontal, ThumbsUp } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
 import { mockPosts, mockUsers } from '../../data/mockData';
 import './PostDetailPage.css';
 
@@ -70,17 +72,30 @@ const PostDetailPage: React.FC = () => {
         }
     };
 
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+    };
+
+    const getStageColor = (stage: string) => {
+        const colors: Record<string, string> = {
+            idea: '#8b5cf6',
+            prototype: '#3b82f6',
+            mvp: '#10b981',
+            growth: '#f59e0b',
+            scaling: '#ef4444',
+        };
+        return colors[stage] || colors.idea;
+    };
+
     const handleSubmitComment = async (e: React.FormEvent) => {
         e.preventDefault();
         if (commentText.trim() && post) {
             try {
                 const response = await api.post(`/projects/${post.id}/comment`, { content: commentText });
-                const newComment = {
-                    ...response.data, // Should return the new comment or the updated project? 
-                    // Usually returns updated project or list of comments. Let's assume controller returns updated comments array or project.
-                    // Checking projectController Step 432:
-                    // res.status(201).json(project.comments); // Returns array of comments
-                };
 
                 // The controller returns the *array* of comments.
                 // We need to adapt them.

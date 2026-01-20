@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, MoreHorizontal, Video, Edit, Phone, Send, Image, Paperclip, Smile } from 'lucide-react';
+import { Search, MoreHorizontal, Video, Edit, Phone, Image, Paperclip, Smile } from 'lucide-react';
 import { mockUsers } from '../../data/mockData';
 import './MessagesPage.css';
 

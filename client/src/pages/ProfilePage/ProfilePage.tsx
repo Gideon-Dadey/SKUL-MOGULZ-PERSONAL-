@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
-    MapPin, Calendar, Settings, Grid, Heart, Users,
-    Edit2, Plus, Share2, MoreHorizontal, Briefcase, GraduationCap
+    MapPin, Edit2, Plus, MoreHorizontal, Briefcase, GraduationCap
 } from 'lucide-react';
 import PostCard from '../../components/PostCard/PostCard';
 import { mockPosts, mockUsers } from '../../data/mockData';

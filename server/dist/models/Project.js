@@ -34,15 +34,33 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const ProjectSchema = new mongoose_1.Schema({
+const commentSchema = new mongoose_1.Schema({
     author: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
-    title: { type: String, required: true, trim: true },
     content: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
+});
+const projectSchema = new mongoose_1.Schema({
+    title: { type: String, required: true, trim: true },
+    content: { type: String, required: true }, // Markdown or text
+    author: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
     category: {
         type: String,
         required: true,
-        enum: ['Technology', 'Healthcare', 'Education', 'Finance', 'Sustainability', 'Other']
+        enum: [
+            'technology',
+            'healthcare',
+            'fintech',
+            'education',
+            'sustainability',
+            'entertainment',
+            'ecommerce',
+            'social-impact',
+            'ai-ml',
+            'other'
+        ]
     },
+    tags: [{ type: String }],
+    media: [{ type: String }],
     projectStage: {
         type: String,
         required: true,
@@ -51,17 +69,9 @@ const ProjectSchema = new mongoose_1.Schema({
     },
     fundingGoal: { type: Number },
     currentFunding: { type: Number, default: 0 },
-    tags: [{ type: String }],
-    images: [{ type: String }],
     likes: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'User' }],
-    comments: [{
-            author: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User' },
-            content: { type: String, required: true },
-            createdAt: { type: Date, default: Date.now }
-        }]
+    comments: [commentSchema]
 }, {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true }
+    timestamps: true
 });
-exports.default = mongoose_1.default.model('Project', ProjectSchema);
+exports.default = mongoose_1.default.model('Project', projectSchema);

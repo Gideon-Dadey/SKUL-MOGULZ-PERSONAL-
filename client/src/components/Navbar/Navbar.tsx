@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
     Home, Users, Briefcase, MessageSquare, Bell, Search,
-    ChevronDown, Settings, LogOut, User, HelpCircle,
+    ChevronDown, Settings, LogOut, HelpCircle,
     Sun, Moon, Plus, Grid3X3, TrendingUp, Bookmark
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';

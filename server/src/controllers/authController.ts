@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import User from '../models/User';
 import jwt from 'jsonwebtoken';
 
@@ -50,7 +51,7 @@ export const register = async (req: Request, res: Response) => {
 
         if (user) {
             // Generate token
-            const token = generateToken(user._id as string);
+            const token = generateToken((user._id as mongoose.Types.ObjectId).toString());
 
             res.status(201).json({
                 _id: user._id,
@@ -80,7 +81,7 @@ export const login = async (req: Request, res: Response) => {
         const user = await User.findOne({ email }).select('+password');
 
         if (user && (await user.comparePassword(password))) {
-            const token = generateToken(user._id as string);
+            const token = generateToken((user._id as mongoose.Types.ObjectId).toString());
 
             res.json({
                 _id: user._id,
