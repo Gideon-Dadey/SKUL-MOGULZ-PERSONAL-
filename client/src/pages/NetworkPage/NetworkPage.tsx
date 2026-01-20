@@ -1,30 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, Briefcase, ChevronRight, UserCheck } from 'lucide-react';
-import { mockUsers } from '../../data/mockData';
+import { useAuth } from '../../context/AuthContext';
+import networkService from '../../services/networkService';
 import './NetworkPage.css';
 
 const NetworkPage: React.FC = () => {
-    // Generate some mock invitations (using existing users for demo)
-    const invitations = [mockUsers[1], mockUsers[2]];
-
-    // Generate suggestions (filtering out first few to simulate difference)
-    const suggestions = [...mockUsers, ...mockUsers].slice(1, 9);
-
-    const [ignoredMap, setIgnoredMap] = useState<Record<string, boolean>>({});
-    const [acceptedMap, setAcceptedMap] = useState<Record<string, boolean>>({});
+    const { user: currentUser } = useAuth();
+    const [invitations, setInvitations] = useState<any[]>([]);
+    const [suggestions, setSuggestions] = useState<any[]>([]);
+    const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(true);
+    const [isLoadingInvitations, setIsLoadingInvitations] = useState(true);
     const [connectedMap, setConnectedMap] = useState<Record<string, boolean>>({});
 
-    const handleAccept = (id: string) => {
-        setAcceptedMap({ ...acceptedMap, [id]: true });
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setIsLoadingInvitations(true);
+                setIsLoadingSuggestions(true);
+
+                const [invitesData, suggestionsData] = await Promise.all([
+                    networkService.getInvitations(),
+                    networkService.getSuggestions()
+                ]);
+
+                setInvitations(invitesData);
+                setSuggestions(suggestionsData);
+            } catch (error) {
+                console.error("Failed to fetch network data", error);
+            } finally {
+                setIsLoadingInvitations(false);
+                setIsLoadingSuggestions(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const handleAccept = async (requestId: string) => {
+        try {
+            await networkService.acceptRequest(requestId);
+            setInvitations(prev => prev.filter(inv => inv._id !== requestId));
+            // In a real app we might also refresh suggestions or show a success message
+        } catch (error) {
+            console.error("Failed to accept request", error);
+        }
     };
 
-    const handleIgnore = (id: string) => {
-        setIgnoredMap({ ...ignoredMap, [id]: true });
+    const handleIgnore = (requestId: string) => {
+        // Technically we could have a reject endpoint, but for MVP we just remove from UI
+        setInvitations(prev => prev.filter(inv => inv._id !== requestId));
     };
 
-    const handleConnect = (id: string) => {
-        setConnectedMap({ ...connectedMap, [id]: true });
+    const handleConnect = async (userId: string) => {
+        try {
+            await networkService.sendRequest(userId);
+            setConnectedMap({ ...connectedMap, [userId]: true });
+        } catch (error) {
+            console.error("Failed to send connection request", error);
+        }
     };
 
     return (
@@ -38,27 +72,19 @@ const NetworkPage: React.FC = () => {
                             <Link to="/connections" className="sidebar-menu-item">
                                 <span className="menu-icon"><Users size={20} /></span>
                                 <span className="menu-label">Connections</span>
-                                <span className="menu-count">287</span>
+                                <span className="menu-count">{currentUser?.connections?.length || 0}</span>
                             </Link>
                         </li>
                         <li>
                             <Link to="/contacts" className="sidebar-menu-item">
                                 <span className="menu-icon"><Briefcase size={20} /></span>
                                 <span className="menu-label">Contacts</span>
-                                <span className="menu-count">140</span>
                             </Link>
                         </li>
                         <li>
                             <Link to="/following" className="sidebar-menu-item">
                                 <span className="menu-icon"><UserCheck size={20} /></span>
                                 <span className="menu-label">Following & Followers</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/groups" className="sidebar-menu-item">
-                                <span className="menu-icon"><Users size={20} /></span>
-                                <span className="menu-label">Groups</span>
-                                <span className="menu-count">3</span>
                             </Link>
                         </li>
                     </ul>
@@ -73,37 +99,39 @@ const NetworkPage: React.FC = () => {
             {/* Main Content */}
             <main className="network-main">
                 {/* Invitations */}
-                {invitations.length > 0 && (
+                {(invitations.length > 0 || isLoadingInvitations) && (
                     <div className="network-card">
                         <div className="card-header">
                             <h3>Invitations</h3>
                             <button className="btn-text">Manage</button>
                         </div>
                         <div className="invitations-list">
-                            {invitations.map(user => !ignoredMap[user.id] && !acceptedMap[user.id] && (
-                                <div key={user.id} className="invitation-item">
-                                    <Link to={`/profile/${user.username}`} className="invitation-link">
-                                        <img
-                                            src={user.avatar || `https://ui-avatars.com/api/?name=${user.firstName}&background=getRandom&color=fff`}
-                                            alt={user.firstName}
-                                            className="invitation-avatar"
-                                        />
-                                        <div className="invitation-info">
-                                            <span className="invitation-name">{user.firstName} {user.lastName}</span>
-                                            <span className="invitation-headline">
-                                                {user.role === 'student' ? 'Student Founder @ University' : 'Angel Investor'}
-                                            </span>
-                                            <span className="invitation-mutual">2 mutual connections</span>
-                                        </div>
-                                    </Link>
-                                    <div className="invitation-actions">
-                                        <button className="btn btn-text" onClick={() => handleIgnore(user.id)}>Ignore</button>
-                                        <button className="btn btn-outline" onClick={() => handleAccept(user.id)}>Accept</button>
-                                    </div>
-                                </div>
-                            ))}
-                            {Object.keys(acceptedMap).length === invitations.length && (
+                            {isLoadingInvitations ? (
+                                <div className="loading-state">Loading invitations...</div>
+                            ) : invitations.length === 0 ? (
                                 <div className="empty-state">No pending invitations</div>
+                            ) : (
+                                invitations.map(invitation => (
+                                    <div key={invitation._id} className="invitation-item">
+                                        <Link to={`/profile/${invitation.sender.username}`} className="invitation-link">
+                                            <img
+                                                src={invitation.sender.avatar || `https://ui-avatars.com/api/?name=${invitation.sender.firstName}&background=ff6b4a&color=fff`}
+                                                alt=""
+                                                className="invitation-avatar"
+                                            />
+                                            <div className="invitation-info">
+                                                <span className="invitation-name">{invitation.sender.firstName} {invitation.sender.lastName}</span>
+                                                <span className="invitation-headline">
+                                                    {invitation.sender.headline || (invitation.sender.role === 'student' ? 'Student Founder' : 'Investor')}
+                                                </span>
+                                            </div>
+                                        </Link>
+                                        <div className="invitation-actions">
+                                            <button className="btn btn-text" onClick={() => handleIgnore(invitation._id)}>Ignore</button>
+                                            <button className="btn btn-outline" onClick={() => handleAccept(invitation._id)}>Accept</button>
+                                        </div>
+                                    </div>
+                                ))
                             )}
                         </div>
                     </div>
@@ -116,65 +144,40 @@ const NetworkPage: React.FC = () => {
                         <button className="btn-text">See all</button>
                     </div>
                     <div className="suggestions-grid">
-                        {suggestions.map((user, index) => (
-                            <div key={`${user.id}-${index}`} className="suggestion-card">
-                                <div className="suggestion-banner"></div>
-                                <img
-                                    src={user.avatar || `https://ui-avatars.com/api/?name=${user.firstName}&background=getRandom&color=fff`}
-                                    alt={user.firstName}
-                                    className="suggestion-avatar"
-                                />
-                                <div className="suggestion-info">
-                                    <Link to={`/profile/${user.username}`} className="suggestion-name">
-                                        {user.firstName} {user.lastName}
-                                    </Link>
-                                    <span className="suggestion-headline">
-                                        {user.role === 'student' ? 'Student Entrepreneur' : 'Investor'}
-                                    </span>
-                                    <span className="suggestion-mutual">
-                                        <Users size={12} /> {Math.floor(Math.random() * 20)} mutual connections
-                                    </span>
+                        {isLoadingSuggestions ? (
+                            <div className="loading-state">Finding peers...</div>
+                        ) : suggestions.length === 0 ? (
+                            <div className="empty-state">No new suggestions found</div>
+                        ) : (
+                            suggestions.map((user) => (
+                                <div key={user._id} className="suggestion-card">
+                                    <div className="suggestion-banner"></div>
+                                    <img
+                                        src={user.avatar || `https://ui-avatars.com/api/?name=${user.firstName}&background=ff6b4a&color=fff`}
+                                        alt=""
+                                        className="suggestion-avatar"
+                                    />
+                                    <div className="suggestion-info">
+                                        <Link to={`/profile/${user.username}`} className="suggestion-name">
+                                            {user.firstName} {user.lastName}
+                                        </Link>
+                                        <span className="suggestion-headline">
+                                            {user.headline || (user.role === 'student' ? 'Student Entrepreneur' : 'Investor')}
+                                        </span>
+                                        <span className="suggestion-mutual">
+                                            <Users size={12} /> Community Member
+                                        </span>
+                                    </div>
+                                    <button
+                                        className={`btn ${connectedMap[user._id] ? 'btn-outline' : 'btn-primary-outline'} btn--stretch`}
+                                        onClick={() => handleConnect(user._id)}
+                                        disabled={connectedMap[user._id]}
+                                    >
+                                        {connectedMap[user._id] ? 'Pending' : 'Connect'}
+                                    </button>
                                 </div>
-                                <button
-                                    className={`btn ${connectedMap[`${user.id}-${index}`] ? 'btn-outline' : 'btn-primary-outline'} btn--stretch`}
-                                    onClick={() => handleConnect(`${user.id}-${index}`)}
-                                >
-                                    {connectedMap[`${user.id}-${index}`] ? 'Pending' : 'Connect'}
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Industry Leaders */}
-                <div className="network-card">
-                    <div className="card-header">
-                        <h3>Top Voices in EdTech</h3>
-                        <button className="btn-text">See all</button>
-                    </div>
-                    <div className="suggestions-grid">
-                        {mockUsers.filter(u => u.role === 'investor').map((user) => (
-                            <div key={user.id} className="suggestion-card">
-                                <div className="suggestion-banner" style={{ background: 'linear-gradient(45deg, #1e293b, #334155)' }}></div>
-                                <img
-                                    src={user.avatar || `https://ui-avatars.com/api/?name=${user.firstName}&background=getRandom&color=fff`}
-                                    alt={user.firstName}
-                                    className="suggestion-avatar"
-                                />
-                                <div className="suggestion-info">
-                                    <Link to={`/profile/${user.username}`} className="suggestion-name">
-                                        {user.firstName} {user.lastName}
-                                    </Link>
-                                    <span className="suggestion-headline">
-                                        {user.bio?.slice(0, 40)}...
-                                    </span>
-                                    <span className="suggestion-mutual">
-                                        <Users size={12} /> 542K followers
-                                    </span>
-                                </div>
-                                <button className="btn btn-outline btn--stretch">Follow</button>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 </div>
             </main>
@@ -183,3 +186,4 @@ const NetworkPage: React.FC = () => {
 };
 
 export default NetworkPage;
+

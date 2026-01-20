@@ -3,7 +3,6 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, MessageCircle, Share2, Send, MoreHorizontal, ThumbsUp } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
-import { mockPosts, mockUsers } from '../../data/mockData';
 import './PostDetailPage.css';
 
 const PostDetailPage: React.FC = () => {
@@ -182,7 +181,7 @@ const PostDetailPage: React.FC = () => {
                         <h1 className="post-article__title">{post.title}</h1>
 
                         <div className="post-article__text">
-                            {post.content.split('\n').map((paragraph, index) => (
+                            {post.content.split('\n').map((paragraph: string, index: number) => (
                                 <p key={index}>{paragraph}</p>
                             ))}
                         </div>
@@ -205,7 +204,7 @@ const PostDetailPage: React.FC = () => {
                         )}
 
                         <div className="post-article__tags">
-                            {post.tags.map(tag => (
+                            {post.tags.map((tag: string) => (
                                 <span key={tag} className="hashtag">#{tag}</span>
                             ))}
                         </div>
@@ -271,7 +270,7 @@ const PostDetailPage: React.FC = () => {
                         </div>
 
                         <div className="comments-list">
-                            {post.comments.map(comment => (
+                            {post.comments.map((comment: any) => (
                                 <div key={comment.id} className="comment-item">
                                     <img
                                         src={comment.author.avatar || `https://ui-avatars.com/api/?name=${comment.author.firstName}&background=ff6b4a&color=fff`}

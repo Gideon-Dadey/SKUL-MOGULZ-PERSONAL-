@@ -8,7 +8,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import PostCard from '../../components/PostCard/PostCard';
 import SearchFilter from '../../components/SearchFilter/SearchFilter';
-import { mockUsers } from '../../data/mockData';
+import networkService from '../../services/networkService';
 import { ProjectCategory } from '../../types';
 import './FeedPage.css';
 
@@ -16,12 +16,28 @@ type SortOption = 'trending' | 'recent' | 'popular';
 
 const FeedPage: React.FC = () => {
     const { user } = useAuth();
-    const [posts, setPosts] = useState<any[]>([]); // Using any[] to bypass type mismatch between frontend Post vs API response temporarily, or ideally we adapt it.
+    const [posts, setPosts] = useState<any[]>([]);
+    const [suggestions, setSuggestions] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | 'all'>('all');
     const [selectedStage, setSelectedStage] = useState('all');
     const [sortBy, setSortBy] = useState<SortOption>('recent');
+
+    useEffect(() => {
+        const fetchSuggestions = async () => {
+            try {
+                const data = await networkService.getSuggestions();
+                setSuggestions(data.slice(0, 3));
+            } catch (error) {
+                console.error("Failed to fetch suggestions", error);
+            } finally {
+                setIsLoadingSuggestions(false);
+            }
+        };
+        fetchSuggestions();
+    }, []);
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -265,22 +281,38 @@ const FeedPage: React.FC = () => {
                     <div className="suggestions-card__header">
                         <h4>People you may know</h4>
                     </div>
-                    {mockUsers.slice(1, 4).map(person => (
-                        <div key={person.id} className="suggestion-item">
-                            <img
-                                src={person.avatar || `https://ui-avatars.com/api/?name=${person.firstName}&background=ff6b4a&color=fff`}
-                                alt={person.firstName}
-                                className="suggestion-item__avatar"
-                            />
-                            <div className="suggestion-item__info">
-                                <h5>{person.firstName} {person.lastName}</h5>
-                                <p>{person.bio?.slice(0, 50)}...</p>
-                                <button className="suggestion-item__connect">
-                                    <Plus size={14} /> Connect
-                                </button>
+                    {isLoadingSuggestions ? (
+                        <div className="suggestion-loading">Loading...</div>
+                    ) : suggestions.length === 0 ? (
+                        <div className="suggestion-empty">No suggestions found</div>
+                    ) : (
+                        suggestions.map(person => (
+                            <div key={person._id} className="suggestion-item">
+                                <img
+                                    src={person.avatar || `https://ui-avatars.com/api/?name=${person.firstName}&background=ff6b4a&color=fff`}
+                                    alt=""
+                                    className="suggestion-item__avatar"
+                                />
+                                <div className="suggestion-item__info">
+                                    <h5>{person.firstName} {person.lastName}</h5>
+                                    <p>{person.headline || (person.role === 'student' ? 'Student Entrepreneur' : 'Investor')}</p>
+                                    <button
+                                        className="suggestion-item__connect"
+                                        onClick={async () => {
+                                            try {
+                                                await networkService.sendRequest(person._id);
+                                                setSuggestions(prev => prev.filter(p => p._id !== person._id));
+                                            } catch (e) {
+                                                console.error(e);
+                                            }
+                                        }}
+                                    >
+                                        <Plus size={14} /> Connect
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
 
                 <div className="ad-card">
