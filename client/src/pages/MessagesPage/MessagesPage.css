@@ -367,6 +367,21 @@
 }
 
 /* Responsive */
+@media (max-width: 900px) {
+    .messages-container {
+        padding: 1rem 0;
+    }
+
+    .messages-sidebar {
+        width: 280px;
+    }
+
+    .msg-avatar-wrapper {
+        width: 44px;
+        height: 44px;
+    }
+}
+
 @media (max-width: 768px) {
     .messages-container {
         padding: 0;
@@ -376,16 +391,120 @@
     .messages-layout {
         border: none;
         border-radius: 0;
+        position: relative;
     }
 
     .messages-sidebar {
         width: 100%;
-        display: flex;
-        /* Always shown unless chat active logic added for mobile */
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 10;
+        background: var(--bg-card);
+    }
+
+    .messages-sidebar.hidden {
+        display: none;
     }
 
     .messages-main {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+    }
+
+    .messages-main.hidden {
         display: none;
-        /* Hide main on mobile list view, toggle with JS for full mobile support */
+    }
+
+    .msg-item {
+        padding: 0.75rem 1rem;
+    }
+
+    .msg-avatar-wrapper {
+        width: 48px;
+        height: 48px;
+    }
+
+    .msg-name {
+        font-size: 0.9rem;
+    }
+
+    .chat-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .chat-history {
+        padding: 0.75rem;
+    }
+
+    .message-bubble {
+        max-width: 85%;
+    }
+
+    .bubble-content {
+        padding: 0.6rem 0.75rem;
+    }
+
+    .bubble-content p {
+        font-size: 0.9rem;
+    }
+
+    .chat-input-area {
+        padding: 0.75rem;
+    }
+
+    .chat-input-area textarea {
+        min-height: 48px;
+        padding: 0.75rem;
+    }
+
+    .chat-tools {
+        margin-top: 0.4rem;
+    }
+
+    .tool-btn {
+        padding: 0.5rem;
+    }
+
+    .send-btn {
+        padding: 0.5rem 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .msg-sidebar-header h2 {
+        font-size: 0.9rem;
+    }
+
+    .msg-item {
+        padding: 0.6rem 0.75rem;
+    }
+
+    .msg-avatar-wrapper {
+        width: 40px;
+        height: 40px;
+    }
+
+    .msg-name {
+        font-size: 0.85rem;
+    }
+
+    .msg-snippet {
+        font-size: 0.8rem;
+    }
+
+    .bubble-avatar {
+        width: 28px;
+        height: 28px;
+    }
+
+    .bubble-content p {
+        font-size: 0.85rem;
     }
 }

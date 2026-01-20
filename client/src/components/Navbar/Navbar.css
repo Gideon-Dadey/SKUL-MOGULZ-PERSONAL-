@@ -571,4 +571,90 @@
         border-radius: 0;
         max-height: calc(100vh - 56px);
     }
+
+    .navbar__nav-item {
+        padding: 0 0.75rem;
+    }
+
+    .navbar__right {
+        gap: 0.5rem;
+    }
+
+    .navbar__icon-btn {
+        width: 32px;
+        height: 32px;
+    }
+
+    .navbar__profile-avatar {
+        width: 28px;
+        height: 28px;
+    }
+
+    .navbar__profile-name {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar {
+        height: 52px;
+    }
+
+    .navbar__container {
+        padding: 0 0.75rem;
+    }
+
+    .navbar__logo-img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .navbar__nav-item {
+        padding: 0 0.5rem;
+    }
+
+    .navbar__nav-item svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .navbar__notification-badge {
+        min-width: 16px;
+        height: 16px;
+        font-size: 0.6rem;
+        top: -2px;
+        right: -4px;
+    }
+
+    .navbar__create-btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .navbar__create-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .navbar__icon-btn {
+        width: 28px;
+        height: 28px;
+    }
+
+    .navbar__profile-btn {
+        padding: 0.15rem;
+    }
+
+    .navbar__profile-avatar {
+        width: 26px;
+        height: 26px;
+    }
+
+    .navbar__profile-info {
+        display: none;
+    }
 }
