@@ -12,6 +12,7 @@ import NetworkPage from './pages/NetworkPage/NetworkPage';
 import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
 import MessagesPage from './pages/MessagesPage/MessagesPage';
 import AnalyticsPage from './pages/AnalyticsPage/AnalyticsPage';
+import logo from './assets/logo.png';
 import './styles/index.css';
 
 // Protected Route Wrapper
@@ -124,7 +125,7 @@ const LoginPage = () => {
             <div className="auth-container">
                 <div className="auth-left">
                     <div className="auth-brand">
-                        <div className="auth-brand__icon">SM</div>
+                        <img src={logo} alt="SM" className="auth-brand__img" />
                         <h1 className="auth-brand__text">SKUL MOGULZ</h1>
                     </div>
                     <h2 className="auth-heading">Welcome back</h2>
@@ -253,7 +254,7 @@ const RegisterPage = () => {
             <div className="auth-container">
                 <div className="auth-left">
                     <div className="auth-brand">
-                        <div className="auth-brand__icon">SM</div>
+                        <img src={logo} alt="SM" className="auth-brand__img" />
                         <h1 className="auth-brand__text">SKUL MOGULZ</h1>
                     </div>
                     <h2 className="auth-heading">Make the most of your professional life</h2>
