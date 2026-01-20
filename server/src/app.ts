@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import projectRoutes from './routes/projectRoutes';
+import authRoutes from './routes/authRoutes';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/projects', projectRoutes);
+app.use('/api/auth', authRoutes);
 
 // Root Route
 app.get('/', (req: Request, res: Response) => {
