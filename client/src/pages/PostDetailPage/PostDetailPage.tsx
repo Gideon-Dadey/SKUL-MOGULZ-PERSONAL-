@@ -7,10 +7,101 @@ import './PostDetailPage.css';
 const PostDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const [post, setPost] = useState<any | null>(null);
+    const [loading, setLoading] = useState(true);
     const [commentText, setCommentText] = useState('');
     const [isLiked, setIsLiked] = useState(false);
 
-    const post = mockPosts.find(p => p.id === id);
+    useEffect(() => {
+        const fetchPost = async () => {
+            try {
+                const response = await api.get(`/projects/${id}`);
+                const p = response.data;
+                const adaptedPost = {
+                    ...p,
+                    id: p._id || p.id,
+                    likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
+                    likedBy: Array.isArray(p.likes) ? p.likes : [], // Store IDs to check if current user liked
+                    comments: (p.comments || []).map((c: any) => ({
+                        ...c,
+                        id: c._id || c.id,
+                        author: { ...c.author, id: c.author?._id || c.author?.id }
+                    })),
+                    author: {
+                        ...p.author,
+                        id: p.author?._id || p.author?.id
+                    }
+                };
+                setPost(adaptedPost);
+
+                // Check if current user liked
+                if (user && adaptedPost.likedBy.includes(user.id)) {
+                    setIsLiked(true);
+                }
+            } catch (error) {
+                console.error("Failed to fetch post", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) fetchPost();
+    }, [id, user]);
+
+    const handleLike = async () => {
+        if (!post) return;
+        try {
+            const response = await api.put(`/projects/${post.id}/like`);
+            const updatedLikes = response.data; // List of user IDs
+
+            setPost((prev: any) => ({
+                ...prev,
+                likes: updatedLikes.length,
+                likedBy: updatedLikes
+            }));
+
+            setIsLiked(!isLiked); // Optimistic or based on result (API returns array of IDs, so check that)
+            if (user) {
+                setIsLiked(updatedLikes.includes(user.id));
+            }
+        } catch (error) {
+            console.error("Failed to like post", error);
+        }
+    };
+
+    const handleSubmitComment = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (commentText.trim() && post) {
+            try {
+                const response = await api.post(`/projects/${post.id}/comment`, { content: commentText });
+                const newComment = {
+                    ...response.data, // Should return the new comment or the updated project? 
+                    // Usually returns updated project or list of comments. Let's assume controller returns updated comments array or project.
+                    // Checking projectController Step 432:
+                    // res.status(201).json(project.comments); // Returns array of comments
+                };
+
+                // The controller returns the *array* of comments.
+                // We need to adapt them.
+                const updatedComments = response.data.map((c: any) => ({
+                    ...c,
+                    id: c._id || c.id,
+                    author: { ...c.author, id: c.author?._id || c.author?.id }
+                }));
+
+                setPost((prev: any) => ({
+                    ...prev,
+                    comments: updatedComments
+                }));
+                setCommentText('');
+            } catch (error) {
+                console.error("Failed to post comment", error);
+            }
+        }
+    };
+
+    if (loading) return <div className="post-detail-layout">Loading...</div>;
 
     if (!post) {
         return (
@@ -22,33 +113,6 @@ const PostDetailPage: React.FC = () => {
             </div>
         );
     }
-
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
-    };
-
-    const getStageColor = (stage: typeof post.projectStage) => {
-        const colors: Record<string, string> = {
-            idea: '#8b5cf6',
-            prototype: '#3b82f6',
-            mvp: '#10b981',
-            growth: '#f59e0b',
-            scaling: '#ef4444',
-        };
-        return colors[stage] || colors.idea;
-    };
-
-    const handleSubmitComment = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (commentText.trim()) {
-            console.log('Submitting comment:', commentText);
-            setCommentText('');
-        }
-    };
 
     const fundingProgress = post.fundingGoal && post.currentFunding
         ? Math.min((post.currentFunding / post.fundingGoal) * 100, 100)
@@ -150,7 +214,7 @@ const PostDetailPage: React.FC = () => {
                     <div className="post-article__actions">
                         <button
                             className={`action-btn ${isLiked ? 'active' : ''}`}
-                            onClick={() => setIsLiked(!isLiked)}
+                            onClick={handleLike}
                         >
                             <ThumbsUp size={20} />
                             <span>Like</span>
@@ -173,7 +237,7 @@ const PostDetailPage: React.FC = () => {
                     <div className="post-article__comments">
                         <div className="comment-input-area">
                             <img
-                                src={`https://ui-avatars.com/api/?name=You&background=ff6b4a&color=fff`}
+                                src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=ff6b4a&color=fff`}
                                 alt="Your avatar"
                                 className="comment-avatar"
                             />

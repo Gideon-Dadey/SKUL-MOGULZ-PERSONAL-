@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Image, X, Sparkles, Hash, DollarSign, Target, Briefcase } from 'lucide-react';
 import { PROJECT_CATEGORIES, ProjectCategory } from '../../types';
+import api from '../../services/api';
 import './CreatePostPage.css';
 
 const STAGES = [
@@ -41,10 +42,29 @@ const CreatePostPage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!isFormValid) return;
+
         setIsSubmitting(true);
-        // Mock submission
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        navigate('/feed');
+        try {
+            const projectData = {
+                title,
+                content,
+                category,
+                projectStage: stage,
+                tags,
+                fundingGoal: hasFunding ? Number(fundingGoal.replace(/[^0-9.-]+/g, "")) : undefined,
+                currentFunding: hasFunding ? Number(currentFunding.replace(/[^0-9.-]+/g, "")) : 0,
+            };
+
+            await api.post('/projects', projectData);
+            navigate('/feed');
+        } catch (error) {
+            console.error("Failed to create post", error);
+            alert("Failed to create post. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const isFormValid = title.trim() && content.trim() && category && stage;

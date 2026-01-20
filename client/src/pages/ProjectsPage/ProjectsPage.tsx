@@ -1,11 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Filter, Briefcase, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { mockPosts } from '../../data/mockData';
+import api from '../../services/api';
 import './ProjectsPage.css';
 
 const ProjectsPage: React.FC = () => {
     const [filter, setFilter] = useState('all');
+    const [projects, setProjects] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProjects = async () => {
+            setIsLoading(true);
+            try {
+                // In a real app, we would pass 'filter' to the API query params
+                // For now, we fetch all and sort/filter client-side or assume default
+                const response = await api.get('/projects');
+
+                let data = response.data.map((p: any) => ({
+                    ...p,
+                    id: p._id || p.id,
+                }));
+
+                // Simple Client-side filtering/sorting logic
+                if (filter === 'new') {
+                    data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                } else if (filter === 'trending') {
+                    // Sort by likes count
+                    data.sort((a: any, b: any) => (b.likes?.length || 0) - (a.likes?.length || 0));
+                } else if (filter === 'funding') {
+                    data = data.filter((p: any) => p.fundingGoal && p.fundingGoal > 0);
+                }
+
+                setProjects(data);
+            } catch (error) {
+                console.error("Failed to fetch projects", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchProjects();
+    }, [filter]);
 
     return (
         <div className="projects-container">
@@ -36,7 +72,7 @@ const ProjectsPage: React.FC = () => {
 
                 {/* Grid */}
                 <div className="projects-grid">
-                    {mockPosts.map(post => {
+                    {isLoading ? <div style={{ padding: 20 }}>Loading...</div> : projects.map(post => {
                         const fundingPercent = post.fundingGoal && post.currentFunding
                             ? Math.min((post.currentFunding / post.fundingGoal) * 100, 100)
                             : 0;
@@ -49,15 +85,19 @@ const ProjectsPage: React.FC = () => {
                                 <div className="project-content">
                                     <h3 className="project-title">{post.title}</h3>
                                     <div className="project-author">
-                                        <img src={post.author.avatar} alt={post.author.firstName} className="author-avatar-sm" />
-                                        <span className="author-name">{post.author.firstName} {post.author.lastName}</span>
-                                        <span className="post-date">• 2d ago</span>
+                                        <img
+                                            src={post.author?.avatar || `https://ui-avatars.com/api/?name=${post.author?.firstName || 'U'}&background=ff6b4a&color=fff`}
+                                            alt={post.author?.firstName}
+                                            className="author-avatar-sm"
+                                        />
+                                        <span className="author-name">{post.author?.firstName} {post.author?.lastName}</span>
+                                        <span className="post-date">• {new Date(post.createdAt).toLocaleDateString()}</span>
                                     </div>
                                     <p className="project-desc">{post.content.substring(0, 120)}...</p>
 
                                     <div className="project-tags">
                                         <span className="tag category">{post.category}</span>
-                                        {post.tags.slice(0, 2).map(t => <span key={t} className="tag">#{t}</span>)}
+                                        {post.tags?.slice(0, 2).map((t: string) => <span key={t} className="tag">#{t}</span>)}
                                     </div>
 
                                     {post.fundingGoal && (
@@ -79,5 +119,4 @@ const ProjectsPage: React.FC = () => {
         </div>
     );
 };
-
 export default ProjectsPage;

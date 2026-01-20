@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import api from '../../services/api';
 import { Link } from 'react-router-dom';
 import {
     Plus, TrendingUp, Clock, Flame, Image, Video, Calendar, FileText,
@@ -15,49 +16,84 @@ type SortOption = 'trending' | 'recent' | 'popular';
 
 const FeedPage: React.FC = () => {
     const { user } = useAuth();
+    const [posts, setPosts] = useState<any[]>([]); // Using any[] to bypass type mismatch between frontend Post vs API response temporarily, or ideally we adapt it.
+    const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | 'all'>('all');
     const [selectedStage, setSelectedStage] = useState('all');
     const [sortBy, setSortBy] = useState<SortOption>('recent');
-    const [showCreateModal, setShowCreateModal] = useState(false);
 
-    const filteredPosts = useMemo(() => {
-        let posts = [...mockPosts];
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                setIsLoading(true);
+                let url = '/projects?';
+                if (selectedCategory !== 'all') url += `category=${selectedCategory}&`;
+                if (selectedStage !== 'all') url += `stage=${selectedStage}&`;
+                if (searchQuery) url += `search=${searchQuery}&`;
 
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            posts = posts.filter(post =>
-                post.title.toLowerCase().includes(query) ||
-                post.content.toLowerCase().includes(query) ||
-                post.tags.some(tag => tag.toLowerCase().includes(query))
-            );
+                const response = await api.get(url);
+
+                // Adapt API response to Frontend Post type
+                const adaptedPosts = response.data.map((p: any) => ({
+                    ...p,
+                    id: p._id || p.id,
+                    likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
+                    likedBy: Array.isArray(p.likes) ? p.likes : [],
+                    comments: (p.comments || []).map((c: any) => ({
+                        ...c,
+                        id: c._id || c.id,
+                        author: { ...c.author, id: c.author?._id || c.author?.id }
+                    })),
+                    author: {
+                        ...p.author,
+                        id: p.author?._id || p.author?.id
+                    }
+                }));
+
+                // Client-side sorting (since API might default to recent)
+                let sortedPosts = [...adaptedPosts];
+                switch (sortBy) {
+                    case 'trending':
+                        sortedPosts.sort((a, b) => (b.likes + b.comments.length * 2) - (a.likes + a.comments.length * 2));
+                        break;
+                    case 'popular':
+                        sortedPosts.sort((a, b) => b.likes - a.likes);
+                        break;
+                    case 'recent':
+                    default:
+                        sortedPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                }
+
+                setPosts(sortedPosts);
+            } catch (error) {
+                console.error("Failed to fetch posts", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchPosts();
+    }, [selectedCategory, selectedStage, searchQuery, sortBy]);
+
+    const handleLike = async (postId: string) => {
+        try {
+            const response = await api.put(`/projects/${postId}/like`);
+            const updatedLikes = response.data; // Array of user IDs
+
+            setPosts(currentPosts => currentPosts.map(post => {
+                if (post.id === postId) {
+                    return {
+                        ...post,
+                        likes: updatedLikes.length,
+                        likedBy: updatedLikes
+                    };
+                }
+                return post;
+            }));
+        } catch (error) {
+            console.error("Failed to like post", error);
         }
-
-        if (selectedCategory !== 'all') {
-            posts = posts.filter(post => post.category === selectedCategory);
-        }
-
-        if (selectedStage !== 'all') {
-            posts = posts.filter(post => post.projectStage === selectedStage);
-        }
-
-        switch (sortBy) {
-            case 'trending':
-                posts.sort((a, b) => (b.likes + b.comments.length * 2) - (a.likes + a.comments.length * 2));
-                break;
-            case 'popular':
-                posts.sort((a, b) => b.likes - a.likes);
-                break;
-            case 'recent':
-            default:
-                posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        }
-
-        return posts;
-    }, [searchQuery, selectedCategory, selectedStage, sortBy]);
-
-    const handleLike = (postId: string) => {
-        console.log('Liked post:', postId);
     };
 
     return (
@@ -172,7 +208,7 @@ const FeedPage: React.FC = () => {
 
                 {/* Posts */}
                 <div className="feed-posts">
-                    {filteredPosts.map(post => (
+                    {posts.map(post => (
                         <PostCard key={post.id} post={post} onLike={handleLike} />
                     ))}
                 </div>

@@ -1,36 +1,63 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
+import { IUser } from './User';
 
 export interface IComment {
-    author: mongoose.Types.ObjectId;
+    _id?: mongoose.Types.ObjectId;
+    author: mongoose.Types.ObjectId | IUser;
     content: string;
     createdAt: Date;
 }
 
 export interface IProject extends Document {
-    author: mongoose.Types.ObjectId;
     title: string;
     content: string;
+    author: mongoose.Types.ObjectId | IUser;
     category: string;
+    tags: string[];
+    media: string[]; // URLs specifically, in MVP maybe just strings
+
+    // Project Specifics
     projectStage: 'idea' | 'prototype' | 'mvp' | 'growth' | 'scaling';
     fundingGoal?: number;
     currentFunding?: number;
-    tags: string[];
-    images: string[];
+
+    // Social
     likes: mongoose.Types.ObjectId[];
     comments: IComment[];
+
     createdAt: Date;
     updatedAt: Date;
 }
 
-const ProjectSchema: Schema = new Schema({
+const commentSchema = new Schema({
     author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    title: { type: String, required: true, trim: true },
     content: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
+});
+
+const projectSchema = new Schema<IProject>({
+    title: { type: String, required: true, trim: true },
+    content: { type: String, required: true }, // Markdown or text
+    author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     category: {
         type: String,
         required: true,
-        enum: ['Technology', 'Healthcare', 'Education', 'Finance', 'Sustainability', 'Other']
+        enum: [
+            'technology',
+            'healthcare',
+            'fintech',
+            'education',
+            'sustainability',
+            'entertainment',
+            'ecommerce',
+            'social-impact',
+            'ai-ml',
+            'other'
+        ]
     },
+    tags: [{ type: String }],
+    media: [{ type: String }],
+
     projectStage: {
         type: String,
         required: true,
@@ -39,18 +66,11 @@ const ProjectSchema: Schema = new Schema({
     },
     fundingGoal: { type: Number },
     currentFunding: { type: Number, default: 0 },
-    tags: [{ type: String }],
-    images: [{ type: String }],
+
     likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    comments: [{
-        author: { type: Schema.Types.ObjectId, ref: 'User' },
-        content: { type: String, required: true },
-        createdAt: { type: Date, default: Date.now }
-    }]
+    comments: [commentSchema]
 }, {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true }
+    timestamps: true
 });
 
-export default mongoose.model<IProject>('Project', ProjectSchema);
+export default mongoose.model<IProject>('Project', projectSchema);
