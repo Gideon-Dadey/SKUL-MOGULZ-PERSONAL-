@@ -56,6 +56,8 @@ const register = async (req, res) => {
                 username: user.username,
                 email: user.email,
                 role: user.role,
+                avatar: user.avatar,
+                interests: user.skills || [],
                 token,
             });
         }
@@ -85,6 +87,8 @@ const login = async (req, res) => {
                 username: user.username,
                 email: user.email,
                 role: user.role,
+                avatar: user.avatar,
+                interests: user.skills || [],
                 token,
             });
         }
@@ -117,7 +121,8 @@ const getMe = async (req, res) => {
                 bio: user.bio,
                 location: user.location,
                 connections: user.connections,
-                avatar: user.avatar
+                avatar: user.avatar,
+                interests: user.skills || []
             });
         }
         else {
