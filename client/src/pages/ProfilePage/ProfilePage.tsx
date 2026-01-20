@@ -195,7 +195,7 @@ const ProfilePage: React.FC = () => {
                         )}
                     </div>
                     <div className="profile-skills">
-                        {profileUser.interests.map(interest => (
+                        {(profileUser.interests || []).map(interest => (
                             <span key={interest} className="profile-skill">
                                 {interest}
                             </span>
