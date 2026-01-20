@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Image, X, Sparkles } from 'lucide-react';
+import { ArrowLeft, Image, X, Sparkles, Hash, DollarSign, Target, Briefcase } from 'lucide-react';
 import { PROJECT_CATEGORIES, ProjectCategory } from '../../types';
 import './CreatePostPage.css';
 
 const STAGES = [
-    { value: 'idea', label: 'Idea', description: 'Just an idea, looking for feedback' },
-    { value: 'prototype', label: 'Prototype', description: 'Working on a prototype' },
-    { value: 'mvp', label: 'MVP', description: 'Minimum viable product ready' },
-    { value: 'growth', label: 'Growth', description: 'Product launched, growing users' },
-    { value: 'scaling', label: 'Scaling', description: 'Scaling operations' },
+    { value: 'idea', label: 'Idea', description: 'Just started', icon: <Sparkles size={18} /> },
+    { value: 'prototype', label: 'Prototype', description: 'In progress', icon: <Target size={18} /> },
+    { value: 'mvp', label: 'MVP', description: 'Ready to test', icon: <Briefcase size={18} /> },
+    { value: 'growth', label: 'Growth', description: 'Gaining traction', icon: <DollarSign size={18} /> },
+    { value: 'scaling', label: 'Scaling', description: 'Expanding', icon: <Hash size={18} /> },
 ];
 
 const CreatePostPage: React.FC = () => {
@@ -42,188 +42,143 @@ const CreatePostPage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-
-        // Mock submission - replace with actual API call
+        // Mock submission
         await new Promise(resolve => setTimeout(resolve, 1500));
-
-        console.log({
-            title,
-            content,
-            category,
-            stage,
-            tags,
-            fundingGoal: hasFunding ? parseInt(fundingGoal) : undefined,
-            currentFunding: hasFunding ? parseInt(currentFunding) : undefined,
-        });
-
         navigate('/feed');
     };
 
     const isFormValid = title.trim() && content.trim() && category && stage;
 
     return (
-        <div className="create-post-page">
-            <div className="create-post-page__container">
-                <div className="create-post-page__header">
-                    <button className="create-post-page__back" onClick={() => navigate(-1)}>
+        <div className="create-layout">
+            <div className="create-container">
+                <header className="create-header">
+                    <button className="create-back-btn" onClick={() => navigate(-1)}>
                         <ArrowLeft size={20} />
                     </button>
-                    <h1>Create New Post</h1>
-                </div>
+                    <h1>Create a Post</h1>
+                    <button
+                        className="btn btn-primary btn--md"
+                        onClick={handleSubmit}
+                        disabled={!isFormValid || isSubmitting}
+                    >
+                        {isSubmitting ? 'Posting...' : 'Post'}
+                    </button>
+                </header>
 
-                <form onSubmit={handleSubmit} className="create-post-form">
-                    {/* Title */}
-                    <div className="form-group">
-                        <label htmlFor="title">Project Title *</label>
+                <div className="create-main">
+                    <div className="create-content-area">
                         <input
-                            id="title"
                             type="text"
+                            className="create-title-input"
+                            placeholder="What are you working on?"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Give your project a compelling title"
-                            className="form-input"
-                            required
                         />
-                    </div>
 
-                    {/* Content */}
-                    <div className="form-group">
-                        <label htmlFor="content">Description *</label>
                         <textarea
-                            id="content"
+                            className="create-body-input"
+                            placeholder="Share your progress, ask for feedback, or find collaborators..."
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
-                            placeholder="Describe your project, progress, and what you're looking for..."
-                            className="form-textarea"
-                            rows={8}
-                            required
                         />
-                        <span className="form-hint">
-                            <Sparkles size={14} /> Tip: Use markdown for better formatting
-                        </span>
-                    </div>
 
-                    {/* Category */}
-                    <div className="form-group">
-                        <label>Category *</label>
-                        <div className="category-grid">
-                            {PROJECT_CATEGORIES.map(cat => (
-                                <button
-                                    key={cat.value}
-                                    type="button"
-                                    className={`category-option ${category === cat.value ? 'active' : ''}`}
-                                    onClick={() => setCategory(cat.value)}
-                                >
-                                    <span className="category-option__icon">{cat.icon}</span>
-                                    <span className="category-option__label">{cat.label}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Stage */}
-                    <div className="form-group">
-                        <label>Project Stage *</label>
-                        <div className="stage-grid">
-                            {STAGES.map(s => (
-                                <button
-                                    key={s.value}
-                                    type="button"
-                                    className={`stage-option ${stage === s.value ? 'active' : ''}`}
-                                    onClick={() => setStage(s.value)}
-                                >
-                                    <span className="stage-option__label">{s.label}</span>
-                                    <span className="stage-option__desc">{s.description}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Tags */}
-                    <div className="form-group">
-                        <label htmlFor="tags">Tags</label>
-                        <div className="tags-input-container">
+                        <div className="create-tags-area">
                             {tags.map(tag => (
-                                <span key={tag} className="tag-chip">
+                                <span key={tag} className="create-tag">
                                     #{tag}
-                                    <button type="button" onClick={() => handleRemoveTag(tag)}>
-                                        <X size={14} />
-                                    </button>
+                                    <button onClick={() => handleRemoveTag(tag)}><X size={12} /></button>
                                 </span>
                             ))}
                             <input
-                                id="tags"
                                 type="text"
+                                className="create-tag-input"
+                                placeholder={tags.length === 0 ? "Add tags (press Enter)..." : ""}
                                 value={tagInput}
                                 onChange={(e) => setTagInput(e.target.value)}
                                 onKeyDown={handleAddTag}
-                                placeholder={tags.length < 5 ? "Add a tag and press Enter" : ""}
-                                className="tags-input"
-                                disabled={tags.length >= 5}
                             />
                         </div>
-                    </div>
 
-                    {/* Funding Toggle */}
-                    <div className="form-group">
-                        <div className="funding-toggle">
-                            <label htmlFor="hasFunding">Looking for funding?</label>
-                            <button
-                                type="button"
-                                className={`toggle-switch ${hasFunding ? 'active' : ''}`}
-                                onClick={() => setHasFunding(!hasFunding)}
-                            >
-                                <span className="toggle-switch__thumb" />
-                            </button>
+                        <div className="create-toolbar">
+                            <button className="toolbar-btn"><Image size={20} /></button>
+                            <button className="toolbar-btn"><Sparkles size={20} /></button>
                         </div>
                     </div>
 
-                    {/* Funding Details */}
-                    {hasFunding && (
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label htmlFor="fundingGoal">Funding Goal ($)</label>
-                                <input
-                                    id="fundingGoal"
-                                    type="number"
-                                    value={fundingGoal}
-                                    onChange={(e) => setFundingGoal(e.target.value)}
-                                    placeholder="150000"
-                                    className="form-input"
-                                />
+                    <aside className="create-settings">
+                        <section className="settings-group">
+                            <h3>Category</h3>
+                            <div className="settings-pills">
+                                {PROJECT_CATEGORIES.map(cat => (
+                                    <button
+                                        key={cat.value}
+                                        className={`settings-pill ${category === cat.value ? 'active' : ''}`}
+                                        onClick={() => setCategory(cat.value)}
+                                        title={cat.label}
+                                    >
+                                        <span className="pill-icon">{cat.icon}</span>
+                                        {cat.label}
+                                    </button>
+                                ))}
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="currentFunding">Current Funding ($)</label>
-                                <input
-                                    id="currentFunding"
-                                    type="number"
-                                    value={currentFunding}
-                                    onChange={(e) => setCurrentFunding(e.target.value)}
-                                    placeholder="0"
-                                    className="form-input"
-                                />
-                            </div>
-                        </div>
-                    )}
+                        </section>
 
-                    {/* Submit */}
-                    <div className="form-actions">
-                        <button
-                            type="button"
-                            className="btn btn-outline"
-                            onClick={() => navigate(-1)}
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="btn btn-primary"
-                            disabled={!isFormValid || isSubmitting}
-                        >
-                            {isSubmitting ? 'Publishing...' : 'Publish Post'}
-                        </button>
-                    </div>
-                </form>
+                        <section className="settings-group">
+                            <h3>Project Stage</h3>
+                            <div className="settings-list">
+                                {STAGES.map(s => (
+                                    <button
+                                        key={s.value}
+                                        className={`settings-list-item ${stage === s.value ? 'active' : ''}`}
+                                        onClick={() => setStage(s.value)}
+                                    >
+                                        <div className="list-item-icon">{s.icon}</div>
+                                        <div className="list-item-text">
+                                            <span className="list-item-label">{s.label}</span>
+                                            <span className="list-item-desc">{s.description}</span>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </section>
+
+                        <section className="settings-group">
+                            <div className="settings-toggle-row">
+                                <h3>Seeking Funding</h3>
+                                <button
+                                    className={`toggle-btn ${hasFunding ? 'active' : ''}`}
+                                    onClick={() => setHasFunding(!hasFunding)}
+                                >
+                                    <div className="toggle-thumb"></div>
+                                </button>
+                            </div>
+
+                            {hasFunding && (
+                                <div className="funding-inputs">
+                                    <div className="input-with-label">
+                                        <label>Goal ($)</label>
+                                        <input
+                                            type="number"
+                                            value={fundingGoal}
+                                            onChange={(e) => setFundingGoal(e.target.value)}
+                                            placeholder="10000"
+                                        />
+                                    </div>
+                                    <div className="input-with-label">
+                                        <label>Raised ($)</label>
+                                        <input
+                                            type="number"
+                                            value={currentFunding}
+                                            onChange={(e) => setCurrentFunding(e.target.value)}
+                                            placeholder="0"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </section>
+                    </aside>
+                </div>
             </div>
         </div>
     );
