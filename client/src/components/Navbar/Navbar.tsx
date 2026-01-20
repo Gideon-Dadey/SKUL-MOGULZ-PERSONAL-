@@ -9,6 +9,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import notificationService from '../../services/notificationService';
+import logo from '../../assets/logo.png';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
@@ -111,7 +112,7 @@ const Navbar: React.FC = () => {
             <nav className="navbar navbar--guest">
                 <div className="navbar__container">
                     <Link to="/" className="navbar__logo">
-                        <div className="navbar__logo-icon">SM</div>
+                        <img src={logo} alt="SKUL MOGULZ" className="navbar__logo-img" />
                         <span className="navbar__logo-text">SKUL MOGULZ</span>
                     </Link>
                     <div className="navbar__guest-actions">
@@ -129,7 +130,7 @@ const Navbar: React.FC = () => {
                 {/* Left Section */}
                 <div className="navbar__left">
                     <Link to="/feed" className="navbar__logo">
-                        <div className="navbar__logo-icon">SM</div>
+                        <img src={logo} alt="SM" className="navbar__logo-img" />
                     </Link>
 
                     <div className={`navbar__search ${searchFocused ? 'navbar__search--focused' : ''}`}>

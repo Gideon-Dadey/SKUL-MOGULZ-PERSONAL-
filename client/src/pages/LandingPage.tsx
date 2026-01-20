@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, BarChart2, Globe, Shield, Users, Zap, Briefcase } from 'lucide-react';
 import profile1 from '../assets/profile-1.png';
 import profile2 from '../assets/profile-2.png';
+import logo from '../assets/logo.png';
 
 const LandingPage: React.FC = () => {
     return (
@@ -174,7 +175,10 @@ const LandingPage: React.FC = () => {
             <footer className="footer">
                 <div className="footer-grid">
                     <div className="footer-info">
-                        <div className="logo-text">SKUL MOGULZ</div>
+                        <div className="footer-logo">
+                            <img src={logo} alt="SKUL MOGULZ" className="footer-logo-img" />
+                            <div className="logo-text">SKUL MOGULZ</div>
+                        </div>
                         <p>The premier launchpad for student-led innovation and professional growth.</p>
                     </div>
                     <div className="footer-links">

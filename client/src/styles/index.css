@@ -324,17 +324,11 @@ a:hover {
   margin-bottom: 2rem;
 }
 
-.auth-brand__icon {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, var(--primary) 0%, #ff8f6b 100%);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 800;
-  font-size: 0.9rem;
+.auth-brand__img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
 .auth-brand__text {

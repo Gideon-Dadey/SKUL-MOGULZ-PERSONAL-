@@ -37,18 +37,11 @@
     text-decoration: none;
 }
 
-.navbar__logo-icon {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, var(--primary) 0%, #ff8f6b 100%);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 800;
-    font-size: 0.9rem;
-    letter-spacing: -0.02em;
+.navbar__logo-img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+    border-radius: 4px;
 }
 
 .navbar__logo-text {
