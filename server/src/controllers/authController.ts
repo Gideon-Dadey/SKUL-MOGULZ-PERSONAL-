@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import User from '../models/User';
+import jwt from 'jsonwebtoken';
 
-// Helper to generate JWT
+// Generate JWT Token
 const generateToken = (id: string) => {
     return jwt.sign({ id }, process.env.JWT_SECRET || 'secret', {
         expiresIn: '30d',
@@ -13,15 +12,9 @@ const generateToken = (id: string) => {
 // @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
-export const register = async (req: Request, res: Response): Promise<void> => {
+export const register = async (req: Request, res: Response) => {
     try {
-        const { firstName, lastName, email, password, role } = req.body;
-
-        // Basic Validation
-        if (!firstName || !lastName || !email || !password) {
-            res.status(400).json({ message: 'Please add all required fields' });
-            return;
-        }
+        const { firstName, lastName, email, username, password, role } = req.body;
 
         // Check if user exists
         const userExists = await User.findOne({ email });
@@ -30,70 +23,110 @@ export const register = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        // Hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
         // Create user
+        // Generate a username from email if not provided
+        const finalUsername = username || email.split('@')[0];
+
+        // Ensure username is unique (simple check, in prod might need more robustness)
+        const usernameExists = await User.findOne({ username: finalUsername });
+        if (usernameExists) {
+            // Append random number if username taken
+            // For MVP, we'll simpler logic or let it fail if user provided it
+            if (username) {
+                res.status(400).json({ message: 'Username already taken' });
+                return;
+            }
+            // Otherwise we could append random, but let's assume email prefix is unique enough for now or user will retry
+        }
+
         const user = await User.create({
             firstName,
             lastName,
             email,
-            password: hashedPassword,
+            username: finalUsername,
+            password, // Mongoose middleware will hash this
             role: role || 'student',
         });
 
         if (user) {
+            // Generate token
+            const token = generateToken(user._id as string);
+
             res.status(201).json({
-                _id: user.id,
+                _id: user._id,
                 firstName: user.firstName,
                 lastName: user.lastName,
+                username: user.username,
                 email: user.email,
                 role: user.role,
-                token: generateToken(user.id),
-                avatar: user.avatar,
+                token,
             });
         } else {
             res.status(400).json({ message: 'Invalid user data' });
         }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
+    } catch (error: any) {
+        console.error("Register Error:", error);
+        res.status(500).json({ message: error.message || 'Server Error' });
     }
 };
 
-// @desc    Authenticate a user
+// @desc    Authenticate user & get token
 // @route   POST /api/auth/login
 // @access  Public
-export const login = async (req: Request, res: Response): Promise<void> => {
+export const login = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email }).select('+password');
 
-        if (user && (await bcrypt.compare(password, user.password || ''))) {
+        if (user && (await user.comparePassword(password))) {
+            const token = generateToken(user._id as string);
+
             res.json({
-                _id: user.id,
+                _id: user._id,
                 firstName: user.firstName,
                 lastName: user.lastName,
+                username: user.username,
                 email: user.email,
                 role: user.role,
-                token: generateToken(user.id),
-                avatar: user.avatar,
+                token,
             });
         } else {
-            res.status(401).json({ message: 'Invalid credentials' });
+            res.status(401).json({ message: 'Invalid email or password' });
         }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
+    } catch (error: any) {
+        console.error("Login Error:", error);
+        res.status(500).json({ message: error.message || 'Server Error' });
     }
 };
 
-// @desc    Get user data
+// @desc    Get current user
 // @route   GET /api/auth/me
 // @access  Private
-export const getMe = async (req: any, res: Response) => { // req: any to bypass type check for now for user attached
-    const user = await User.findById(req.user.id);
-    res.status(200).json(user);
+export const getMe = async (req: Request, res: Response) => {
+    try {
+        // req.user is set by authMiddleware
+        const user = await User.findById((req as any).user._id);
+
+        if (user) {
+            res.json({
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                username: user.username,
+                email: user.email,
+                role: user.role,
+                headline: user.headline,
+                bio: user.bio,
+                location: user.location,
+                connections: user.connections,
+                avatar: user.avatar
+            });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error: any) {
+        console.error("GetMe Error:", error);
+        res.status(500).json({ message: error.message || 'Server Error' });
+    }
 };
