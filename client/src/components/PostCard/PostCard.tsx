@@ -1,16 +1,22 @@
 import React from 'react';
 import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from 'lucide-react';
-import { Post } from '../../types';
 import { Link } from 'react-router-dom';
+import { Post } from '../../types';
+import { useAuth } from '../../context/AuthContext';
 import './PostCard.css';
 
 interface PostCardProps {
-    post: Post;
+    post: any;
     onLike?: (postId: string) => void;
     compact?: boolean;
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, onLike, compact = false }) => {
+    const { user } = useAuth();
+
+    // Check if liked by current user
+    const isLiked = user && (post.likedBy || []).includes(user.id);
+
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         const now = new Date();
@@ -103,17 +109,17 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, compact = false }) =>
 
             <div className="post-card__tags">
                 <span className="post-card__category">{post.category}</span>
-                {post.tags.slice(0, 3).map(tag => (
+                {post.tags.slice(0, 3).map((tag: string) => (
                     <span key={tag} className="post-card__tag">#{tag}</span>
                 ))}
             </div>
 
             <div className="post-card__footer">
                 <button
-                    className="post-card__action-btn"
+                    className={`post-card__action-btn ${isLiked ? 'active' : ''}`}
                     onClick={() => onLike?.(post.id)}
                 >
-                    <Heart size={18} />
+                    <Heart size={18} fill={isLiked ? "var(--primary)" : "none"} color={isLiked ? "var(--primary)" : "currentColor"} />
                     <span>{post.likes}</span>
                 </button>
                 <Link to={`/post/${post.id}`} className="post-card__action-btn">

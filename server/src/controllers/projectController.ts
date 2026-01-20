@@ -1,16 +1,21 @@
 import { Request, Response } from 'express';
 import Project from '../models/Project';
+import Notification from '../models/Notification';
 
 // @desc    Get all projects/posts (Feed)
 // @route   GET /api/projects
 // @access  Public (or Private)
 export const getProjects = async (req: Request, res: Response) => {
     try {
-        const { category, search, stage } = req.query;
+        const { category, search, stage, author } = req.query;
         let query: any = {};
 
         if (category && category !== 'all') {
             query.category = category;
+        }
+
+        if (author) {
+            query.author = author;
         }
 
         if (stage && stage !== 'all') {
@@ -101,6 +106,16 @@ export const likeProject = async (req: any, res: Response) => {
         } else {
             // Like
             project.likes.push(req.user.id);
+
+            // Create Notification
+            if (project.author.toString() !== req.user.id) {
+                await Notification.create({
+                    recipient: project.author,
+                    sender: req.user.id,
+                    type: 'like',
+                    project: project._id,
+                });
+            }
         }
 
         await project.save();
@@ -130,6 +145,17 @@ export const commentProject = async (req: any, res: Response) => {
 
         project.comments.unshift(newComment);
         await project.save();
+
+        // Create Notification
+        if (project.author.toString() !== req.user.id) {
+            await Notification.create({
+                recipient: project.author,
+                sender: req.user.id,
+                type: 'comment',
+                project: project._id,
+                content: req.body.content.substring(0, 50) + (req.body.content.length > 50 ? '...' : '')
+            });
+        }
 
         // we generally need to return the new comments list populated
         await project.populate('comments.author', 'firstName lastName avatar');

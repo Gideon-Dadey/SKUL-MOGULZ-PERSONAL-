@@ -7,8 +7,13 @@ export interface User {
     username: string;
     avatar?: string;
     bio?: string;
+    headline?: string;
+    location?: string;
     role: 'student' | 'investor';
     interests: string[];
+    connections?: string[];
+    impressions?: number;
+    viewedProfile?: number;
     createdAt: string;
 }
 

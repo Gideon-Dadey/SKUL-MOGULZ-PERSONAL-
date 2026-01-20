@@ -83,12 +83,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
     };
 
-    const updateProfile = (data: Partial<User>) => {
-        // TODO: Implement backend update
-        if (state.user) {
-            const updatedUser = { ...state.user, ...data };
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-            setState(prev => ({ ...prev, user: updatedUser }));
+    const updateProfile = async (data: Partial<User>) => {
+        try {
+            const updatedUser = await authService.updateProfile(data);
+            const user = { ...updatedUser, id: updatedUser._id || updatedUser.id };
+            setState(prev => ({ ...prev, user }));
+        } catch (error) {
+            console.error("Profile update failed", error);
+            throw error;
         }
     };
 

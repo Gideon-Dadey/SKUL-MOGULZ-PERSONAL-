@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import api from '../../services/api';
 import './ProjectsPage.css';
 
 const ProjectsPage: React.FC = () => {
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const urlSearch = queryParams.get('search') || '';
+
     const [filter, setFilter] = useState('all');
     const [projects, setProjects] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -13,9 +17,10 @@ const ProjectsPage: React.FC = () => {
         const fetchProjects = async () => {
             setIsLoading(true);
             try {
-                // In a real app, we would pass 'filter' to the API query params
-                // For now, we fetch all and sort/filter client-side or assume default
-                const response = await api.get('/projects');
+                let url = '/projects?';
+                if (urlSearch) url += `search=${encodeURIComponent(urlSearch)}&`;
+                // Add filter logic
+                const response = await api.get(url);
 
                 let data = response.data.map((p: any) => ({
                     ...p,
@@ -41,7 +46,7 @@ const ProjectsPage: React.FC = () => {
         };
 
         fetchProjects();
-    }, [filter]);
+    }, [filter, urlSearch]);
 
     return (
         <div className="projects-container">

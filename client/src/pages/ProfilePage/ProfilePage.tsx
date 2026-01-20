@@ -1,27 +1,71 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
     MapPin, Edit2, Plus, MoreHorizontal, Briefcase, GraduationCap
 } from 'lucide-react';
 import PostCard from '../../components/PostCard/PostCard';
-import { mockPosts, mockUsers } from '../../data/mockData';
+import { mockUsers } from '../../data/mockData';
 import { useAuth } from '../../context/AuthContext';
+import authService from '../../services/authService';
+import api from '../../services/api';
 import './ProfilePage.css';
 
 const ProfilePage: React.FC = () => {
     const { username } = useParams<{ username: string }>();
     const { user: currentUser } = useAuth();
+    const [profileUser, setProfileUser] = useState<any>(null);
+    const [userPosts, setUserPosts] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Find user based on URL param or fallback to current (or mock) user
-    const profileUser = username
-        ? mockUsers.find(u => u.username === username)
-        : currentUser ? currentUser : mockUsers[0];
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            try {
+                setIsLoading(true);
+                // 1. Get User Profile
+                let user;
+                if (username) {
+                    user = await authService.getProfile(username);
+                } else if (currentUser) {
+                    user = currentUser;
+                }
 
-    const userPosts = mockPosts.filter(post => post.author.id === profileUser?.id);
+                if (user) {
+                    setProfileUser(user);
+                    // 2. Get User's Projects
+                    const userId = user._id || user.id;
+                    const response = await api.get(`/projects?author=${userId}`);
 
+                    const adaptedPosts = response.data.map((p: any) => ({
+                        ...p,
+                        id: p._id || p.id,
+                        likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
+                        likedBy: Array.isArray(p.likes) ? p.likes : [],
+                        comments: (p.comments || []).map((c: any) => ({
+                            ...c,
+                            id: c._id || c.id,
+                            author: { ...c.author, id: c.author?._id || c.author?.id }
+                        })),
+                        author: {
+                            ...p.author,
+                            id: p.author?._id || p.author?.id
+                        }
+                    }));
+                    setUserPosts(adaptedPosts);
+                }
+            } catch (error) {
+                console.error("Failed to fetch profile data", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchProfileData();
+    }, [username, currentUser]);
+
+    if (isLoading) return <div className="profile-page"><div className="loading-spinner"></div></div>;
     if (!profileUser) return <div className="profile-page">User not found</div>;
 
-    const isOwnProfile = currentUser?.id === profileUser.id;
+    const isOwnProfile = currentUser?.id === (profileUser._id || profileUser.id);
 
     return (
         <div className="profile-layout">
@@ -195,7 +239,7 @@ const ProfilePage: React.FC = () => {
                         )}
                     </div>
                     <div className="profile-skills">
-                        {(profileUser.interests || []).map(interest => (
+                        {(profileUser.interests || []).map((interest: string) => (
                             <span key={interest} className="profile-skill">
                                 {interest}
                             </span>
@@ -232,7 +276,7 @@ const ProfilePage: React.FC = () => {
                         <h3>People also viewed</h3>
                     </div>
                     <div className="sidebar-people-list">
-                        {mockUsers.filter(u => u.id !== profileUser.id).slice(0, 5).map(u => (
+                        {mockUsers.filter((u: any) => u.id !== (profileUser._id || profileUser.id)).slice(0, 5).map((u: any) => (
                             <div key={u.id} className="sidebar-person">
                                 <img
                                     src={u.avatar || `https://ui-avatars.com/api/?name=${u.firstName}&background=ff6b4a&color=fff`}
