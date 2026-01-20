@@ -1,14 +1,13 @@
 /* ============================================
-   NAVBAR - LinkedIn Style Professional Nav
+   NAVBAR - Modern Floating Pill Style
    ============================================ */
 .navbar {
     position: sticky;
     top: 0;
     z-index: 1000;
-    background: var(--bg-nav);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    height: 56px;
+    background: transparent;
+    height: 72px;
+    padding: 0.75rem 0;
 }
 
 .navbar--guest {
@@ -19,7 +18,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: 1280px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 1.5rem;
     height: 100%;
@@ -29,33 +28,36 @@
 .navbar__logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
     text-decoration: none;
+    transition: transform 0.2s ease;
 }
 
 .navbar__logo:hover {
     text-decoration: none;
+    transform: scale(1.02);
 }
 
 .navbar__logo-img {
-    width: 34px;
-    height: 34px;
+    width: 40px;
+    height: 40px;
     object-fit: contain;
-    border-radius: 4px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .navbar__logo-text {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     font-weight: 800;
     color: var(--text-main);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
 }
 
 /* Left Section */
 .navbar__left {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 /* Search */
@@ -63,33 +65,34 @@
     position: relative;
     display: flex;
     align-items: center;
-    min-width: 280px;
+    min-width: 240px;
 }
 
 .navbar__search-icon {
     position: absolute;
-    left: 12px;
+    left: 14px;
     color: var(--text-muted);
     pointer-events: none;
 }
 
 .navbar__search-input {
     width: 100%;
-    padding: 0.6rem 2.5rem 0.6rem 2.5rem;
+    padding: 0.7rem 1rem 0.7rem 2.75rem;
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 100px;
     color: var(--text-main);
     font-size: 0.875rem;
     font-family: inherit;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
 }
 
 .navbar__search-input:focus {
     outline: none;
-    background: var(--bg-main);
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px var(--primary-light);
+    background: var(--bg-card);
+    border-color: var(--border-strong);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    width: 320px;
 }
 
 .navbar__search-input::placeholder {
@@ -97,73 +100,86 @@
 }
 
 .navbar__search--focused .navbar__search-input {
-    width: 360px;
+    width: 320px;
 }
 
 .navbar__search-shortcut {
     position: absolute;
-    right: 10px;
-    padding: 2px 6px;
+    right: 12px;
+    padding: 3px 8px;
     background: var(--bg-main);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 0.65rem;
     color: var(--text-muted);
+    font-family: monospace;
 }
 
-/* Center Navigation */
+/* Center Navigation - Floating Pill */
 .navbar__center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
     gap: 0.25rem;
-    height: 100%;
+    padding: 0.35rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
 }
 
 .navbar__nav-item-wrapper {
     position: relative;
-    height: 100%;
 }
 
 .navbar__nav-item {
     position: relative;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0 1.25rem;
-    height: 100%;
+    width: 44px;
+    height: 44px;
     color: var(--text-muted);
     text-decoration: none;
-    background: none;
+    background: transparent;
     border: none;
+    border-radius: 100px;
     cursor: pointer;
-    transition: color 0.2s ease;
-    min-width: 80px;
+    transition: all 0.2s ease;
+}
+
+.navbar__nav-item svg {
+    transition: all 0.2s ease;
 }
 
 .navbar__nav-item:hover {
     color: var(--text-main);
+    background: var(--bg-main);
     text-decoration: none;
 }
 
 .navbar__nav-item--active {
-    color: var(--text-main);
+    color: white;
+    background: var(--primary);
+}
+
+.navbar__nav-item--active:hover {
+    background: var(--primary-hover);
+    color: white;
+}
+
+.navbar__nav-item--active svg {
+    color: white;
 }
 
 .navbar__nav-label {
-    font-size: 0.7rem;
-    font-weight: 500;
-    margin-top: 2px;
+    display: none;
 }
 
 .navbar__nav-indicator {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--primary);
-    border-radius: 2px 2px 0 0;
+    display: none;
 }
 
 /* Notification Badge */
@@ -173,65 +189,100 @@
 
 .navbar__notification-badge {
     position: absolute;
-    top: -4px;
-    right: -6px;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 5px;
+    top: -2px;
+    right: -2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
     background: #ef4444;
     color: white;
-    font-size: 0.65rem;
+    font-size: 0.55rem;
     font-weight: 700;
     border-radius: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 2px solid var(--bg-card);
+}
+
+@keyframes pulse-badge {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
 }
 
 /* Right Section */
 .navbar__right {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
+}
+
+.navbar__divider {
+    display: none;
 }
 
 .navbar__create-btn {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 1rem;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
     background: var(--primary);
     color: white;
+    border: none;
     border-radius: 100px;
-    font-size: 0.85rem;
+    font-size: 0.875rem;
     font-weight: 600;
     text-decoration: none;
     transition: all 0.2s ease;
+    box-shadow: 0 2px 12px rgba(255, 107, 74, 0.2);
 }
 
 .navbar__create-btn:hover {
     background: var(--primary-hover);
     transform: translateY(-1px);
     text-decoration: none;
+    box-shadow: 0 4px 20px rgba(255, 107, 74, 0.3);
+}
+
+.navbar__create-btn:active {
+    transform: translateY(0);
 }
 
 .navbar__icon-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    background: none;
-    border: none;
+    width: 40px;
+    height: 40px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
     color: var(--text-muted);
-    border-radius: 50%;
+    border-radius: 100px;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
+.navbar__icon-btn::before {
+    display: none;
+}
+
 .navbar__icon-btn:hover {
-    background: var(--bg-card);
     color: var(--text-main);
+    border-color: var(--border-strong);
+    background: var(--bg-card);
+}
+
+.navbar__icon-btn svg {
+    position: relative;
+    z-index: 1;
 }
 
 /* Profile Button */
@@ -243,16 +294,17 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.25rem;
-    background: none;
-    border: none;
+    padding: 0.25rem 0.75rem 0.25rem 0.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
     cursor: pointer;
-    border-radius: 8px;
-    transition: background 0.2s ease;
+    border-radius: 100px;
+    transition: all 0.2s ease;
 }
 
 .navbar__profile-btn:hover {
-    background: var(--bg-card);
+    border-color: var(--border-strong);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
 .navbar__profile-avatar {
@@ -260,19 +312,19 @@
     height: 32px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--border);
+    border: none;
 }
 
 .navbar__profile-info {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.35rem;
 }
 
 .navbar__profile-name {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-main);
 }
 
 /* Dropdown Base */
