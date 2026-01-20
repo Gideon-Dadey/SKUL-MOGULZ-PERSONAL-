@@ -2,6 +2,7 @@ import { Response } from 'express';
 import Message from '../models/Message';
 import User from '../models/User';
 import mongoose from 'mongoose';
+import { getIO } from '../socket';
 
 // @desc    Get list of conversations (people messaged)
 // @route   GET /api/messages/conversations
@@ -120,7 +121,13 @@ export const sendMessage = async (req: any, res: Response) => {
             content
         });
 
-        res.status(201).json(message);
+        const fullMessage = await message.populate('sender', 'firstName lastName username avatar');
+
+        // Emit to recipient's personal room
+        const io = getIO();
+        io.to(recipientId).emit('new_message', fullMessage);
+
+        res.status(201).json(fullMessage);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }

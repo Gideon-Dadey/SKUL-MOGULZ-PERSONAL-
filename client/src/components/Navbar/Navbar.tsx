@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
+import { useSocket } from '../../context/SocketContext';
 import notificationService from '../../services/notificationService';
 import './Navbar.css';
 
@@ -15,6 +16,7 @@ const Navbar: React.FC = () => {
     const location = useLocation();
     const { theme, toggleTheme } = useTheme();
     const { user, isAuthenticated, logout } = useAuth();
+    const { socket } = useSocket();
     const [notifications, setNotifications] = useState<any[]>([]);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
@@ -45,10 +47,20 @@ const Navbar: React.FC = () => {
         };
 
         fetchNotifications();
-        // Set up a poll every 30 seconds
-        const interval = setInterval(fetchNotifications, 30000);
-        return () => clearInterval(interval);
     }, [isAuthenticated]);
+
+    // Listen for real-time notifications
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.on('notification', (newNotification: any) => {
+            setNotifications(prev => [newNotification, ...prev]);
+        });
+
+        return () => {
+            socket.off('notification');
+        };
+    }, [socket]);
 
     const handleMarkAllRead = async () => {
         try {
