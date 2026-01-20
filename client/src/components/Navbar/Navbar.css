@@ -502,6 +502,7 @@
 
 .navbar__dropdown-item:hover {
     background: var(--bg-card);
+    text-decoration: none;
 }
 
 .navbar__dropdown-item--danger {
