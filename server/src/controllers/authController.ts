@@ -18,7 +18,7 @@ export const register = async (req: Request, res: Response) => {
         const { firstName, lastName, email, username, password, role } = req.body;
 
         // Check if user exists
-        const userExists = await User.findOne({ email });
+        const userExists = await User.findOne({ email: email.toLowerCase() });
         if (userExists) {
             res.status(400).json({ message: 'User already exists' });
             return;
@@ -142,3 +142,76 @@ export const getMe = async (req: Request, res: Response) => {
         res.status(500).json({ message: error.message || 'Server Error' });
     }
 };
+
+// @desc    Get user by username
+// @route   GET /api/auth/profile/:username
+// @access  Public
+export const getUserProfile = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findOne({ username: req.params.username });
+
+        if (user) {
+            res.json({
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                username: user.username,
+                email: user.email,
+                role: user.role,
+                headline: user.headline,
+                bio: user.bio,
+                location: user.location,
+                avatar: user.avatar,
+                interests: user.skills || [],
+                connectionsCount: user.connections.length
+            });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error: any) {
+        console.error("GetProfile Error:", error);
+        res.status(500).json({ message: error.message || 'Server Error' });
+    }
+};
+
+// @desc    Update user profile
+// @route   PUT /api/auth/profile
+// @access  Private
+export const updateProfile = async (req: any, res: Response) => {
+    try {
+        const user = await User.findById(req.user._id);
+
+        if (user) {
+            user.firstName = req.body.firstName || user.firstName;
+            user.lastName = req.body.lastName || user.lastName;
+            user.bio = req.body.bio || user.bio;
+            user.headline = req.body.headline || user.headline;
+            user.location = req.body.location || user.location;
+            user.skills = req.body.interests || req.body.skills || user.skills;
+            // Avatar update would normally involve file upload, but for now we'll accept a URL
+            if (req.body.avatar) user.avatar = req.body.avatar;
+
+            const updatedUser = await user.save();
+
+            res.json({
+                _id: updatedUser._id,
+                firstName: updatedUser.firstName,
+                lastName: updatedUser.lastName,
+                username: updatedUser.username,
+                email: updatedUser.email,
+                role: updatedUser.role,
+                headline: updatedUser.headline,
+                bio: updatedUser.bio,
+                location: updatedUser.location,
+                avatar: updatedUser.avatar,
+                interests: updatedUser.skills || []
+            });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error: any) {
+        console.error("UpdateProfile Error:", error);
+        res.status(500).json({ message: error.message || 'Server Error' });
+    }
+};
+
