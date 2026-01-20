@@ -6,6 +6,9 @@ import dotenv from 'dotenv';
 import projectRoutes from './routes/projectRoutes';
 import authRoutes from './routes/authRoutes';
 import notificationRoutes from './routes/notificationRoutes';
+import messageRoutes from './routes/messageRoutes';
+import networkRoutes from './routes/networkRoutes';
+import analyticsRoutes from './routes/analyticsRoutes';
 
 dotenv.config();
 
@@ -22,6 +25,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/projects', projectRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/network', networkRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Root Route
 app.get('/', (req: Request, res: Response) => {

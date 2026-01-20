@@ -1,13 +1,90 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, MoreHorizontal, Video, Edit, Phone, Image, Paperclip, Smile } from 'lucide-react';
-import { mockUsers } from '../../data/mockData';
+import { useAuth } from '../../context/AuthContext';
+import messageService from '../../services/messageService';
 import './MessagesPage.css';
 
 const MessagesPage: React.FC = () => {
-    const [selectedChat, setSelectedChat] = useState<string | null>(mockUsers[1].id);
+    const { user: currentUser } = useAuth();
+    const [conversations, setConversations] = useState<any[]>([]);
+    const [selectedChat, setSelectedChat] = useState<string | null>(null);
+    const [messages, setMessages] = useState<any[]>([]);
     const [messageInput, setMessageInput] = useState('');
+    const [loadingConversations, setLoadingConversations] = useState(true);
+    const [loadingMessages, setLoadingMessages] = useState(false);
+    const historyRef = useRef<HTMLDivElement>(null);
 
-    const activeUser = mockUsers.find(u => u.id === selectedChat);
+    // Fetch conversations on mount
+    useEffect(() => {
+        const fetchConversations = async () => {
+            try {
+                setLoadingConversations(true);
+                const data = await messageService.getConversations();
+                setConversations(data);
+                // Select first conversation if available
+                if (data.length > 0 && !selectedChat) {
+                    setSelectedChat(data[0]._id);
+                }
+            } catch (error) {
+                console.error("Failed to fetch conversations", error);
+            } finally {
+                setLoadingConversations(false);
+            }
+        };
+
+        fetchConversations();
+        const interval = setInterval(fetchConversations, 10000); // Poll every 10s
+        return () => clearInterval(interval);
+    }, []);
+
+    // Fetch messages when selectedChat changes
+    useEffect(() => {
+        if (!selectedChat) return;
+
+        const fetchMessages = async () => {
+            try {
+                setLoadingMessages(true);
+                const data = await messageService.getMessages(selectedChat);
+                setMessages(data);
+            } catch (error) {
+                console.error("Failed to fetch messages", error);
+            } finally {
+                setLoadingMessages(false);
+            }
+        };
+
+        fetchMessages();
+        const interval = setInterval(fetchMessages, 3000); // Faster poll for active chat
+        return () => clearInterval(interval);
+    }, [selectedChat]);
+
+    // Scroll to bottom when messages update
+    useEffect(() => {
+        if (historyRef.current) {
+            historyRef.current.scrollTop = historyRef.current.scrollHeight;
+        }
+    }, [messages]);
+
+    const handleSendMessage = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedChat || !messageInput.trim()) return;
+
+        const content = messageInput.trim();
+        setMessageInput('');
+
+        try {
+            const newMessage = await messageService.sendMessage(selectedChat, content);
+            setMessages([...messages, newMessage]);
+        } catch (error) {
+            console.error("Failed to send message", error);
+        }
+    };
+
+    const activeChatPartner = conversations.find(c => c._id === selectedChat)?.user;
+
+    const formatTime = (dateString: string) => {
+        return new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
 
     return (
         <div className="messages-container">
@@ -28,38 +105,52 @@ const MessagesPage: React.FC = () => {
                     </div>
 
                     <div className="msg-list">
-                        {mockUsers.map(user => (
-                            <div
-                                key={user.id}
-                                className={`msg-item ${selectedChat === user.id ? 'active' : ''}`}
-                                onClick={() => setSelectedChat(user.id)}
-                            >
-                                <div className="msg-avatar-wrapper">
-                                    <img src={user.avatar} alt={user.firstName} className="msg-avatar" />
-                                    <span className="msg-online-status"></span>
-                                </div>
-                                <div className="msg-preview">
-                                    <div className="msg-row-top">
-                                        <span className="msg-name">{user.firstName} {user.lastName}</span>
-                                        <span className="msg-date">Dec 12</span>
+                        {loadingConversations ? (
+                            <div className="msg-loading">Loading chats...</div>
+                        ) : conversations.length === 0 ? (
+                            <div className="msg-empty">No conversations yet</div>
+                        ) : (
+                            conversations.map(conv => (
+                                <div
+                                    key={conv._id}
+                                    className={`msg-item ${selectedChat === conv._id ? 'active' : ''}`}
+                                    onClick={() => setSelectedChat(conv._id)}
+                                >
+                                    <div className="msg-avatar-wrapper">
+                                        <img
+                                            src={conv.user.avatar || `https://ui-avatars.com/api/?name=${conv.user.firstName}&background=ff6b4a&color=fff`}
+                                            alt=""
+                                            className="msg-avatar"
+                                        />
+                                        {conv.unreadCount > 0 && <span className="msg-unread-dot">{conv.unreadCount}</span>}
                                     </div>
-                                    <p className="msg-snippet">
-                                        {user.role === 'investor' ? 'I would love to discuss your pitch deck...' : 'Hey, did you see the new update?'}
-                                    </p>
+                                    <div className="msg-preview">
+                                        <div className="msg-row-top">
+                                            <span className="msg-name">{conv.user.firstName} {conv.user.lastName}</span>
+                                            <span className="msg-date">
+                                                {new Date(conv.lastMessageDate).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                                            </span>
+                                        </div>
+                                        <p className="msg-snippet">
+                                            {conv.lastMessage}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 </aside>
 
                 {/* Main Chat Area */}
                 <main className="messages-main">
-                    {activeUser ? (
+                    {activeChatPartner ? (
                         <>
                             <header className="chat-header">
                                 <div className="chat-user-info">
-                                    <h3 className="chat-username">{activeUser.firstName} {activeUser.lastName}</h3>
-                                    <span className="chat-status">{activeUser.role === 'student' ? 'Student Entrepreneur' : 'Investor'}</span>
+                                    <h3 className="chat-username">{activeChatPartner.firstName} {activeChatPartner.lastName}</h3>
+                                    <span className="chat-status">
+                                        {activeChatPartner.role === 'student' ? 'Student Entrepreneur' : 'Investor'}
+                                    </span>
                                 </div>
                                 <div className="chat-actions">
                                     <button className="icon-btn"><MoreHorizontal size={20} /></button>
@@ -68,59 +159,65 @@ const MessagesPage: React.FC = () => {
                                 </div>
                             </header>
 
-                            <div className="chat-history">
-                                <div className="chat-divider"><span>Today</span></div>
+                            <div className="chat-history" ref={historyRef}>
+                                <div className="chat-divider"><span>Conversation started</span></div>
 
-                                <div className="message-bubble received">
-                                    <img src={activeUser.avatar} className="bubble-avatar" />
-                                    <div className="bubble-content">
-                                        <p>Hi Alex! I saw your recent post about the EdTech project. It looks fascinating.</p>
-                                        <span className="bubble-time">10:30 AM</span>
-                                    </div>
-                                </div>
-
-                                <div className="message-bubble sent">
-                                    <div className="bubble-content">
-                                        <p>Thanks {activeUser.firstName}! We are working hard on the MVP. Would you like to see a demo?</p>
-                                        <span className="bubble-time">10:45 AM</span>
-                                    </div>
-                                </div>
-
-                                <div className="message-bubble received">
-                                    <img src={activeUser.avatar} className="bubble-avatar" />
-                                    <div className="bubble-content">
-                                        <p>Absolutely! Are you free for a quick call this week?</p>
-                                        <span className="bubble-time">11:00 AM</span>
-                                    </div>
-                                </div>
+                                {messages.map((msg) => {
+                                    const isSent = msg.sender === currentUser?.id;
+                                    return (
+                                        <div key={msg._id} className={`message-bubble ${isSent ? 'sent' : 'received'}`}>
+                                            {!isSent && (
+                                                <img
+                                                    src={activeChatPartner.avatar || `https://ui-avatars.com/api/?name=${activeChatPartner.firstName}&background=ff6b4a&color=fff`}
+                                                    className="bubble-avatar"
+                                                />
+                                            )}
+                                            <div className="bubble-content">
+                                                <p>{msg.content}</p>
+                                                <span className="bubble-time">{formatTime(msg.createdAt)}</span>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                                {loadingMessages && messages.length === 0 && (
+                                    <div className="chat-loading">Loading messages...</div>
+                                )}
                             </div>
 
                             <footer className="chat-input-area">
-                                <textarea
-                                    placeholder="Write a message..."
-                                    value={messageInput}
-                                    onChange={(e) => setMessageInput(e.target.value)}
-                                    rows={1}
-                                />
-                                <div className="chat-tools">
-                                    <div className="tools-left">
-                                        <button className="tool-btn"><Image size={18} /></button>
-                                        <button className="tool-btn"><Paperclip size={18} /></button>
-                                        <button className="tool-btn"><Smile size={18} /></button>
+                                <form onSubmit={handleSendMessage} className="chat-form-wrapper">
+                                    <textarea
+                                        placeholder="Write a message..."
+                                        value={messageInput}
+                                        onChange={(e) => setMessageInput(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' && !e.shiftKey) {
+                                                e.preventDefault();
+                                                handleSendMessage(e);
+                                            }
+                                        }}
+                                        rows={1}
+                                    />
+                                    <div className="chat-tools">
+                                        <div className="tools-left">
+                                            <button type="button" className="tool-btn"><Image size={18} /></button>
+                                            <button type="button" className="tool-btn"><Paperclip size={18} /></button>
+                                            <button type="button" className="tool-btn"><Smile size={18} /></button>
+                                        </div>
+                                        <div className="tools-right">
+                                            <button type="submit" className="send-btn" disabled={!messageInput.trim()}>
+                                                Send
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="tools-right">
-                                        <button className="send-btn" disabled={!messageInput.trim()}>
-                                            Send
-                                        </button>
-                                    </div>
-                                </div>
+                                </form>
                             </footer>
                         </>
                     ) : (
                         <div className="chat-empty-state">
                             <h3>Select a message</h3>
-                            <p>Choose from your existing conversations, start a new one, or just keep swimming.</p>
-                            <button className="btn btn-primary">New Message</button>
+                            <p>Choose from your existing conversations or start a new one to connect with entrepreneurs and investors.</p>
+                            <button className="btn btn-primary">Start New Chat</button>
                         </div>
                     )}
                 </main>
@@ -130,3 +227,4 @@ const MessagesPage: React.FC = () => {
 };
 
 export default MessagesPage;
+

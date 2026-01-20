@@ -24,6 +24,7 @@ export interface IProject extends Document {
     // Social
     likes: mongoose.Types.ObjectId[];
     comments: IComment[];
+    views: number;
 
     createdAt: Date;
     updatedAt: Date;
@@ -68,7 +69,8 @@ const projectSchema = new Schema<IProject>({
     currentFunding: { type: Number, default: 0 },
 
     likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    comments: [commentSchema]
+    comments: [commentSchema],
+    views: { type: Number, default: 0 }
 }, {
     timestamps: true
 });

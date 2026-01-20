@@ -10,6 +10,7 @@ import ProfilePage from './pages/ProfilePage/ProfilePage';
 import NetworkPage from './pages/NetworkPage/NetworkPage';
 import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
 import MessagesPage from './pages/MessagesPage/MessagesPage';
+import AnalyticsPage from './pages/AnalyticsPage/AnalyticsPage';
 import './styles/index.css';
 
 // Protected Route Wrapper
@@ -375,15 +376,5 @@ const RegisterPage = () => {
 // ============================================
 // PLACEHOLDER PAGES (Remaining)
 // ============================================
-
-const AnalyticsPage = () => (
-    <div className="placeholder-page">
-        <div className="placeholder-page__content">
-            <h1>Analytics Dashboard</h1>
-            <p>Track your project performance, engagement, and investor interest.</p>
-            <span className="placeholder-page__badge">Coming Soon</span>
-        </div>
-    </div>
-);
 
 export default App;
