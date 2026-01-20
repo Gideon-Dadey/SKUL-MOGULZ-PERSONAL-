@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, MoreHorizontal, Video, Edit, Phone, Image, Paperclip, Smile } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useSocket } from '../../context/SocketContext';
 import messageService from '../../services/messageService';
 import './MessagesPage.css';
 
 const MessagesPage: React.FC = () => {
     const { user: currentUser } = useAuth();
+    const { socket } = useSocket();
     const [conversations, setConversations] = useState<any[]>([]);
     const [selectedChat, setSelectedChat] = useState<string | null>(null);
     const [messages, setMessages] = useState<any[]>([]);
@@ -21,7 +23,6 @@ const MessagesPage: React.FC = () => {
                 setLoadingConversations(true);
                 const data = await messageService.getConversations();
                 setConversations(data);
-                // Select first conversation if available
                 if (data.length > 0 && !selectedChat) {
                     setSelectedChat(data[0]._id);
                 }
@@ -33,9 +34,32 @@ const MessagesPage: React.FC = () => {
         };
 
         fetchConversations();
-        const interval = setInterval(fetchConversations, 10000); // Poll every 10s
+        const interval = setInterval(fetchConversations, 10000);
         return () => clearInterval(interval);
     }, []);
+
+    // Listen for real-time messages
+    useEffect(() => {
+        if (!socket) return;
+
+        socket.on('new_message', (message: any) => {
+            // Update messages if the message belongs to the current chat
+            if (message.sender._id === selectedChat || message.recipient === selectedChat) {
+                setMessages((prev: any[]) => [...prev, message]);
+            }
+
+            // Also refresh conversations to show new snippet/unread status
+            const refreshConversations = async () => {
+                const data = await messageService.getConversations();
+                setConversations(data);
+            };
+            refreshConversations();
+        });
+
+        return () => {
+            socket.off('new_message');
+        };
+    }, [socket, selectedChat]);
 
     // Fetch messages when selectedChat changes
     useEffect(() => {
@@ -54,8 +78,6 @@ const MessagesPage: React.FC = () => {
         };
 
         fetchMessages();
-        const interval = setInterval(fetchMessages, 3000); // Faster poll for active chat
-        return () => clearInterval(interval);
     }, [selectedChat]);
 
     // Scroll to bottom when messages update

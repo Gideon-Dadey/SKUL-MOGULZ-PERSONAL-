@@ -62,7 +62,7 @@ const PostDetailPage: React.FC = () => {
                 likedBy: updatedLikes
             }));
 
-            setIsLiked(!isLiked); // Optimistic or based on result (API returns array of IDs, so check that)
+            setIsLiked(!isLiked);
             if (user) {
                 setIsLiked(updatedLikes.includes(user.id));
             }
@@ -96,8 +96,6 @@ const PostDetailPage: React.FC = () => {
             try {
                 const response = await api.post(`/projects/${post.id}/comment`, { content: commentText });
 
-                // The controller returns the *array* of comments.
-                // We need to adapt them.
                 const updatedComments = response.data.map((c: any) => ({
                     ...c,
                     id: c._id || c.id,
@@ -112,6 +110,23 @@ const PostDetailPage: React.FC = () => {
             } catch (error) {
                 console.error("Failed to post comment", error);
             }
+        }
+    };
+
+    const handleSupport = async () => {
+        if (!post) return;
+        const amount = prompt("Enter the amount you want to support with ($):", "10");
+        if (!amount || isNaN(Number(amount))) return;
+
+        try {
+            const response = await api.post(`/projects/${post.id}/support`, { amount });
+            setPost((prev: any) => ({
+                ...prev,
+                currentFunding: response.data.currentFunding
+            }));
+            alert(`Thank you for supporting this project with $${amount}!`);
+        } catch (error) {
+            console.error("Failed to support project", error);
         }
     };
 
@@ -186,6 +201,17 @@ const PostDetailPage: React.FC = () => {
                             ))}
                         </div>
 
+                        {/* Media Section */}
+                        {post.media && post.media.length > 0 && (
+                            <div className="post-article__media">
+                                {post.media.map((url: string, idx: number) => (
+                                    <div key={idx} className="post-article__media-item">
+                                        <img src={url} alt="" />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
                         {/* Funding Card */}
                         {fundingProgress !== null && (
                             <div className="funding-widget">
@@ -199,7 +225,7 @@ const PostDetailPage: React.FC = () => {
                                 <div className="funding-widget__bar">
                                     <div className="funding-widget__fill" style={{ width: `${fundingProgress}%` }}></div>
                                 </div>
-                                <button className="btn btn-primary btn--full">Support Project</button>
+                                <button className="btn btn-primary btn--full" onClick={handleSupport}>Support Project</button>
                             </div>
                         )}
 
@@ -321,7 +347,6 @@ const PostDetailPage: React.FC = () => {
                         <h3>More from {post.author.firstName}</h3>
                     </div>
                     <div className="sidebar-more-list">
-                        {/* Placeholder for more posts */}
                         <p className="text-muted text-sm">No other posts yet.</p>
                     </div>
                 </div>

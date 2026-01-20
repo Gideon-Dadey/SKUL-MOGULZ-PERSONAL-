@@ -2,6 +2,7 @@ import { Response } from 'express';
 import User from '../models/User';
 import ConnectionRequest from '../models/ConnectionRequest';
 import Notification from '../models/Notification';
+import { getIO } from '../socket';
 
 // @desc    Get network suggestions (users you are not connected to)
 // @route   GET /api/network/suggestions
@@ -73,12 +74,15 @@ export const sendConnectionRequest = async (req: any, res: Response) => {
         });
 
         // Notify recipient
-        await Notification.create({
+        const notification = await Notification.create({
             recipient: recipientId,
             sender: senderId,
             type: 'follow', // using follow type for connection requests for now
             content: 'sent you a connection request'
         });
+
+        const fullNotification = await notification.populate('sender', 'firstName lastName avatar');
+        getIO().to(recipientId).emit('notification', fullNotification);
 
         res.status(201).json(request);
     } catch (error: any) {
@@ -110,12 +114,15 @@ export const acceptRequest = async (req: any, res: Response) => {
         await User.findByIdAndUpdate(request.recipient, { $addToSet: { connections: request.sender } });
 
         // Notify sender
-        await Notification.create({
+        const notification = await Notification.create({
             recipient: request.sender,
             sender: req.user.id,
             type: 'follow',
             content: 'accepted your connection request'
         });
+
+        const fullNotification = await notification.populate('sender', 'firstName lastName avatar');
+        getIO().to(request.sender.toString()).emit('notification', fullNotification);
 
         res.status(200).json({ message: 'Connection accepted' });
     } catch (error: any) {

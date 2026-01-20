@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { SocketProvider } from './context/SocketContext';
 import Navbar from './components/Navbar/Navbar';
 import FeedPage from './pages/FeedPage/FeedPage';
 import CreatePostPage from './pages/CreatePostPage/CreatePostPage';
@@ -93,7 +94,9 @@ function App() {
     return (
         <ThemeProvider>
             <AuthProvider>
-                <AppContent />
+                <SocketProvider>
+                    <AppContent />
+                </SocketProvider>
             </AuthProvider>
         </ThemeProvider>
     );

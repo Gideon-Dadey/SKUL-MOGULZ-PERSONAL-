@@ -86,6 +86,18 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, compact = false }) =>
                         {compact ? post.content.slice(0, 200) + '...' : post.content.slice(0, 400) + (post.content.length > 400 ? '...' : '')}
                     </p>
                 </div>
+                {post.media && post.media.length > 0 && (
+                    <div className="post-card__media">
+                        {post.media.slice(0, 3).map((url: string, idx: number) => (
+                            <div key={idx} className="post-card__image-wrapper">
+                                <img src={url} alt="" className="post-card__image" />
+                                {idx === 2 && post.media.length > 3 && (
+                                    <div className="post-card__media-overlay">+{post.media.length - 3}</div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </Link>
 
             {fundingProgress !== null && (

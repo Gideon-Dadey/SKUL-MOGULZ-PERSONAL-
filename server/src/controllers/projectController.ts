@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Project from '../models/Project';
 import Notification from '../models/Notification';
+import { getIO } from '../socket';
 
 // @desc    Get all projects/posts (Feed)
 // @route   GET /api/projects
@@ -70,8 +71,18 @@ export const createProject = async (req: any, res: Response) => {
             return;
         }
 
+        const media: string[] = [];
+        if (req.files && Array.isArray(req.files)) {
+            req.files.forEach((file: any) => {
+                // Return full URL for local serving
+                const filePath = file.path.replace(/\\/g, '/'); // fix windows paths
+                media.push(`${req.protocol}://${req.get('host')}/${filePath}`);
+            });
+        }
+
         const project = await Project.create({
             ...req.body,
+            media,
             author: req.user.id
         });
 
@@ -109,12 +120,15 @@ export const likeProject = async (req: any, res: Response) => {
 
             // Create Notification
             if (project.author.toString() !== req.user.id) {
-                await Notification.create({
+                const notification = await Notification.create({
                     recipient: project.author,
                     sender: req.user.id,
                     type: 'like',
                     project: project._id,
                 });
+
+                const fullNotification = await notification.populate('sender', 'firstName lastName avatar');
+                getIO().to(project.author.toString()).emit('notification', fullNotification);
             }
         }
 
@@ -148,19 +162,64 @@ export const commentProject = async (req: any, res: Response) => {
 
         // Create Notification
         if (project.author.toString() !== req.user.id) {
-            await Notification.create({
+            const notification = await Notification.create({
                 recipient: project.author,
                 sender: req.user.id,
                 type: 'comment',
                 project: project._id,
                 content: req.body.content.substring(0, 50) + (req.body.content.length > 50 ? '...' : '')
             });
+
+            const fullNotification = await notification.populate('sender', 'firstName lastName avatar');
+            getIO().to(project.author.toString()).emit('notification', fullNotification);
         }
 
         // we generally need to return the new comments list populated
         await project.populate('comments.author', 'firstName lastName avatar');
 
         res.status(200).json(project.comments);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Support/Fund a project
+// @route   POST /api/projects/:id/support
+// @access  Private
+export const supportProject = async (req: any, res: Response) => {
+    try {
+        const { amount } = req.body;
+        const project = await Project.findById(req.params.id);
+
+        if (!project) {
+            res.status(404).json({ message: 'Project not found' });
+            return;
+        }
+
+        const donation = Number(amount);
+        if (isNaN(donation) || donation <= 0) {
+            res.status(400).json({ message: 'Invalid support amount' });
+            return;
+        }
+
+        project.currentFunding! += donation;
+        await project.save();
+
+        // Create Notification
+        if (project.author.toString() !== req.user.id) {
+            const notification = await Notification.create({
+                recipient: project.author,
+                sender: req.user.id,
+                type: 'funding', // using funding type
+                project: project._id,
+                content: `supported your project with $${donation.toLocaleString()}`
+            });
+
+            const fullNotification = await notification.populate('sender', 'firstName lastName avatar');
+            getIO().to(project.author.toString()).emit('notification', fullNotification);
+        }
+
+        res.status(200).json({ currentFunding: project.currentFunding });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }

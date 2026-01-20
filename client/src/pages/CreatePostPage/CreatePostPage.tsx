@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Image, X, Sparkles, Hash, DollarSign, Target, Briefcase } from 'lucide-react';
 import { PROJECT_CATEGORIES, ProjectCategory } from '../../types';
@@ -26,6 +26,11 @@ const CreatePostPage: React.FC = () => {
     const [currentFunding, setCurrentFunding] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // Media handling
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const [previews, setPreviews] = useState<string[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     const handleAddTag = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && tagInput.trim()) {
             e.preventDefault();
@@ -40,6 +45,20 @@ const CreatePostPage: React.FC = () => {
         setTags(tags.filter(tag => tag !== tagToRemove));
     };
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const files = Array.from(e.target.files);
+            const newPreviews = files.map(file => URL.createObjectURL(file));
+            setSelectedFiles(prev => [...prev, ...files]);
+            setPreviews(prev => [...prev, ...newPreviews]);
+        }
+    };
+
+    const handleRemoveImage = (index: number) => {
+        setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+        setPreviews(prev => prev.filter((_, i) => i !== index));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -47,17 +66,28 @@ const CreatePostPage: React.FC = () => {
 
         setIsSubmitting(true);
         try {
-            const projectData = {
-                title,
-                content,
-                category,
-                projectStage: stage,
-                tags,
-                fundingGoal: hasFunding ? Number(fundingGoal.replace(/[^0-9.-]+/g, "")) : undefined,
-                currentFunding: hasFunding ? Number(currentFunding.replace(/[^0-9.-]+/g, "")) : 0,
-            };
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('content', content);
+            formData.append('category', category);
+            formData.append('projectStage', stage);
 
-            await api.post('/projects', projectData);
+            tags.forEach(tag => formData.append('tags[]', tag));
+
+            if (hasFunding) {
+                formData.append('fundingGoal', fundingGoal.replace(/[^0-9.-]+/g, ""));
+                formData.append('currentFunding', currentFunding.replace(/[^0-9.-]+/g, ""));
+            }
+
+            selectedFiles.forEach(file => {
+                formData.append('media', file);
+            });
+
+            await api.post('/projects', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
             navigate('/feed');
         } catch (error) {
             console.error("Failed to create post", error);
@@ -103,6 +133,20 @@ const CreatePostPage: React.FC = () => {
                             onChange={(e) => setContent(e.target.value)}
                         />
 
+                        {/* Previews Section */}
+                        {previews.length > 0 && (
+                            <div className="create-previews">
+                                {previews.map((src, idx) => (
+                                    <div key={idx} className="preview-item">
+                                        <img src={src} alt="" />
+                                        <button className="remove-preview" onClick={() => handleRemoveImage(idx)}>
+                                            <X size={14} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
                         <div className="create-tags-area">
                             {tags.map(tag => (
                                 <span key={tag} className="create-tag">
@@ -121,12 +165,23 @@ const CreatePostPage: React.FC = () => {
                         </div>
 
                         <div className="create-toolbar">
-                            <button className="toolbar-btn"><Image size={20} /></button>
+                            <input
+                                type="file"
+                                hidden
+                                multiple
+                                accept="image/*"
+                                ref={fileInputRef}
+                                onChange={handleFileChange}
+                            />
+                            <button className="toolbar-btn" onClick={() => fileInputRef.current?.click()}>
+                                <Image size={20} />
+                            </button>
                             <button className="toolbar-btn"><Sparkles size={20} /></button>
                         </div>
                     </div>
 
                     <aside className="create-settings">
+                        {/* ... settings same as before ... */}
                         <section className="settings-group">
                             <h3>Category</h3>
                             <div className="settings-pills">
