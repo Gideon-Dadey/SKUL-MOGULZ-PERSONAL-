@@ -445,6 +445,7 @@
     margin: 0.25rem 0 0.5rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -564,5 +565,91 @@
     .feed-sidebar {
         position: relative;
         top: 0;
+    }
+
+    .create-box {
+        padding: 0.85rem;
+    }
+
+    .create-box__avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+    .create-box__input {
+        padding: 0.6rem 0.85rem;
+        font-size: 0.85rem;
+    }
+
+    .create-box__action {
+        padding: 0.6rem 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .create-box__action span {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .feed-layout {
+        padding: 0;
+        gap: 0.5rem;
+    }
+
+    .create-box {
+        padding: 0.75rem;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+
+    .create-box__top {
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .create-box__avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    .create-box__input {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .create-box__actions {
+        padding-top: 0.4rem;
+    }
+
+    .create-box__action {
+        padding: 0.5rem 0.4rem;
+        gap: 0.25rem;
+    }
+
+    .create-box__action svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .feed-sort-bar__text,
+    .feed-sort-bar__dropdown {
+        font-size: 0.7rem;
+    }
+
+    .feed-posts {
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .create-box__action {
+        padding: 0.4rem 0.25rem;
+    }
+
+    .create-box__action svg {
+        width: 16px;
+        height: 16px;
     }
 }
