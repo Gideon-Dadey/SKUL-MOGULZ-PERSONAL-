@@ -60,6 +60,8 @@ export const register = async (req: Request, res: Response) => {
                 username: user.username,
                 email: user.email,
                 role: user.role,
+                avatar: user.avatar,
+                interests: user.skills || [],
                 token,
             });
         } else {
@@ -90,6 +92,8 @@ export const login = async (req: Request, res: Response) => {
                 username: user.username,
                 email: user.email,
                 role: user.role,
+                avatar: user.avatar,
+                interests: user.skills || [],
                 token,
             });
         } else {
@@ -121,7 +125,8 @@ export const getMe = async (req: Request, res: Response) => {
                 bio: user.bio,
                 location: user.location,
                 connections: user.connections,
-                avatar: user.avatar
+                avatar: user.avatar,
+                interests: user.skills || []
             });
         } else {
             res.status(404).json({ message: 'User not found' });
