@@ -33,6 +33,10 @@
     text-decoration: none;
 }
 
+.navbar__logo:hover {
+    text-decoration: none;
+}
+
 .navbar__logo-icon {
     width: 36px;
     height: 36px;
@@ -146,6 +150,7 @@
 
 .navbar__nav-item:hover {
     color: var(--text-main);
+    text-decoration: none;
 }
 
 .navbar__nav-item--active {
@@ -214,6 +219,7 @@
 .navbar__create-btn:hover {
     background: var(--primary-hover);
     transform: translateY(-1px);
+    text-decoration: none;
 }
 
 .navbar__icon-btn {
@@ -461,6 +467,7 @@
 .navbar__dropdown-view-profile:hover {
     background: var(--primary);
     color: white;
+    text-decoration: none;
 }
 
 .navbar__dropdown-divider {
@@ -522,6 +529,7 @@
 
 .navbar__guest-link:hover {
     color: var(--primary);
+    text-decoration: none;
 }
 
 .btn--sm {
