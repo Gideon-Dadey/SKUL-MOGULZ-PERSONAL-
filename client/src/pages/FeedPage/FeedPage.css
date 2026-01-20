@@ -1,0 +1,226 @@
+.feed-page {
+    min-height: 100vh;
+    background: var(--bg-main);
+    padding: 2rem 0;
+}
+
+.feed-page__container {
+    display: grid;
+    grid-template-columns: 280px 1fr 300px;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* Sidebars */
+.feed-page__sidebar {
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+}
+
+.sidebar-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.sidebar-card__title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 1rem;
+}
+
+/* Trending Topics */
+.trending-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.trending-topic {
+    padding: 0.4rem 0.75rem;
+    background: var(--primary-light);
+    color: var(--primary);
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.trending-topic:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* Top Users */
+.top-users {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.top-user {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.top-user__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.top-user__info {
+    display: flex;
+    flex-direction: column;
+}
+
+.top-user__name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.top-user__role {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Platform Stats */
+.platform-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.platform-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.platform-stat__value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.platform-stat__label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Main Feed */
+.feed-page__main {
+    min-width: 0;
+}
+
+.feed-page__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.feed-page__title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.feed-page__sort {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.sort-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.sort-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.sort-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Posts */
+.feed-page__posts {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.feed-page__empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+}
+
+.feed-page__empty h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+}
+
+.feed-page__empty p {
+    color: var(--text-muted);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .feed-page__container {
+        grid-template-columns: 1fr 300px;
+    }
+
+    .feed-page__sidebar--left {
+        display: none;
+    }
+}
+
+@media (max-width: 900px) {
+    .feed-page__container {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+    }
+
+    .feed-page__sidebar--right {
+        display: none;
+    }
+
+    .feed-page__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .feed-page__sort {
+        width: 100%;
+        overflow-x: auto;
+    }
+}
