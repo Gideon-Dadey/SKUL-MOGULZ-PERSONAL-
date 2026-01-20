@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
     Home, Users, Briefcase, MessageSquare, Bell, Search,
     ChevronDown, Settings, LogOut, HelpCircle,
@@ -7,13 +7,15 @@ import {
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
-import { mockNotifications } from '../../data/mockData';
+import notificationService from '../../services/notificationService';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
+    const navigate = useNavigate();
     const location = useLocation();
     const { theme, toggleTheme } = useTheme();
     const { user, isAuthenticated, logout } = useAuth();
+    const [notifications, setNotifications] = useState<any[]>([]);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -21,7 +23,53 @@ const Navbar: React.FC = () => {
     const profileMenuRef = useRef<HTMLDivElement>(null);
     const notificationRef = useRef<HTMLDivElement>(null);
 
-    const unreadNotifications = mockNotifications.filter(n => !n.read).length;
+    const unreadNotifications = notifications.filter((n: any) => !n.isRead).length;
+
+    const handleSearch = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && searchQuery.trim()) {
+            navigate(`/projects?search=${encodeURIComponent(searchQuery.trim())}`);
+            setSearchQuery('');
+        }
+    };
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            if (isAuthenticated) {
+                try {
+                    const data = await notificationService.getNotifications();
+                    setNotifications(data);
+                } catch (error) {
+                    console.error("Failed to fetch notifications", error);
+                }
+            }
+        };
+
+        fetchNotifications();
+        // Set up a poll every 30 seconds
+        const interval = setInterval(fetchNotifications, 30000);
+        return () => clearInterval(interval);
+    }, [isAuthenticated]);
+
+    const handleMarkAllRead = async () => {
+        try {
+            await notificationService.markAllAsRead();
+            setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+        } catch (error) {
+            console.error("Failed to mark all as read", error);
+        }
+    };
+
+    const handleNotificationClick = async (n: any) => {
+        if (!n.isRead) {
+            try {
+                await notificationService.markAsRead(n._id);
+                setNotifications(prev => prev.map(item => item._id === n._id ? { ...item, isRead: true } : item));
+            } catch (error) {
+                console.error("Failed to mark notification as read", error);
+            }
+        }
+        setShowNotifications(false);
+    };
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -79,6 +127,7 @@ const Navbar: React.FC = () => {
                             placeholder="Search projects, people, posts..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={handleSearch}
                             onFocus={() => setSearchFocused(true)}
                             onBlur={() => setSearchFocused(false)}
                             className="navbar__search-input"
@@ -122,24 +171,37 @@ const Navbar: React.FC = () => {
                             <div className="navbar__dropdown navbar__dropdown--notifications">
                                 <div className="navbar__dropdown-header">
                                     <h3>Notifications</h3>
-                                    <button className="navbar__dropdown-action">Mark all as read</button>
+                                    <button className="navbar__dropdown-action" onClick={handleMarkAllRead}>Mark all as read</button>
                                 </div>
                                 <div className="navbar__dropdown-content">
-                                    {mockNotifications.slice(0, 5).map(notification => (
+                                    {notifications.length === 0 ? (
+                                        <div className="navbar__dropdown-empty">No notifications yet</div>
+                                    ) : notifications.slice(0, 10).map((n: any) => (
                                         <div
-                                            key={notification.id}
-                                            className={`notification-item ${!notification.read ? 'notification-item--unread' : ''}`}
+                                            key={n._id}
+                                            className={`notification-item ${!n.isRead ? 'notification-item--unread' : ''}`}
+                                            onClick={() => handleNotificationClick(n)}
                                         >
-                                            <img
-                                                src={notification.fromUser?.avatar || `https://ui-avatars.com/api/?name=User&background=ff6b4a&color=fff`}
-                                                alt=""
-                                                className="notification-item__avatar"
-                                            />
+                                            <Link to={`/profile/${n.sender.username}`} onClick={(e) => e.stopPropagation()}>
+                                                <img
+                                                    src={n.sender?.avatar || `https://ui-avatars.com/api/?name=${n.sender.firstName}&background=ff6b4a&color=fff`}
+                                                    alt=""
+                                                    className="notification-item__avatar"
+                                                />
+                                            </Link>
                                             <div className="notification-item__content">
-                                                <p>{notification.message}</p>
-                                                <span className="notification-item__time">2h ago</span>
+                                                <p>
+                                                    <strong>{n.sender.firstName} {n.sender.lastName}</strong>{' '}
+                                                    {n.type === 'like' ? 'liked your project' :
+                                                        n.type === 'comment' ? 'commented on your project' :
+                                                            'followed you'}
+                                                    {n.project && <span>: "{n.project.title}"</span>}
+                                                </p>
+                                                <span className="notification-item__time">
+                                                    {new Date(n.createdAt).toLocaleDateString()}
+                                                </span>
                                             </div>
-                                            {!notification.read && <div className="notification-item__dot" />}
+                                            {!n.isRead && <div className="notification-item__dot" />}
                                         </div>
                                     ))}
                                 </div>

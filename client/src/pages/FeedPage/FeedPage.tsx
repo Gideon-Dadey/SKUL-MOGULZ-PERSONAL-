@@ -112,13 +112,13 @@ const FeedPage: React.FC = () => {
                         <p>{user?.bio || 'Add a headline to stand out'}</p>
                     </div>
                     <div className="profile-card__stats">
-                        <Link to="/connections" className="profile-card__stat">
+                        <Link to="/network" className="profile-card__stat">
                             <span className="profile-card__stat-label">Connections</span>
-                            <span className="profile-card__stat-value">287</span>
+                            <span className="profile-card__stat-value">{user?.connections?.length || 0}</span>
                         </Link>
                         <Link to="/profile" className="profile-card__stat">
                             <span className="profile-card__stat-label">Profile views</span>
-                            <span className="profile-card__stat-value">156</span>
+                            <span className="profile-card__stat-value">{user?.viewedProfile || 0}</span>
                         </Link>
                     </div>
                     <div className="profile-card__actions">
