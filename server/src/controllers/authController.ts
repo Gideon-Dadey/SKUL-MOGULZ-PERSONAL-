@@ -80,7 +80,13 @@ export const login = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
 
-        const user = await User.findOne({ email }).select('+password');
+        // Find user by email OR username
+        const user = await User.findOne({
+            $or: [
+                { email: email.toLowerCase() },
+                { username: email }
+            ]
+        }).select('+password');
 
         if (user && (await user.comparePassword(password))) {
             const token = generateToken((user._id as mongoose.Types.ObjectId).toString());
