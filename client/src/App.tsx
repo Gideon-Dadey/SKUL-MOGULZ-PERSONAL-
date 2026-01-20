@@ -7,6 +7,9 @@ import FeedPage from './pages/FeedPage/FeedPage';
 import CreatePostPage from './pages/CreatePostPage/CreatePostPage';
 import PostDetailPage from './pages/PostDetailPage/PostDetailPage';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
+import NetworkPage from './pages/NetworkPage/NetworkPage';
+import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
+import MessagesPage from './pages/MessagesPage/MessagesPage';
 import './styles/index.css';
 
 // Protected Route Wrapper
@@ -370,37 +373,8 @@ const RegisterPage = () => {
 };
 
 // ============================================
-// PLACEHOLDER PAGES
+// PLACEHOLDER PAGES (Remaining)
 // ============================================
-const NetworkPage = () => (
-    <div className="placeholder-page">
-        <div className="placeholder-page__content">
-            <h1>My Network</h1>
-            <p>Connect with fellow innovators, investors, and mentors.</p>
-            <span className="placeholder-page__badge">Coming Soon</span>
-        </div>
-    </div>
-);
-
-const ProjectsPage = () => (
-    <div className="placeholder-page">
-        <div className="placeholder-page__content">
-            <h1>Discover Projects</h1>
-            <p>Browse and filter through thousands of innovative student projects.</p>
-            <span className="placeholder-page__badge">Coming Soon</span>
-        </div>
-    </div>
-);
-
-const MessagesPage = () => (
-    <div className="placeholder-page">
-        <div className="placeholder-page__content">
-            <h1>Messages</h1>
-            <p>Direct messaging with investors and collaborators.</p>
-            <span className="placeholder-page__badge">Coming Soon</span>
-        </div>
-    </div>
-);
 
 const AnalyticsPage = () => (
     <div className="placeholder-page">
