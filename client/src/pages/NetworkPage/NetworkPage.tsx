@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, UserPlus, Briefcase, ChevronRight, UserCheck } from 'lucide-react';
+import { Users, Briefcase, ChevronRight, UserCheck } from 'lucide-react';
 import { mockUsers } from '../../data/mockData';
 import './NetworkPage.css';
 

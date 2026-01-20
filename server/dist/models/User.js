@@ -32,27 +32,47 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const UserSchema = new mongoose_1.Schema({
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const userSchema = new mongoose_1.Schema({
     firstName: { type: String, required: true, trim: true },
     lastName: { type: String, required: true, trim: true },
+    username: { type: String, unique: true, sparse: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true, select: false },
     role: { type: String, enum: ['student', 'investor', 'admin'], default: 'student' },
-    headline: { type: String },
-    location: { type: String },
+    googleId: { type: String, unique: true, sparse: true },
     avatar: { type: String },
-    bio: { type: String },
+    bio: { type: String, maxlength: 500 },
+    headline: { type: String, maxlength: 100 },
+    location: { type: String },
+    skills: [{ type: String }],
     connections: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'User' }],
-    following: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'User' }],
+    viewedProfile: { type: Number, default: 0 },
+    impressions: { type: Number, default: 0 }
 }, {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true }
+    timestamps: true
 });
-// Virtual for full name
-UserSchema.virtual('fullName').get(function () {
-    return `${this.firstName} ${this.lastName}`;
+// Hash password before saving
+userSchema.pre('save', async function () {
+    if (!this.isModified('password') || !this.password)
+        return;
+    try {
+        const salt = await bcryptjs_1.default.genSalt(10);
+        this.password = await bcryptjs_1.default.hash(this.password, salt);
+    }
+    catch (error) {
+        throw error;
+    }
 });
-exports.default = mongoose_1.default.model('User', UserSchema);
+// Method to compare passwords
+userSchema.methods.comparePassword = async function (candidatePassword) {
+    if (!this.password)
+        return false;
+    return bcryptjs_1.default.compare(candidatePassword, this.password);
+};
+exports.default = mongoose_1.default.model('User', userSchema);

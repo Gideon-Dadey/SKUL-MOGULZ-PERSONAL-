@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Briefcase, TrendingUp } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import './ProjectsPage.css';

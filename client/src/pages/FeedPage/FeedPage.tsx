@@ -1,14 +1,14 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { Link } from 'react-router-dom';
 import {
-    Plus, TrendingUp, Clock, Flame, Image, Video, Calendar, FileText,
-    ChevronDown, MoreHorizontal, Globe, X, Sparkles
+    Plus, TrendingUp, Image, Calendar, FileText,
+    ChevronDown, Sparkles
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import PostCard from '../../components/PostCard/PostCard';
 import SearchFilter from '../../components/SearchFilter/SearchFilter';
-import { mockPosts, mockUsers } from '../../data/mockData';
+import { mockUsers } from '../../data/mockData';
 import { ProjectCategory } from '../../types';
 import './FeedPage.css';
 
@@ -190,7 +190,14 @@ const FeedPage: React.FC = () => {
                 <div className="feed-sort-bar">
                     <div className="feed-sort-bar__line"></div>
                     <span className="feed-sort-bar__text">Sort by:</span>
-                    <button className="feed-sort-bar__dropdown">
+                    <button
+                        className="feed-sort-bar__dropdown"
+                        onClick={() => {
+                            if (sortBy === 'recent') setSortBy('trending');
+                            else if (sortBy === 'trending') setSortBy('popular');
+                            else setSortBy('recent');
+                        }}
+                    >
                         {sortBy === 'recent' ? 'Most Recent' : sortBy === 'trending' ? 'Trending' : 'Most Popular'}
                         <ChevronDown size={16} />
                     </button>
@@ -208,7 +215,7 @@ const FeedPage: React.FC = () => {
 
                 {/* Posts */}
                 <div className="feed-posts">
-                    {posts.map(post => (
+                    {isLoading ? <div style={{ padding: '20px', textAlign: 'center' }}>Loading posts...</div> : posts.map(post => (
                         <PostCard key={post.id} post={post} onLike={handleLike} />
                     ))}
                 </div>

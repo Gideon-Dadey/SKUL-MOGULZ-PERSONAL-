@@ -1,5 +1,5 @@
 import api from './api';
-import { User } from '../types';
+
 
 // Login user
 const login = async (userData: any) => {
