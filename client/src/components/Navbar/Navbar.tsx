@@ -206,7 +206,8 @@ const Navbar: React.FC = () => {
                                                     <strong>{n.sender.firstName} {n.sender.lastName}</strong>{' '}
                                                     {n.type === 'like' ? 'liked your project' :
                                                         n.type === 'comment' ? 'commented on your project' :
-                                                            'followed you'}
+                                                            n.type === 'funding' ? 'supported your project' :
+                                                                'followed you'}
                                                     {n.project && <span>: "{n.project.title}"</span>}
                                                 </p>
                                                 <span className="notification-item__time">

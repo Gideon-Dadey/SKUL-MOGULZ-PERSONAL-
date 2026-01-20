@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
-    MapPin, Edit2, Plus, MoreHorizontal, Briefcase, GraduationCap
+    MapPin, Edit2, Plus, MoreHorizontal, Briefcase, GraduationCap, Camera
 } from 'lucide-react';
+import { useRef } from 'react';
 import PostCard from '../../components/PostCard/PostCard';
 import { mockUsers } from '../../data/mockData';
 import { useAuth } from '../../context/AuthContext';
@@ -16,6 +17,9 @@ const ProfilePage: React.FC = () => {
     const [profileUser, setProfileUser] = useState<any>(null);
     const [userPosts, setUserPosts] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isUploading, setIsUploading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const { updateProfile } = useAuth();
 
     useEffect(() => {
         const fetchProfileData = async () => {
@@ -62,6 +66,43 @@ const ProfilePage: React.FC = () => {
         fetchProfileData();
     }, [username, currentUser]);
 
+    const handleAvatarClick = () => {
+        if (isOwnProfile && fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setIsUploading(true);
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            // Directly call api to handle multipart/form-data
+            const response = await api.put('/auth/profile', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            if (response.data) {
+                const updatedUser = response.data;
+                // Update local state
+                setProfileUser((prev: any) => ({ ...prev, avatar: updatedUser.avatar }));
+                // Update context and localStorage
+                updateProfile(updatedUser);
+            }
+        } catch (error) {
+            console.error("Failed to upload avatar", error);
+            alert("Failed to upload image. Please try again.");
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
     if (isLoading) return <div className="profile-page"><div className="loading-spinner"></div></div>;
     if (!profileUser) return <div className="profile-page">User not found</div>;
 
@@ -76,11 +117,32 @@ const ProfilePage: React.FC = () => {
                     <div className="profile-hero__banner"></div>
                     <div className="profile-hero__content">
                         <div className="profile-hero__top">
-                            <img
-                                src={profileUser.avatar || `https://ui-avatars.com/api/?name=${profileUser.firstName}+${profileUser.lastName}&background=ff6b4a&color=fff&size=128`}
-                                alt={profileUser.firstName}
-                                className="profile-hero__avatar"
-                            />
+                            <div
+                                className={`profile-hero__avatar-container ${isOwnProfile ? 'editable' : ''}`}
+                                onClick={handleAvatarClick}
+                            >
+                                <img
+                                    src={profileUser.avatar || `https://ui-avatars.com/api/?name=${profileUser.firstName}+${profileUser.lastName}&background=ff6b4a&color=fff&size=200`}
+                                    alt={profileUser.firstName}
+                                    className="profile-hero__avatar"
+                                />
+                                {isOwnProfile && (
+                                    <div className="profile-hero__avatar-overlay">
+                                        {isUploading ? (
+                                            <div className="upload-spinner"></div>
+                                        ) : (
+                                            <Camera size={24} />
+                                        )}
+                                    </div>
+                                )}
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    className="hidden-input"
+                                    accept="image/*"
+                                    onChange={handleAvatarChange}
+                                />
+                            </div>
                             {isOwnProfile && (
                                 <button className="profile-hero__edit-btn" aria-label="Edit Profile">
                                     <Edit2 size={18} />
