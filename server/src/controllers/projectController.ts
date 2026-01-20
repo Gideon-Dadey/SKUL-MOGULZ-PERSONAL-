@@ -74,9 +74,8 @@ export const createProject = async (req: any, res: Response) => {
         const media: string[] = [];
         if (req.files && Array.isArray(req.files)) {
             req.files.forEach((file: any) => {
-                // Return full URL for local serving
-                const filePath = file.path.replace(/\\/g, '/'); // fix windows paths
-                media.push(`${req.protocol}://${req.get('host')}/${filePath}`);
+                const filePath = file.path.replace(/\\/g, '/');
+                media.push(`/${filePath}`);
             });
         }
 
