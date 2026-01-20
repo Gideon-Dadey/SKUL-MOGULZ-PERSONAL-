@@ -89,6 +89,10 @@
     color: inherit;
 }
 
+.post-card__content-link:hover {
+    text-decoration: none;
+}
+
 .post-card__content {
     margin-bottom: 1rem;
 }

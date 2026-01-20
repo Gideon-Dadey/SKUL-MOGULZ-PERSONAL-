@@ -136,6 +136,7 @@
 
 .project-card:hover {
     box-shadow: var(--shadow-lg);
+    text-decoration: none;
 }
 
 .project-banner {
