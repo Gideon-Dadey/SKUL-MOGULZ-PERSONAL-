@@ -19,7 +19,7 @@ const ProjectsPage: React.FC = () => {
             try {
                 let url = '/projects?';
                 if (urlSearch) url += `search=${encodeURIComponent(urlSearch)}&`;
-                // Add filter logic
+
                 const response = await api.get(url);
 
                 let data = response.data.map((p: any) => ({
@@ -27,12 +27,12 @@ const ProjectsPage: React.FC = () => {
                     id: p._id || p.id,
                 }));
 
-                // Simple Client-side filtering/sorting logic
+                // Client-side filtering/sorting
                 if (filter === 'new') {
                     data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
                 } else if (filter === 'trending') {
-                    // Sort by likes count
-                    data.sort((a: any, b: any) => (b.likes?.length || 0) - (a.likes?.length || 0));
+                    // Sort by likes as a proxy for trending
+                    data.sort((a: any, b: any) => (b.likes || 0) - (a.likes || 0));
                 } else if (filter === 'funding') {
                     data = data.filter((p: any) => p.fundingGoal && p.fundingGoal > 0);
                 }

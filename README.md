@@ -1,10 +1,14 @@
-# SKUL MOGULZ
+# SKUL MOGULZ 💀🚀
+> **The Operating System for Student Titans.**
 
-> **The Premier Platform for Student Innovation & Investment**
+![Status](https://img.shields.io/badge/Status-Stealth_Mode-black?style=for-the-badge&logo=github)
+![Vibe](https://img.shields.io/badge/Vibe-Hardcore-ff6b4a?style=for-the-badge)
 
-SKUL MOGULZ is a cutting-edge platform that connects young professionals and students with world-class investors. It provides an arena for showcasing projects, tracking progress, and securing funding.
+## 🧠 The Vision
+We are not building a social network. We are building a utility network for the next generation of Elon Musks and Mark Zuckerbergs.
 
-![SKUL MOGULZ](./docs/screenshots/hero-light.png)
+*   **See the Master Plan:** [`docs/vision/MASTER_PLAN.md`](./docs/vision/MASTER_PLAN.md)
+*   **See the Roadmap:** [`docs/vision/PRODUCT_ROADMAP.md`](./docs/vision/PRODUCT_ROADMAP.md)
 
 ---
 
