@@ -145,9 +145,6 @@ const Navbar: React.FC = () => {
                             onBlur={() => setSearchFocused(false)}
                             className="navbar__search-input"
                         />
-                        {searchQuery && (
-                            <kbd className="navbar__search-shortcut">⌘K</kbd>
-                        )}
                     </div>
                 </div>
 
