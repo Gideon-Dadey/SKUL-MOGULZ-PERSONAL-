@@ -125,16 +125,7 @@
     left: 0;
     width: 100%;
     height: 2px;
-    background: var(--text-black);
-    /* Solid black in light, white in dark */
-}
-
-[data-theme="light"] .navbar__nav-indicator {
-    background: #000;
-}
-
-[data-theme="dark"] .navbar__nav-indicator {
-    background: #fff;
+    background: var(--primary);
 }
 
 .navbar__nav-label {
@@ -307,8 +298,8 @@
 }
 
 .navbar__dropdown-item:hover {
-    text-decoration: underline;
     color: var(--text-muted);
+    background: var(--bg-main);
 }
 
 .navbar__dropdown-item svg {
@@ -323,12 +314,6 @@
 
 .navbar__dropdown-item--danger:hover {
     color: var(--primary);
-}
-
-.navbar__dropdown-item:hover {
-    text-decoration: underline;
-    background: transparent;
-    /* Clean LinkedIn style hover */
 }
 
 .navbar__dropdown-divider {
