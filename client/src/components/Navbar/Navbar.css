@@ -966,111 +966,138 @@
         display: none;
     }
 
+    /* Move Center Nav to Bottom - Floating Dock */
+    .navbar__center {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        top: auto;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 360px;
+        justify-content: space-evenly;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.12),
+            0 2px 8px rgba(0, 0, 0, 0.05);
+        z-index: 1002;
+    }
+
+    [data-theme="dark"] .navbar__center {
+        background: rgba(30, 30, 40, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar__nav-item {
+        width: auto;
+        height: 48px;
+        padding: 0 1rem;
+        margin: 0;
+    }
+
+    .navbar__nav-item:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Remove the 'create' text on mobile */
     .navbar__create-btn span {
         display: none;
     }
 
     .navbar__create-btn {
-        padding: 0.5rem;
+        padding: 0;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
     }
 
-    .navbar__dropdown--notifications,
-    .navbar__dropdown--profile {
-        position: fixed;
-        top: 56px;
-        right: 0;
-        left: 0;
-        width: 100%;
-        border-radius: 0;
-        max-height: calc(100vh - 56px);
+    .navbar__create-btn svg {
+        width: 20px;
+        height: 20px;
     }
 
-    .navbar__nav-item {
-        padding: 0 0.75rem;
+    /* Adjust dropdowns for mobile */
+    .navbar__dropdown--notifications {
+        position: fixed;
+        top: auto;
+        bottom: 90px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 360px;
+        max-height: 50vh;
+        border-radius: 20px;
+        animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Profile dropdown stays at top */
+    .navbar__dropdown--profile {
+        position: absolute;
+        top: calc(100% + 12px);
+        right: 0;
+        left: auto;
+        width: 280px;
     }
 
     .navbar__right {
-        gap: 0.5rem;
-    }
-
-    .navbar__icon-btn {
-        width: 32px;
-        height: 32px;
-    }
-
-    .navbar__profile-avatar {
-        width: 28px;
-        height: 28px;
+        gap: 0.75rem;
     }
 
     .navbar__profile-name {
         display: none;
     }
+
+    .navbar__profile-arrow {
+        display: none;
+    }
+
+    .navbar__profile-btn {
+        padding: 0;
+        border: none;
+        background: transparent;
+    }
+
+    .navbar__profile-btn:hover {
+        background: transparent;
+        box-shadow: none;
+        transform: scale(1.05);
+    }
+
+    .navbar__profile-avatar {
+        width: 36px;
+        height: 36px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
 }
 
 @media (max-width: 480px) {
     .navbar {
-        height: 52px;
+        padding: 0.5rem 0;
     }
 
     .navbar__container {
-        padding: 0 0.75rem;
+        padding: 0 1rem;
     }
 
-    .navbar__logo-img {
-        width: 28px;
-        height: 28px;
-    }
-
-    .navbar__nav-item {
-        width: 42px;
-        height: 42px;
-        padding: 0;
-    }
-
-    .navbar__nav-item svg {
-        width: 20px;
-        height: 20px;
-    }
-
-    .navbar__notification-badge {
-        min-width: 16px;
-        height: 16px;
-        font-size: 0.6rem;
-        top: -2px;
-        right: -4px;
-    }
-
-    .navbar__create-btn {
-        width: 32px;
-        height: 32px;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .navbar__create-btn svg {
-        width: 18px;
-        height: 18px;
-    }
-
-    .navbar__icon-btn {
-        width: 28px;
-        height: 28px;
-    }
-
-    .navbar__profile-btn {
-        padding: 0.15rem;
-    }
-
-    .navbar__profile-avatar {
-        width: 26px;
-        height: 26px;
-    }
-
-    .navbar__profile-info {
-        display: none;
+    .navbar__center {
+        width: 92%;
+        bottom: 16px;
+        padding: 0.4rem 0.5rem;
     }
 }
