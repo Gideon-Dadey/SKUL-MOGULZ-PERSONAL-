@@ -45,7 +45,8 @@
 .ad-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 16px;
+    border-radius: 8px;
+    /* 0.5rem */
     overflow: hidden;
     transition: all 0.2s ease;
 }
@@ -184,7 +185,8 @@
 .create-box {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 20px;
+    border-radius: 8px;
+    /* 0.5rem */
     padding: 1.25rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
 }
