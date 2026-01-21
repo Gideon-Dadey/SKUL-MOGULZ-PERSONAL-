@@ -186,14 +186,14 @@ const MessagesPage: React.FC = () => {
 
                                 {messages.map((msg) => {
                                     const isSent = msg.sender === currentUser?.id;
+                                    const senderInfo = isSent ? currentUser : activeChatPartner;
                                     return (
                                         <div key={msg._id} className={`message-bubble ${isSent ? 'sent' : 'received'}`}>
-                                            {!isSent && (
-                                                <img
-                                                    src={activeChatPartner.avatar || `https://ui-avatars.com/api/?name=${activeChatPartner.firstName}&background=ff6b4a&color=fff`}
-                                                    className="bubble-avatar"
-                                                />
-                                            )}
+                                            <img
+                                                src={senderInfo?.avatar || `https://ui-avatars.com/api/?name=${senderInfo?.firstName}+${senderInfo?.lastName}&background=ff6b4a&color=fff`}
+                                                className="bubble-avatar"
+                                                alt=""
+                                            />
                                             <div className="bubble-content">
                                                 <p>{msg.content}</p>
                                                 <span className="bubble-time">{formatTime(msg.createdAt)}</span>
