@@ -60,59 +60,102 @@
     gap: 1.5rem;
 }
 
-/* Search */
+/* Search - Glass Cockpit Style */
 .navbar__search {
     position: relative;
     display: flex;
     align-items: center;
-    min-width: 240px;
+    min-width: 260px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 20;
 }
 
 .navbar__search-icon {
     position: absolute;
-    left: 14px;
+    left: 16px;
     color: var(--text-muted);
     pointer-events: none;
+    transition: color 0.3s ease;
+    z-index: 2;
 }
 
 .navbar__search-input {
     width: 100%;
-    padding: 0.7rem 1rem 0.7rem 2.75rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
+    padding: 0.75rem 3.5rem 0.75rem 2.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    /* Extremely subtle glass */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 100px;
     color: var(--text-main);
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     font-family: inherit;
-    transition: all 0.25s ease;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.02),
+        0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .navbar__search-input:focus {
     outline: none;
-    background: var(--bg-card);
-    border-color: var(--border-strong);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    width: 320px;
+    width: 340px;
+    background: rgba(255, 255, 255, 0.85);
+    border-color: var(--primary);
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.08),
+        0 0 0 4px rgba(255, 107, 74, 0.1);
+}
+
+[data-theme="dark"] .navbar__search-input:focus {
+    background: rgba(30, 30, 40, 0.95);
+    border-color: var(--primary);
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.3),
+        0 0 0 4px rgba(255, 107, 74, 0.15);
+}
+
+.navbar__search:focus-within .navbar__search-icon {
+    color: var(--primary);
 }
 
 .navbar__search-input::placeholder {
-    color: var(--text-light);
+    color: var(--text-muted);
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.navbar__search-input:focus::placeholder {
+    opacity: 0.5;
 }
 
 .navbar__search--focused .navbar__search-input {
-    width: 320px;
+    width: 340px;
 }
 
+/* 3D Keycap Shortcut */
 .navbar__search-shortcut {
     position: absolute;
-    right: 12px;
-    padding: 3px 8px;
-    background: var(--bg-main);
-    border: 1px solid var(--border);
+    right: 14px;
+    padding: 4px 8px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    /* 3D depth */
     border-radius: 6px;
-    font-size: 0.65rem;
+    font-size: 0.7rem;
+    font-weight: 600;
     color: var(--text-muted);
-    font-family: monospace;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.navbar__search-input:focus~.navbar__search-shortcut {
+    opacity: 0;
+    transform: translateY(4px);
 }
 
 /* ============================================
@@ -561,9 +604,13 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.navbar__icon-btn svg {
-    position: relative;
-    z-index: 1;
+.navbar__theme-toggle:hover svg {
+    transform: rotate(180deg) scale(1.1);
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.navbar__theme-toggle:active svg {
+    transform: rotate(360deg) scale(0.9);
 }
 
 /* Profile Button */
@@ -589,6 +636,24 @@
     border-color: rgba(255, 255, 255, 0.2);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.navbar__profile-btn--active {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(255, 107, 74, 0.1);
+}
+
+.navbar__profile-arrow {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.navbar__profile-btn--active .navbar__profile-arrow {
+    transform: rotate(180deg);
+    color: var(--primary);
 }
 
 .navbar__profile-avatar {
@@ -611,18 +676,30 @@
     color: var(--text-main);
 }
 
-/* Dropdown Base */
+/* Dropdown Base - Glass */
 .navbar__dropdown {
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 12px);
     right: 0;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    box-shadow: var(--shadow-xl);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.12),
+        0 4px 12px rgba(0, 0, 0, 0.04);
     overflow: hidden;
-    animation: dropdownSlide 0.2s ease;
+    animation: dropdownSlide 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     z-index: 1001;
+}
+
+[data-theme="dark"] .navbar__dropdown {
+    background: rgba(30, 30, 40, 0.85);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 16px 48px rgba(0, 0, 0, 0.4),
+        0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes dropdownSlide {
