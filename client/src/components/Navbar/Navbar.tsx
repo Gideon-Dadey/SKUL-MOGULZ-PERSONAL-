@@ -234,14 +234,14 @@ const Navbar: React.FC = () => {
                         <span>Post</span>
                     </Link>
 
-                    <button className="navbar__icon-btn" onClick={toggleTheme}>
+                    <button className="navbar__icon-btn navbar__theme-toggle" onClick={toggleTheme}>
                         {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
                     </button>
 
                     {/* Profile Menu */}
                     <div className="navbar__profile-wrapper" ref={profileMenuRef}>
                         <button
-                            className="navbar__profile-btn"
+                            className={`navbar__profile-btn ${showProfileMenu ? 'navbar__profile-btn--active' : ''}`}
                             onClick={() => setShowProfileMenu(!showProfileMenu)}
                         >
                             <img
@@ -251,7 +251,7 @@ const Navbar: React.FC = () => {
                             />
                             <div className="navbar__profile-info">
                                 <span className="navbar__profile-name">Me</span>
-                                <ChevronDown size={14} />
+                                <ChevronDown size={14} className="navbar__profile-arrow" />
                             </div>
                         </button>
 
