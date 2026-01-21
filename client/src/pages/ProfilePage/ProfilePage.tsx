@@ -103,6 +103,10 @@ const ProfilePage: React.FC = () => {
         }
     };
 
+    const handleDeletePost = (postId: string) => {
+        setUserPosts(currentPosts => currentPosts.filter(post => post.id !== postId));
+    };
+
     if (isLoading) return <div className="profile-page"><div className="loading-spinner"></div></div>;
     if (!profileUser) return <div className="profile-page">User not found</div>;
 
@@ -223,7 +227,7 @@ const ProfilePage: React.FC = () => {
                     <div className="profile-activity-list">
                         {userPosts.length > 0 ? (
                             userPosts.slice(0, 3).map(post => (
-                                <PostCard key={post.id} post={post} compact={true} />
+                                <PostCard key={post.id} post={post} compact={true} onDelete={handleDeletePost} />
                             ))
                         ) : (
                             <div className="profile-empty">

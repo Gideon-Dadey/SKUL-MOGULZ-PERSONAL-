@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Image, X, Sparkles, Hash, DollarSign, Target, Briefcase } from 'lucide-react';
 import { PROJECT_CATEGORIES, ProjectCategory } from '../../types';
 import api from '../../services/api';
@@ -25,6 +25,26 @@ const CreatePostPage: React.FC = () => {
     const [fundingGoal, setFundingGoal] = useState('');
     const [currentFunding, setCurrentFunding] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const location = useLocation();
+    const editingPost = location.state?.post;
+
+    useEffect(() => {
+        if (editingPost) {
+            setTitle(editingPost.title || '');
+            setContent(editingPost.content || '');
+            setCategory(editingPost.category || '');
+            setStage(editingPost.projectStage || '');
+            setTags(editingPost.tags || []);
+            if (editingPost.fundingGoal) {
+                setHasFunding(true);
+                setFundingGoal(editingPost.fundingGoal.toString());
+                setCurrentFunding(editingPost.currentFunding?.toString() || '0');
+            }
+            if (editingPost.media) {
+                setPreviews(editingPost.media);
+            }
+        }
+    }, [editingPost]);
 
     // Media handling
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -83,11 +103,19 @@ const CreatePostPage: React.FC = () => {
                 formData.append('media', file);
             });
 
-            await api.post('/projects', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            if (editingPost) {
+                await api.put(`/projects/${editingPost.id || editingPost._id}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+            } else {
+                await api.post('/projects', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+            }
             navigate('/feed');
         } catch (error) {
             console.error("Failed to create post", error);
@@ -112,7 +140,7 @@ const CreatePostPage: React.FC = () => {
                         onClick={handleSubmit}
                         disabled={!isFormValid || isSubmitting}
                     >
-                        {isSubmitting ? 'Posting...' : 'Post'}
+                        {isSubmitting ? (editingPost ? 'Saving...' : 'Posting...') : (editingPost ? 'Save Changes' : 'Post')}
                     </button>
                 </header>
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, MessageCircle, Share2, Send, MoreHorizontal, ThumbsUp } from 'lucide-react';
+import { ArrowLeft, Heart, MessageCircle, Share2, Send, MoreHorizontal, ThumbsUp, Trash2, Edit } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import './PostDetailPage.css';
@@ -13,6 +13,8 @@ const PostDetailPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [commentText, setCommentText] = useState('');
     const [isLiked, setIsLiked] = useState(false);
+    const [showMenu, setShowMenu] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -69,6 +71,27 @@ const PostDetailPage: React.FC = () => {
         } catch (error) {
             console.error("Failed to like post", error);
         }
+    };
+
+    const handleDelete = async () => {
+        if (!window.confirm("Are you sure you want to delete this post?")) return;
+
+        try {
+            setIsDeleting(true);
+            await api.delete(`/projects/${post.id}`);
+            navigate('/feed');
+        } catch (error) {
+            console.error("Failed to delete post", error);
+            alert("Failed to delete post");
+        } finally {
+            setIsDeleting(false);
+            setShowMenu(false);
+        }
+    };
+
+    const handleEdit = () => {
+        navigate('/create-post', { state: { post } });
+        setShowMenu(false);
     };
 
     const formatDate = (dateString: string) => {
@@ -172,9 +195,23 @@ const PostDetailPage: React.FC = () => {
                                 <span className="post-article__headline">Student Entrepreneur</span>
                                 <span className="post-article__date">{formatDate(post.createdAt)} • <GlobeIcon /></span>
                             </div>
-                            <button className="post-article__more">
-                                <MoreHorizontal size={20} />
-                            </button>
+                            {user && (post.author.id === user.id || (post.author as any)._id === user.id) && (
+                                <div className="post-card__menu-container" style={{ position: 'relative' }}>
+                                    <button className="post-article__more" onClick={() => setShowMenu(!showMenu)}>
+                                        <MoreHorizontal size={20} />
+                                    </button>
+                                    {showMenu && (
+                                        <div className="post-card__menu-dropdown" style={{ right: 0, top: '100%' }}>
+                                            <button onClick={handleEdit} className="post-card__menu-item">
+                                                <Edit size={16} /> Edit
+                                            </button>
+                                            <button onClick={handleDelete} disabled={isDeleting} className="post-card__menu-item post-card__menu-item--danger">
+                                                {isDeleting ? 'Deleting...' : <><Trash2 size={16} /> Delete</>}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -351,7 +388,7 @@ const PostDetailPage: React.FC = () => {
                     </div>
                 </div>
             </aside>
-        </div>
+        </div >
     );
 };
 

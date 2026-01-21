@@ -1,21 +1,49 @@
-import React from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Trash2, Edit } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Post } from '../../types';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
 import './PostCard.css';
+import './PostCardMenu.css';
 
 interface PostCardProps {
     post: any;
     onLike?: (postId: string) => void;
+    onDelete?: (postId: string) => void;
     compact?: boolean;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post, onLike, compact = false }) => {
+const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = false }) => {
     const { user } = useAuth();
+    const navigate = useNavigate();
+    const [showMenu, setShowMenu] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     // Check if liked by current user
     const isLiked = user && (post.likedBy || []).includes(user.id);
+    const isAuthor = user && (user.id === post.author.id || user.id === post.author._id);
+
+    const handleDelete = async () => {
+        if (!window.confirm("Are you sure you want to delete this post?")) return;
+
+        try {
+            setIsDeleting(true);
+            await api.delete(`/projects/${post.id}`);
+            if (onDelete) onDelete(post.id);
+        } catch (error) {
+            console.error("Failed to delete post", error);
+            alert("Failed to delete post");
+        } finally {
+            setIsDeleting(false);
+            setShowMenu(false);
+        }
+    };
+
+    const handleEdit = () => {
+        navigate('/create-post', { state: { post } });
+        setShowMenu(false);
+    };
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -73,9 +101,26 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, compact = false }) =>
                     >
                         {post.projectStage.charAt(0).toUpperCase() + post.projectStage.slice(1)}
                     </span>
-                    <button className="post-card__more-btn">
-                        <MoreHorizontal size={18} />
-                    </button>
+                    {isAuthor && (
+                        <div className="post-card__menu-container">
+                            <button className="post-card__more-btn" onClick={(e) => {
+                                e.preventDefault();
+                                setShowMenu(!showMenu);
+                            }}>
+                                <MoreHorizontal size={18} />
+                            </button>
+                            {showMenu && (
+                                <div className="post-card__menu-dropdown">
+                                    <button onClick={(e) => { e.preventDefault(); handleEdit(); }} className="post-card__menu-item">
+                                        <Edit size={16} /> Edit
+                                    </button>
+                                    <button onClick={(e) => { e.preventDefault(); handleDelete(); }} disabled={isDeleting} className="post-card__menu-item post-card__menu-item--danger">
+                                        {isDeleting ? 'Deleting...' : <><Trash2 size={16} /> Delete</>}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -100,24 +145,26 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, compact = false }) =>
                 )}
             </Link>
 
-            {fundingProgress !== null && (
-                <div className="post-card__funding">
-                    <div className="post-card__funding-header">
-                        <span className="post-card__funding-raised">
-                            ${(post.currentFunding! / 1000).toFixed(0)}K raised
-                        </span>
-                        <span className="post-card__funding-goal">
-                            of ${(post.fundingGoal! / 1000).toFixed(0)}K goal
-                        </span>
+            {
+                fundingProgress !== null && (
+                    <div className="post-card__funding">
+                        <div className="post-card__funding-header">
+                            <span className="post-card__funding-raised">
+                                ${(post.currentFunding! / 1000).toFixed(0)}K raised
+                            </span>
+                            <span className="post-card__funding-goal">
+                                of ${(post.fundingGoal! / 1000).toFixed(0)}K goal
+                            </span>
+                        </div>
+                        <div className="post-card__funding-bar">
+                            <div
+                                className="post-card__funding-progress"
+                                style={{ width: `${fundingProgress}%` }}
+                            />
+                        </div>
                     </div>
-                    <div className="post-card__funding-bar">
-                        <div
-                            className="post-card__funding-progress"
-                            style={{ width: `${fundingProgress}%` }}
-                        />
-                    </div>
-                </div>
-            )}
+                )
+            }
 
             <div className="post-card__tags">
                 <span className="post-card__category">{post.category}</span>
@@ -145,7 +192,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, compact = false }) =>
                     <Bookmark size={18} />
                 </button>
             </div>
-        </article>
+        </article >
     );
 };
 
