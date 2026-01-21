@@ -103,6 +103,7 @@ const Navbar: React.FC = () => {
         { path: '/network', icon: Users, label: 'My Network' },
         { path: '/projects', icon: Rocket, label: 'Projects' },
         { path: '/messages', icon: MessageSquare, label: 'Messaging' },
+        { path: '/notifications', icon: Bell, label: 'Notifications', badge: unreadNotifications },
     ];
 
     const isActive = (path: string) => location.pathname === path;
@@ -151,79 +152,81 @@ const Navbar: React.FC = () => {
                 {/* Center Navigation */}
                 <div className="navbar__center">
                     {navItems.map(item => (
-                        <Link
-                            key={item.path}
-                            to={item.path}
-                            className={`navbar__nav-item ${isActive(item.path) ? 'navbar__nav-item--active' : ''}`}
-                            data-tooltip={item.label}
+                        <div key={item.path} className="navbar__nav-item-wrapper"
+                            ref={item.path === '/notifications' ? notificationRef : null}
+                            onMouseEnter={() => item.path === '/notifications' && setShowNotifications(true)}
+                            onMouseLeave={() => item.path === '/notifications' && setShowNotifications(false)}
                         >
-                            <item.icon size={22} />
-                            <span className="navbar__nav-label">{item.label}</span>
-                            {isActive(item.path) && <div className="navbar__nav-indicator" />}
-                        </Link>
-                    ))}
-
-                    {/* Notifications */}
-                    <div className="navbar__nav-item-wrapper" ref={notificationRef}>
-                        <button
-                            className={`navbar__nav-item ${showNotifications ? 'navbar__nav-item--active' : ''}`}
-                            onClick={() => setShowNotifications(!showNotifications)}
-                            data-tooltip="Notifications"
-                        >
-                            <div className="navbar__notification-icon">
-                                <Bell size={22} />
-                                {unreadNotifications > 0 && (
-                                    <span className="navbar__notification-badge">{unreadNotifications}</span>
-                                )}
-                            </div>
-                            <span className="navbar__nav-label">Notifications</span>
-                        </button>
-
-                        {showNotifications && (
-                            <div className="navbar__dropdown navbar__dropdown--notifications">
-                                <div className="navbar__dropdown-header">
-                                    <h3>Notifications</h3>
-                                    <button className="navbar__dropdown-action" onClick={handleMarkAllRead}>Mark all as read</button>
+                            <Link
+                                to={item.path}
+                                className={`navbar__nav-item ${isActive(item.path) ? 'navbar__nav-item--active' : ''}`}
+                                data-tooltip={item.label}
+                                onClick={() => item.path === '/notifications' && setShowNotifications(false)}
+                            >
+                                <div className="navbar__nav-icon-container">
+                                    <item.icon size={22} />
+                                    {item.badge !== undefined && item.badge > 0 && (
+                                        <span className="navbar__notification-badge">{item.badge}</span>
+                                    )}
                                 </div>
-                                <div className="navbar__dropdown-content">
-                                    {notifications.length === 0 ? (
-                                        <div className="navbar__dropdown-empty">No notifications yet</div>
-                                    ) : notifications.slice(0, 10).map((n: any) => (
-                                        <div
-                                            key={n._id}
-                                            className={`notification-item ${!n.isRead ? 'notification-item--unread' : ''}`}
-                                            onClick={() => handleNotificationClick(n)}
-                                        >
-                                            <Link to={`/profile/${n.sender.username}`} onClick={(e) => e.stopPropagation()}>
-                                                <img
-                                                    src={n.sender?.avatar || `https://ui-avatars.com/api/?name=${n.sender.firstName}&background=ff6b4a&color=fff`}
-                                                    alt=""
-                                                    className="notification-item__avatar"
-                                                />
-                                            </Link>
-                                            <div className="notification-item__content">
-                                                <p>
-                                                    <strong>{n.sender.firstName} {n.sender.lastName}</strong>{' '}
-                                                    {n.type === 'like' ? 'liked your project' :
-                                                        n.type === 'comment' ? 'commented on your project' :
-                                                            n.type === 'funding' ? 'supported your project' :
-                                                                'followed you'}
-                                                    {n.project && <span>: "{n.project.title}"</span>}
-                                                </p>
-                                                <span className="notification-item__time">
-                                                    {new Date(n.createdAt).toLocaleDateString()}
-                                                </span>
+                                <span className="navbar__nav-label">{item.label}</span>
+                                {isActive(item.path) && <div className="navbar__nav-indicator" />}
+                            </Link>
+
+                            {item.path === '/notifications' && showNotifications && (
+                                <div className="navbar__dropdown navbar__dropdown--notifications">
+                                    <div className="navbar__dropdown-header">
+                                        <h3>Notifications</h3>
+                                        <button className="navbar__dropdown-action" onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleMarkAllRead();
+                                        }}>Mark all as read</button>
+                                    </div>
+                                    <div className="navbar__dropdown-content">
+                                        {notifications.length === 0 ? (
+                                            <div className="navbar__dropdown-empty">No notifications yet</div>
+                                        ) : notifications.slice(0, 10).map((n: any) => (
+                                            <div
+                                                key={n._id}
+                                                className={`notification-item ${!n.isRead ? 'notification-item--unread' : ''}`}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    handleNotificationClick(n);
+                                                }}
+                                            >
+                                                <Link to={`/profile/${n.sender.username}`} onClick={(e) => e.stopPropagation()}>
+                                                    <img
+                                                        src={n.sender?.avatar || `https://ui-avatars.com/api/?name=${n.sender.firstName}&background=ff6b4a&color=fff`}
+                                                        alt=""
+                                                        className="notification-item__avatar"
+                                                    />
+                                                </Link>
+                                                <div className="notification-item__content">
+                                                    <p>
+                                                        <strong>{n.sender.firstName} {n.sender.lastName}</strong>{' '}
+                                                        {n.type === 'like' ? 'liked your project' :
+                                                            n.type === 'comment' ? 'commented on your project' :
+                                                                n.type === 'funding' ? 'supported your project' :
+                                                                    'followed you'}
+                                                        {n.project && <span>: "{n.project.title}"</span>}
+                                                    </p>
+                                                    <span className="notification-item__time">
+                                                        {new Date(n.createdAt).toLocaleDateString()}
+                                                    </span>
+                                                </div>
+                                                {!n.isRead && <div className="notification-item__dot" />}
                                             </div>
-                                            {!n.isRead && <div className="notification-item__dot" />}
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
+                                    <Link to="/notifications" className="navbar__dropdown-footer" onClick={() => setShowNotifications(false)}>
+                                        View all notifications
+                                    </Link>
                                 </div>
-                                <Link to="/notifications" className="navbar__dropdown-footer">
-                                    View all notifications
-                                </Link>
-                            </div>
-                        )}
-                    </div>
+                            )}
+                        </div>
+                    ))}
                 </div>
 
                 {/* Right Section */}
@@ -307,7 +310,7 @@ const Navbar: React.FC = () => {
                     </div>
                 </div>
             </div>
-        </nav>
+        </nav >
     );
 };
 
