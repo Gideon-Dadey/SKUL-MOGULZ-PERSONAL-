@@ -3,7 +3,7 @@ import api from '../../services/api';
 import { Link } from 'react-router-dom';
 import {
     Plus, TrendingUp, Image, Calendar, FileText,
-    ChevronDown, Sparkles
+    ChevronDown
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import PostCard from '../../components/PostCard/PostCard';
@@ -246,7 +246,6 @@ const FeedPage: React.FC = () => {
                 <div className="news-card">
                     <div className="news-card__header">
                         <h4>Platform Insights</h4>
-                        <Sparkles size={16} />
                     </div>
                     <ul className="news-card__list">
                         <li className="news-card__item">
