@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Project from '../models/Project';
 import Notification from '../models/Notification';
 import { getIO } from '../socket';
+import { IUser } from '../models/User';
 
 // @desc    Get all projects/posts (Feed)
 // @route   GET /api/projects
@@ -219,6 +220,83 @@ export const supportProject = async (req: any, res: Response) => {
         }
 
         res.status(200).json({ currentFunding: project.currentFunding });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Update a project
+// @route   PUT /api/projects/:id
+// @access  Private
+export const updateProject = async (req: any, res: Response) => {
+    try {
+        const { title, content, category, tags, projectStage, fundingGoal } = req.body;
+        const project = await Project.findById(req.params.id);
+
+        if (!project) {
+            res.status(404).json({ message: 'Project not found' });
+            return;
+        }
+
+        // Check ownership
+        if (project.author.toString() !== req.user.id) {
+            res.status(401).json({ message: 'Not authorized' });
+            return;
+        }
+
+        // Handle media updates if needed (simplified for now)
+        // This assumes new media replaces old, or we just keep old if no new media
+        // Ideally we'd have logic to append or remove specific images, but simple update is fine.
+        let media = project.media;
+        if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+            const newMedia: string[] = [];
+            req.files.forEach((file: any) => {
+                const filePath = file.path.replace(/\\/g, '/');
+                newMedia.push(`/${filePath}`);
+            });
+            media = newMedia;
+        }
+
+
+        project.title = title || project.title;
+        project.content = content || project.content;
+        project.category = category || project.category;
+        project.tags = tags || project.tags;
+        project.projectStage = projectStage || project.projectStage;
+        project.fundingGoal = fundingGoal || project.fundingGoal;
+        project.media = media;
+
+        const updatedProject = await project.save();
+        await updatedProject.populate('author', 'firstName lastName avatar headline role');
+
+        res.status(200).json(updatedProject);
+
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Delete a project
+// @route   DELETE /api/projects/:id
+// @access  Private
+export const deleteProject = async (req: any, res: Response) => {
+    try {
+        const project = await Project.findById(req.params.id);
+
+        if (!project) {
+            res.status(404).json({ message: 'Project not found' });
+            return;
+        }
+
+        // Check ownership
+        if (project.author.toString() !== req.user.id) {
+            res.status(401).json({ message: 'Not authorized' });
+            return;
+        }
+
+        await project.deleteOne();
+
+        res.status(200).json({ message: 'Project removed' });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }

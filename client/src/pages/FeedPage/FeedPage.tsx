@@ -112,6 +112,10 @@ const FeedPage: React.FC = () => {
         }
     };
 
+    const handleDeletePost = (postId: string) => {
+        setPosts(currentPosts => currentPosts.filter(post => post.id !== postId));
+    };
+
     return (
         <div className="feed-layout">
             {/* Left Sidebar - Profile Card */}
@@ -232,7 +236,7 @@ const FeedPage: React.FC = () => {
                 {/* Posts */}
                 <div className="feed-posts">
                     {isLoading ? <div style={{ padding: '20px', textAlign: 'center' }}>Loading posts...</div> : posts.map(post => (
-                        <PostCard key={post.id} post={post} onLike={handleLike} />
+                        <PostCard key={post.id} post={post} onLike={handleLike} onDelete={handleDeletePost} />
                     ))}
                 </div>
             </main>
