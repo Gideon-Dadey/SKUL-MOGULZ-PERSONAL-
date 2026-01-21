@@ -1,8 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-/* ============================================
-   CSS CUSTOM PROPERTIES (Light Theme Default)
-   ============================================ */
 :root {
   /* Primary Colors - Coral/Salmon Orange */
   --primary: #ff6b4a;
@@ -45,9 +42,6 @@
   --radius-xl: 16px;
 }
 
-/* ============================================
-   DARK THEME OVERRIDES
-   ============================================ */
 [data-theme="dark"] {
   --bg-main: #000000;
   --bg-card: #1b1f23;
@@ -66,9 +60,6 @@
   --shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.6);
 }
 
-/* ============================================
-   BASE STYLES
-   ============================================ */
 *,
 *::before,
 *::after {
@@ -131,14 +122,6 @@ input[type="submit"],
   min-height: 44px;
 }
 
-/* ============================================
-   TYPOGRAPHY
-   ============================================ */
-h1,
-h2,
-h3,
-h4,
-h5,
 h6 {
   font-weight: 700;
   line-height: 1.2;
@@ -153,9 +136,6 @@ a:hover {
   text-decoration: underline;
 }
 
-/* ============================================
-   BUTTONS
-   ============================================ */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -225,9 +205,6 @@ a:hover {
   cursor: not-allowed;
 }
 
-/* ============================================
-   FORM ELEMENTS
-   ============================================ */
 .form-group {
   margin-bottom: 1.25rem;
 }
@@ -327,9 +304,6 @@ a:hover {
   flex: 1;
 }
 
-/* ============================================
-   AUTH PAGES
-   ============================================ */
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -469,7 +443,6 @@ a:hover {
   opacity: 0.9;
 }
 
-/* Role Selector */
 .role-selector {
   display: flex;
   flex-direction: column;
@@ -516,9 +489,6 @@ a:hover {
   line-height: 1.4;
 }
 
-/* ============================================
-   LOADING STATES
-   ============================================ */
 .loading-screen {
   display: flex;
   align-items: center;
@@ -542,9 +512,6 @@ a:hover {
   }
 }
 
-/* ============================================
-   PLACEHOLDER PAGES
-   ============================================ */
 .placeholder-page {
   display: flex;
   align-items: center;
@@ -580,9 +547,6 @@ a:hover {
   border-radius: 100px;
 }
 
-/* ============================================
-   GLASS CARD (Legacy)
-   ============================================ */
 .glass-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -590,16 +554,10 @@ a:hover {
   padding: 1.5rem;
 }
 
-/* ============================================
-   SECTION PADDING
-   ============================================ */
 .section-padding {
   padding: 4rem 5%;
 }
 
-/* ============================================
-   FOOTER LOGO
-   ============================================ */
 .footer-logo {
   display: flex;
   align-items: center;
@@ -614,9 +572,6 @@ a:hover {
   border-radius: 6px;
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
 @media (max-width: 900px) {
   .auth-container {
     grid-template-columns: 1fr;

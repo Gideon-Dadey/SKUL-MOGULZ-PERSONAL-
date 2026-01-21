@@ -1,6 +1,3 @@
-/* ============================================
-   NAVBAR - Modern Floating Pill Style
-   ============================================ */
 .navbar {
     position: sticky;
     top: 0;
@@ -24,7 +21,6 @@
     height: 100%;
 }
 
-/* Logo */
 .navbar__logo {
     display: flex;
     align-items: center;
@@ -53,14 +49,12 @@
     letter-spacing: -0.04em;
 }
 
-/* Left Section */
 .navbar__left {
     display: flex;
     align-items: center;
     gap: 1.5rem;
 }
 
-/* Search - Glass Cockpit Style */
 .navbar__search {
     position: relative;
     display: flex;
@@ -133,7 +127,6 @@
     width: 340px;
 }
 
-/* 3D Keycap Shortcut */
 .navbar__search-shortcut {
     position: absolute;
     right: 14px;
@@ -158,12 +151,6 @@
     transform: translateY(4px);
 }
 
-/* ============================================
-   CENTER NAVIGATION - FUTURISTIC GLASS MORPHISM
-   Premium MIT-Grad Level Design System
-   ============================================ */
-
-/* Center Navigation - Floating Pill with Animated Gradient Border */
 .navbar__center {
     position: absolute;
     left: 50%;
@@ -189,7 +176,6 @@
     isolation: isolate;
 }
 
-/* Animated gradient border effect */
 .navbar__center::before {
     content: '';
     position: absolute;
@@ -228,7 +214,6 @@
     }
 }
 
-/* Dark mode adjustments */
 [data-theme="dark"] .navbar__center {
     background: linear-gradient(135deg,
             rgba(30, 30, 40, 0.85) 0%,
@@ -246,7 +231,6 @@
     position: relative;
 }
 
-/* Nav Item - Enhanced with Magnetic Effect */
 .navbar__nav-item {
     position: relative;
     display: flex;
@@ -267,7 +251,6 @@
     z-index: 1;
 }
 
-/* Glow ring on hover */
 .navbar__nav-item::before {
     content: '';
     position: absolute;
@@ -281,7 +264,6 @@
     z-index: -1;
 }
 
-/* Particle effect container */
 .navbar__nav-item::after {
     content: '';
     position: absolute;
@@ -302,7 +284,6 @@
     z-index: 2;
 }
 
-/* Hover State - Magnetic Pull Effect */
 .navbar__nav-item:hover {
     color: var(--text-main);
     text-decoration: none;
@@ -323,7 +304,6 @@
     filter: drop-shadow(0 2px 8px rgba(255, 107, 74, 0.25));
 }
 
-/* Active State - Premium Multi-Layer Effect */
 .navbar__nav-item--active {
     color: white;
     transform: translateY(-2px);
@@ -355,7 +335,6 @@
     }
 }
 
-/* Active pulse ring animation */
 .navbar__nav-item--active::after {
     inset: -4px;
     width: auto;
@@ -403,7 +382,6 @@
     transform: scale(1.15) rotate(-3deg);
 }
 
-/* Active indicator dot (optional bottom indicator) */
 .navbar__nav-indicator {
     position: absolute;
     bottom: -8px;
@@ -439,7 +417,6 @@
     display: none;
 }
 
-/* Tooltip Label on Hover */
 .navbar__nav-item[data-tooltip]::after {
     content: attr(data-tooltip);
     position: absolute;
@@ -469,7 +446,6 @@
     transform: translateX(-50%) translateY(0);
 }
 
-/* Notification Badge */
 .navbar__notification-icon {
     position: relative;
 }
@@ -521,7 +497,6 @@
     }
 }
 
-/* Right Section */
 .navbar__right {
     display: flex;
     align-items: center;
@@ -613,7 +588,6 @@
     transform: rotate(360deg) scale(0.9);
 }
 
-/* Profile Button */
 .navbar__profile-wrapper {
     position: relative;
 }
@@ -676,7 +650,6 @@
     color: var(--text-main);
 }
 
-/* Dropdown Base - Glass */
 .navbar__dropdown {
     position: absolute;
     top: calc(100% + 12px);
@@ -714,7 +687,6 @@
     }
 }
 
-/* Notification Dropdown */
 .navbar__dropdown--notifications {
     width: 400px;
     max-height: 480px;
@@ -919,7 +891,6 @@
     background: rgba(239, 68, 68, 0.1);
 }
 
-/* Guest Navbar */
 .navbar__guest-actions {
     display: flex;
     align-items: center;
@@ -944,7 +915,6 @@
     font-size: 0.85rem;
 }
 
-/* Responsive */
 @media (max-width: 1100px) {
     .navbar__search {
         min-width: 200px;
@@ -966,7 +936,6 @@
         display: none;
     }
 
-    /* Move Center Nav to Bottom - Floating Dock */
     .navbar__center {
         position: fixed;
         bottom: 20px;
@@ -1003,7 +972,6 @@
         transform: translateY(-2px);
     }
 
-    /* Remove the 'create' text on mobile */
     .navbar__create-btn span {
         display: none;
     }
@@ -1020,7 +988,6 @@
         height: 20px;
     }
 
-    /* Adjust dropdowns for mobile */
     .navbar__dropdown--notifications {
         position: fixed;
         top: auto;
@@ -1034,7 +1001,6 @@
         animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    /* Profile dropdown stays at top */
     .navbar__dropdown--profile {
         position: absolute;
         top: calc(100% + 12px);
