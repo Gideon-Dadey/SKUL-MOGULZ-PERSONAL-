@@ -11,6 +11,7 @@ import ProfilePage from './pages/ProfilePage/ProfilePage';
 import NetworkPage from './pages/NetworkPage/NetworkPage';
 import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
 import MessagesPage from './pages/MessagesPage/MessagesPage';
+import NotificationsPage from './pages/NotificationsPage/NotificationsPage';
 import AnalyticsPage from './pages/AnalyticsPage/AnalyticsPage';
 import logo from './assets/logo.png';
 import './styles/index.css';
@@ -78,6 +79,9 @@ function AppContent() {
                     } />
                     <Route path="/messages" element={
                         <ProtectedRoute><MessagesPage /></ProtectedRoute>
+                    } />
+                    <Route path="/notifications" element={
+                        <ProtectedRoute><NotificationsPage /></ProtectedRoute>
                     } />
                     <Route path="/analytics" element={
                         <ProtectedRoute><AnalyticsPage /></ProtectedRoute>
