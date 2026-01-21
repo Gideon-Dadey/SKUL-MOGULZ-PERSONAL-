@@ -149,7 +149,7 @@
 }
 
 .search-filter__clear-all:hover {
-    text-decoration: underline;
+    color: var(--primary-hover);
 }
 
 /* Responsive */
