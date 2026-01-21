@@ -210,7 +210,7 @@
     right: 0;
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 8px 0 8px 8px;
+    border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     width: 260px;
     /* LinkedIn standard width */
@@ -320,6 +320,130 @@
     height: 1px;
     background: var(--border);
     margin: 4px 0;
+}
+
+/* Notification Dropdown Specifics */
+.navbar__dropdown--notifications {
+    width: 360px;
+    max-height: 480px;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar__dropdown-header {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.navbar__dropdown-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.navbar__dropdown-action {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.navbar__dropdown-action:hover {
+    background: var(--primary-light);
+}
+
+.navbar__dropdown-content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.notification-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+}
+
+.notification-item:hover {
+    background: var(--bg-main);
+}
+
+.notification-item--unread {
+    background: rgba(255, 107, 74, 0.04);
+}
+
+.notification-item__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.notification-item__content {
+    flex: 1;
+}
+
+.notification-item__content p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.notification-item__content strong {
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.notification-item__time {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-light);
+    margin-top: 4px;
+}
+
+.notification-item__dot {
+    width: 8px;
+    height: 8px;
+    background: var(--primary);
+    border-radius: 50%;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.navbar__dropdown-empty {
+    padding: 24px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.navbar__dropdown-footer {
+    display: block;
+    text-align: center;
+    padding: 12px;
+    border-top: 1px solid var(--border);
+    color: var(--primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.navbar__dropdown-footer:hover {
+    background: var(--bg-main);
 }
 
 /* Mobile Styling Fixes */
