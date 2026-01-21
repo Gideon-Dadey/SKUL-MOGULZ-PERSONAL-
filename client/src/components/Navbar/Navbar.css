@@ -115,6 +115,20 @@
     color: var(--text-main);
 }
 
+.navbar__nav-item-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.navbar__nav-icon-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .navbar__nav-item--active {
     color: var(--text-main);
 }
@@ -136,17 +150,10 @@
     color: inherit;
 }
 
-.navbar__notification-icon {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .navbar__notification-badge {
     position: absolute;
-    top: -4px;
-    right: -4px;
+    top: -6px;
+    right: -6px;
     background: #cc1016;
     color: white;
     font-size: 10px;
