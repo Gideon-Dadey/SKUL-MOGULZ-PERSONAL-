@@ -1,14 +1,431 @@
 /* ============================================
-   FEED PAGE - LinkedIn Style Layout
+   FEED PAGE - MIT / STEALTH STARTUP THEME
+   Technical, Clean, Blueprint Aesthetic
    ============================================ */
+
 .feed-layout {
     display: grid;
-    grid-template-columns: 225px minmax(0, 600px) 300px;
-    gap: 1.5rem;
-    max-width: 1160px;
+    grid-template-columns: 280px minmax(0, 1fr) 340px;
+    gap: 2rem;
+    max-width: 1440px;
     margin: 0 auto;
-    padding: 1.5rem;
-    min-height: calc(100vh - 56px);
+    padding: 2rem;
+    min-height: 100vh;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   SIDEBAR COMMON
+   ============================================ */
+.feed-sidebar {
+    height: fit-content;
+    position: sticky;
+    top: 90px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.sidebar-card,
+.profile-card,
+.news-card,
+.suggestions-card,
+.ad-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+/* Glass hover effect for all cards */
+.sidebar-card:hover,
+.profile-card:hover,
+.news-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================
+   LEFT SIDEBAR - PROFILE
+   ============================================ */
+.profile-card__banner {
+    height: 80px;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-card__banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.15) 1px, transparent 0);
+    background-size: 20px 20px;
+    opacity: 0.3;
+}
+
+.profile-card__avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    /* Squircle */
+    object-fit: cover;
+    border: 4px solid var(--bg-card);
+    margin-top: -40px;
+    margin-left: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-card__info {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.profile-card__info h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.profile-card__info p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+    font-family: inherit;
+}
+
+.profile-card__stats {
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.profile-card__stat {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    background: var(--bg-main);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+
+.profile-card__stat:hover {
+    transform: translateY(-2px);
+    background: var(--bg-elevated);
+}
+
+.profile-card__stat-value {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.profile-card__stat-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Sidebar Navigation Links */
+.sidebar-card__header {
+    padding: 1rem 1.25rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+}
+
+.sidebar-card__item {
+    display: block;
+    padding: 0.6rem 1.25rem;
+    color: var(--text-main);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.sidebar-card__item:hover {
+    background: var(--bg-main);
+    border-left-color: var(--primary);
+    padding-left: 1.5rem;
+}
+
+/* ============================================
+   MAIN FEED - CENTRAL HUB
+   ============================================ */
+.feed-main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Create Box - "Command Center" Style */
+.create-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.create-box__top {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.create-box__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+}
+
+.create-box__input {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 1.25rem;
+    background: var(--bg-main);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-size: 0.95rem;
+}
+
+.create-box__input:hover {
+    border-color: var(--primary);
+    background: var(--bg-card);
+    transform: scale(1.01);
+}
+
+.create-box__actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.create-box__action {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.75rem;
+    background: var(--bg-main);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.create-box__action:hover {
+    background: var(--bg-card);
+    border-color: var(--border);
+    color: var(--text-main);
+    transform: translateY(-2px);
+}
+
+/* Sort Bar */
+.feed-sort-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    padding: 0 0.5rem;
+}
+
+.feed-sort-bar__line {
+    display: none;
+    /* Removed for cleaner look */
+}
+
+.feed-sort-bar__dropdown {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 0.5rem 1rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.feed-sort-bar__dropdown:hover {
+    border-color: var(--primary);
+}
+
+.feed-posts {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ============================================
+   RIGHT SIDEBAR - TRENDS & NEWS
+   ============================================ */
+.feed-sidebar--right {
+    gap: 1.5rem;
+}
+
+.news-card__item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.news-card__item:last-child {
+    border-bottom: none;
+}
+
+.news-card__bullet {
+    width: 2px;
+    height: 100%;
+    background: var(--border);
+    display: none;
+    /* Minimalism */
+}
+
+.news-card__number {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--border);
+    width: 20px;
+}
+
+.news-card__title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+}
+
+.news-card__meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Ad Card */
+.ad-card {
+    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-main) 100%);
+    border: 1px solid var(--border);
+}
+
+.ad-card__label {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.6rem;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Suggestions */
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.suggestion-item__info h5 {
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.suggestion-item__connect {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.suggestion-item__connect:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(255, 107, 74, 0.05);
+}
+
+/* ============================================
+   RESPONSIVE - PRESERVING MOBILE LAYOUT
+   ============================================ */
+@media (max-width: 1200px) {
+    .feed-layout {
+        grid-template-columns: 240px 1fr;
+        max-width: 1000px;
+    }
+
+    .feed-sidebar--right {
+        display: none;
+    }
+}
+
+@media (max-width: 850px) {
+    .feed-layout {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+
+    .feed-sidebar--left {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+
+    /* Mobile Adjustments from previous step */
+    .feed-layout {
+        padding-bottom: 80px;
+        /* Space for dock */
+    }
+
+    .create-box {
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        padding: 1rem;
+        margin: -1rem -1rem 1rem -1rem;
+    }
+
+    .create-box__action span {
+        display: none;
+    }
 }
 
 /* ============================================
