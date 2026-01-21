@@ -100,8 +100,8 @@ const Navbar: React.FC = () => {
 
     const navItems = [
         { path: '/feed', icon: Home, label: 'Home' },
-        { path: '/network', icon: Users, label: 'Network' },
-        { path: '/projects', icon: Briefcase, label: 'Projects' },
+        { path: '/network', icon: Users, label: 'My Network' },
+        { path: '/projects', icon: Briefcase, label: 'Jobs' },
         { path: '/messages', icon: MessageSquare, label: 'Messaging' },
     ];
 
@@ -158,6 +158,7 @@ const Navbar: React.FC = () => {
                             key={item.path}
                             to={item.path}
                             className={`navbar__nav-item ${isActive(item.path) ? 'navbar__nav-item--active' : ''}`}
+                            data-tooltip={item.label}
                         >
                             <item.icon size={22} />
                             <span className="navbar__nav-label">{item.label}</span>
@@ -170,6 +171,7 @@ const Navbar: React.FC = () => {
                         <button
                             className={`navbar__nav-item ${showNotifications ? 'navbar__nav-item--active' : ''}`}
                             onClick={() => setShowNotifications(!showNotifications)}
+                            data-tooltip="Notifications"
                         >
                             <div className="navbar__notification-icon">
                                 <Bell size={22} />
@@ -229,9 +231,9 @@ const Navbar: React.FC = () => {
 
                 {/* Right Section */}
                 <div className="navbar__right">
-                    <Link to="/create-post" className="navbar__create-btn">
-                        <Plus size={18} />
-                        <span>Post</span>
+                    <Link to="/create-post" className="navbar__nav-item navbar__create-btn">
+                        <Plus size={20} />
+                        <span className="navbar__nav-label">Post</span>
                     </Link>
 
                     <button className="navbar__icon-btn navbar__theme-toggle" onClick={toggleTheme}>
@@ -241,7 +243,7 @@ const Navbar: React.FC = () => {
                     {/* Profile Menu */}
                     <div className="navbar__profile-wrapper" ref={profileMenuRef}>
                         <button
-                            className={`navbar__profile-btn ${showProfileMenu ? 'navbar__profile-btn--active' : ''}`}
+                            className={`navbar__nav-item navbar__profile-btn ${showProfileMenu ? 'navbar__profile-btn--active' : ''}`}
                             onClick={() => setShowProfileMenu(!showProfileMenu)}
                         >
                             <img
@@ -250,8 +252,7 @@ const Navbar: React.FC = () => {
                                 className="navbar__profile-avatar"
                             />
                             <div className="navbar__profile-info">
-                                <span className="navbar__profile-name">Me</span>
-                                <ChevronDown size={14} className="navbar__profile-arrow" />
+                                <span className="navbar__nav-label">Me <ChevronDown size={12} style={{ marginLeft: '2px' }} /></span>
                             </div>
                         </button>
 
