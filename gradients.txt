@@ -1,0 +1,18 @@
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/components/PostCard/PostCard.css:169:    background: linear-gradient(to bottom, var(--bg-card), var(--bg-main));
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/components/PostCard/PostCard.css:200:    background: linear-gradient(90deg, var(--primary) 0%, #ff8f6d 100%);
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/components/PostCard/PostCard.css:213:    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/pages/AnalyticsPage/AnalyticsPage.css:151:    background: linear-gradient(to top, var(--primary), var(--primary-light));
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/pages/AnalyticsPage/AnalyticsPage.css:228:    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/pages/FeedPage/FeedPage.css:67:    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/pages/FeedPage/FeedPage.css:342:    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-main) 100%);
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/pages/FeedPage/FeedPage.css:458:    background: linear-gradient(135deg, var(--primary) 0%, #89C29D 50%, #D1EADE 100%);
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/pages/LandingPage.tsx:163:                <div className="glass-card" style={{ maxWidth: '800px', margin: '0 auto', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(167, 139, 250, 0.1) 100%)' }}>
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/pages/NetworkPage/NetworkPage.css:231:    background: linear-gradient(to right, #e2e8f0, #cbd5e1);
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/pages/ProfilePage/ProfilePage.css:42:    background: linear-gradient(135deg, #1e293b, #0f172a);
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/pages/ProfilePage/ProfilePage.css:52:        linear-gradient(45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/pages/ProfilePage/ProfilePage.css:53:        linear-gradient(-45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%);
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/pages/ProfilePage/ProfilePage.css:526:    background: linear-gradient(135deg, #0077b5 0%, #00a0dc 100%);
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/pages/ProfilePage/ProfilePage.css:528:    background: linear-gradient(135deg, var(--primary) 0%, #89C29D 50%, #D1EADE 100%);
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/pages/ProjectsPage/ProjectsPage.css:39:    background: linear-gradient(135deg, var(--text-main) 0%, var(--text-muted) 100%);
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/pages/ProjectsPage/ProjectsPage.css:225:    background: linear-gradient(135deg, #1e293b, #334155);
+c:/Users/Gideon Dadey/Desktop/SKUL MOGULZ/client/src/styles/index.css:397:  background: linear-gradient(135deg, var(--primary) 0%, #89C29D 50%, #D1EADE 100%);

@@ -381,7 +381,7 @@
 .suggestion-item__connect:hover {
     border-color: var(--primary);
     color: var(--primary);
-    background: rgba(255, 107, 74, 0.05);
+    background: rgba(165, 214, 183, 0.05);
 }
 
 /* ============================================
@@ -455,7 +455,7 @@
 
 .profile-card__banner {
     height: 56px;
-    background: linear-gradient(135deg, var(--primary) 0%, #ff8f6b 50%, #ffd4c4 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, #89C29D 50%, #D1EADE 100%);
 }
 
 .profile-card__avatar {

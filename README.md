@@ -142,7 +142,7 @@ SKUL MOGULZ/
 | Aspect | Choice |
 |--------|--------|
 | **Typography** | Plus Jakarta Sans |
-| **Primary Color** | Coral/Salmon (#ff6b4a) |
+| **Primary Color** | Coral/Salmon (#A5D6B7) |
 | **Theme** | Light (default) & Dark |
 | **CSS** | Custom CSS Modules & Variables |
 
@@ -164,8 +164,8 @@ SKUL MOGULZ/
 
 ```css
 /* Light Theme */
---primary: #ff6b4a;        /* Coral/Salmon */
---primary-hover: #e85a3a;
+--primary: #A5D6B7;        /* Mint Green */
+--primary-hover: #89C29D;
 --bg-main: #ffffff;
 --bg-card: #f8f9fb;
 --text-main: #1a1a2e;

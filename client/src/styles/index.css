@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Primary Colors - Coral/Salmon Orange */
-  --primary: #ff6b4a;
-  --primary-hover: #e85a3a;
-  --primary-light: rgba(255, 107, 74, 0.1);
+  /* Primary Colors - Mint Green */
+  --primary: #A5D6B7;
+  --primary-hover: #89C29D;
+  --primary-light: rgba(165, 214, 183, 0.1);
 
   /* Secondary */
   --secondary: #10b981;
@@ -21,7 +21,7 @@
   --text-light: #999999;
 
   /* Accents */
-  --accent: #ff6b4a;
+  --accent: #A5D6B7;
   --border: rgba(0, 0, 0, 0.08);
   --border-strong: rgba(0, 0, 0, 0.15);
 
@@ -394,7 +394,7 @@ a:hover {
 }
 
 .auth-right {
-  background: linear-gradient(135deg, var(--primary) 0%, #ff8f6b 50%, #ffd4c4 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, #89C29D 50%, #D1EADE 100%);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -68,7 +68,7 @@ This is the first MVP release of SKUL MOGULZ, featuring core functionality for s
 
 #### Design System
 - Plus Jakarta Sans typography
-- Coral/Salmon primary color (#ff6b4a)
+- Coral/Salmon primary color (#A5D6B7)
 - Glassmorphism card components
 - Responsive design (mobile → desktop)
 

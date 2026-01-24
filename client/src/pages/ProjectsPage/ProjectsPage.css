@@ -28,7 +28,7 @@
     right: 0;
     width: 60%;
     height: 100%;
-    background: radial-gradient(circle at top right, rgba(255, 107, 74, 0.08), transparent 60%);
+    background: radial-gradient(circle at top right, rgba(165, 214, 183, 0.08), transparent 60%);
     pointer-events: none;
 }
 
@@ -320,9 +320,9 @@
 }
 
 .tag.category {
-    background: rgba(255, 107, 74, 0.1);
+    background: rgba(165, 214, 183, 0.1);
     color: var(--primary);
-    border-color: rgba(255, 107, 74, 0.2);
+    border-color: rgba(165, 214, 183, 0.2);
     font-weight: 600;
     text-transform: uppercase;
 }
