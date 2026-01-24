@@ -19,9 +19,9 @@ This document defines the design system and CSS conventions for SKUL MOGULZ.
 
 ```css
 /* Primary - Coral/Salmon */
---primary: #ff6b4a;
---primary-hover: #e85a3a;
---primary-light: rgba(255, 107, 74, 0.1);
+--primary: #A5D6B7;
+--primary-hover: #89C29D;
+--primary-light: rgba(165, 214, 183, 0.1);
 
 /* Secondary - Green (Success) */
 --secondary: #10b981;
@@ -249,13 +249,13 @@ In dark mode, shadows are more pronounced:
 .btn-primary {
     background: var(--primary);
     color: white;
-    box-shadow: 0 4px 14px rgba(255, 107, 74, 0.25);
+    box-shadow: 0 4px 14px rgba(165, 214, 183, 0.25);
 }
 
 .btn-primary:hover {
     background: var(--primary-hover);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(255, 107, 74, 0.35);
+    box-shadow: 0 8px 20px rgba(165, 214, 183, 0.35);
 }
 
 .btn-outline {

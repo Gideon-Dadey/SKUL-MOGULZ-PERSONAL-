@@ -33,7 +33,7 @@
 
 .profile-hero {
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: radial-gradient(circle at top right, rgba(255, 107, 74, 0.05), transparent 50%),
+    background: radial-gradient(circle at top right, rgba(165, 214, 183, 0.05), transparent 50%),
         var(--bg-card);
 }
 
@@ -200,12 +200,12 @@
 .btn-primary {
     background: var(--primary);
     color: white;
-    box-shadow: 0 4px 20px rgba(255, 107, 74, 0.3);
+    box-shadow: 0 4px 20px rgba(165, 214, 183, 0.3);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255, 107, 74, 0.4);
+    box-shadow: 0 8px 25px rgba(165, 214, 183, 0.4);
 }
 
 .btn-outline {
@@ -525,7 +525,7 @@
     height: 200px;
     background: linear-gradient(135deg, #0077b5 0%, #00a0dc 100%);
     /* LinkedIn-ish blue or user brand color */
-    background: linear-gradient(135deg, var(--primary) 0%, #ff8f6b 50%, #ffd4c4 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, #89C29D 50%, #D1EADE 100%);
     /* Or branded */
     position: relative;
 }

@@ -110,7 +110,7 @@
 }
 
 .msg-item.active {
-    background: rgba(255, 107, 74, 0.04);
+    background: rgba(165, 214, 183, 0.04);
     box-shadow: inset 2px 0 0 var(--primary);
 }
 
@@ -294,7 +294,7 @@
     /* Very soft primary tint */
     color: var(--text-main);
     border-radius: 8px 0 8px 8px;
-    border-color: rgba(255, 107, 74, 0.2);
+    border-color: rgba(165, 214, 183, 0.2);
 }
 
 .bubble-content p {
