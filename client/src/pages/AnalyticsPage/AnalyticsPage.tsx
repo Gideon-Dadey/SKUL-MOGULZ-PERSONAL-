@@ -40,7 +40,7 @@ const AnalyticsPage: React.FC = () => {
                 </div>
             </header>
 
-            {/* Summary Stats */}
+            {}
             <div className="stats-grid">
                 <div className="stat-card">
                     <div className="stat-icon views"><Eye size={20} /></div>
@@ -77,7 +77,7 @@ const AnalyticsPage: React.FC = () => {
             </div>
 
             <div className="analytics-content-grid">
-                {/* Main Graph Placeholder */}
+                {}
                 <div className="analytics-card main-graph">
                     <div className="card-header">
                         <h3>Content performance</h3>
@@ -88,7 +88,7 @@ const AnalyticsPage: React.FC = () => {
                     </div>
                     <div className="graph-container">
                         <div className="graph-placeholder">
-                            {/* Simple Visual Bars */}
+                            {}
                             {data.graphs.views.map((val: number, i: number) => (
                                 <div key={i} className="graph-bar-wrapper">
                                     <div
@@ -103,7 +103,7 @@ const AnalyticsPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Top Projects */}
+                {}
                 <div className="analytics-card top-projects">
                     <div className="card-header">
                         <h3>Top Performing Projects</h3>
@@ -129,7 +129,7 @@ const AnalyticsPage: React.FC = () => {
                 </div>
             </div>
 
-            {/* Tips Section */}
+            {}
             <div className="analytics-card tips-card">
                 <div className="tips-content">
                     <div className="tips-icon"><Award size={32} /></div>

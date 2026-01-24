@@ -18,13 +18,13 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     useEffect(() => {
         if (isAuthenticated && user) {
-            // Initialize socket connection
-            const newSocket = io('http://localhost:5000'); // Replace with your backend URL
+            
+            const newSocket = io('http://localhost:5000'); 
 
             newSocket.on('connect', () => {
                 setIsConnected(true);
                 console.log('Socket connected:', newSocket.id);
-                // Join personal room for notifications/messages
+                
                 newSocket.emit('join_room', user.id);
             });
 

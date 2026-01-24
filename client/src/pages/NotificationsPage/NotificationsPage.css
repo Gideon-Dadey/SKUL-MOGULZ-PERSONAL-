@@ -13,7 +13,7 @@
     padding: 0 1rem;
 }
 
-/* Sidebar */
+
 .notif-sidebar {
     height: fit-content;
 }
@@ -53,7 +53,7 @@
     text-decoration: underline;
 }
 
-/* Main content */
+
 .notif-main {
     display: flex;
     flex-direction: column;
@@ -198,7 +198,7 @@
     border-radius: 50%;
 }
 
-/* Right Sidebar */
+
 .notif-sidebar-right {
     height: fit-content;
 }
@@ -228,7 +228,7 @@
     font-weight: 600;
 }
 
-/* Responsive */
+
 @media (max-width: 1100px) {
     .notif-container {
         grid-template-columns: 240px 1fr;

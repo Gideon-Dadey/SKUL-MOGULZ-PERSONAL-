@@ -16,7 +16,7 @@ import AnalyticsPage from './pages/AnalyticsPage/AnalyticsPage';
 import logo from './assets/logo.png';
 import './styles/index.css';
 
-// Protected Route Wrapper
+
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { isAuthenticated, loading } = useAuth();
 
@@ -35,7 +35,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     return <>{children}</>;
 };
 
-// Main App Content
+
 function AppContent() {
     const { isAuthenticated } = useAuth();
 
@@ -44,7 +44,7 @@ function AppContent() {
             <div className="app">
                 <Navbar />
                 <Routes>
-                    {/* Public Routes */}
+                    {}
                     <Route path="/login" element={
                         isAuthenticated ? <Navigate to="/feed" replace /> : <LoginPage />
                     } />
@@ -52,7 +52,7 @@ function AppContent() {
                         isAuthenticated ? <Navigate to="/feed" replace /> : <RegisterPage />
                     } />
 
-                    {/* Protected Routes */}
+                    {}
                     <Route path="/" element={
                         <ProtectedRoute><Navigate to="/feed" replace /></ProtectedRoute>
                     } />
@@ -87,7 +87,7 @@ function AppContent() {
                         <ProtectedRoute><AnalyticsPage /></ProtectedRoute>
                     } />
 
-                    {/* Catch all */}
+                    {}
                     <Route path="*" element={<Navigate to="/feed" replace />} />
                 </Routes>
             </div>
@@ -107,9 +107,9 @@ function App() {
     );
 }
 
-// ============================================
-// LOGIN PAGE
-// ============================================
+
+
+
 const LoginPage = () => {
     const { login } = useAuth();
     const [email, setEmail] = useState('');
@@ -381,8 +381,8 @@ const RegisterPage = () => {
     );
 };
 
-// ============================================
-// PLACEHOLDER PAGES (Remaining)
-// ============================================
+
+
+
 
 export default App;

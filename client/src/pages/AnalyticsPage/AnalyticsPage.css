@@ -27,7 +27,7 @@
     gap: 12px;
 }
 
-/* Stats Cards */
+
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -87,7 +87,7 @@
 .stat-trend.positive { color: #10b981; }
 .stat-trend.neutral { color: var(--text-secondary); }
 
-/* Main Grid */
+
 .analytics-content-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -120,7 +120,7 @@
     font-weight: 600;
 }
 
-/* Graph Styling */
+
 .graph-container {
     height: 300px;
     display: flex;
@@ -165,7 +165,7 @@
     color: var(--text-secondary);
 }
 
-/* Rank List */
+
 .project-rank-list {
     display: flex;
     flex-direction: column;
@@ -223,7 +223,7 @@
     padding: 20px;
 }
 
-/* Tips Card */
+
 .tips-card {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: white;
@@ -253,7 +253,7 @@
     font-size: 14px;
 }
 
-/* States */
+
 .analytics-loading {
     display: flex;
     justify-content: center;

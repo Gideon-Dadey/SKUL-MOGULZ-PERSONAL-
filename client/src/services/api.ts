@@ -1,4 +1,4 @@
-/// <reference types="vite/client" />
+
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -10,7 +10,7 @@ const api = axios.create({
     },
 });
 
-// Add a request interceptor to attach the token
+
 api.interceptors.request.use(
     (config) => {
         const userStr = localStorage.getItem('user');

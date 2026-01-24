@@ -1,6 +1,4 @@
-/* ============================================
-   PROJECTS LAUNCHPAD - MIT STYLE
-   ============================================ */
+
 
 .projects-container {
     padding: 0 0 4rem;
@@ -9,7 +7,7 @@
     min-height: 100vh;
 }
 
-/* Hero Section */
+
 .projects-hero {
     padding: 4rem 2rem 3rem;
     display: flex;
@@ -76,7 +74,7 @@
     margin-top: 0.25rem;
 }
 
-/* Sticky Filter Panel */
+
 .sticky-filter-panel {
     position: sticky;
     top: 70px;
@@ -182,7 +180,7 @@
     background: var(--bg-card);
 }
 
-/* Grid */
+
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -198,7 +196,7 @@
     font-family: monospace;
 }
 
-/* Tech Card Style */
+
 .project-card--tech {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -292,7 +290,7 @@
     border-radius: 0.5rem;
     border: 2px solid var(--bg-card);
     margin-top: -3px;
-    /* visual alignment */
+    
 }
 
 .project-desc {
@@ -301,7 +299,7 @@
     line-height: 1.5;
     margin-bottom: 1.5rem;
     flex: 1;
-    /* Pushes footer down */
+    
 }
 
 .project-tags {
@@ -327,7 +325,7 @@
     text-transform: uppercase;
 }
 
-/* Funding Tech Style */
+
 .project-funding-snippet {
     padding-top: 1rem;
     border-top: 1px solid var(--border);
@@ -361,7 +359,7 @@
     font-weight: 700;
 }
 
-/* Responsive */
+
 @media (max-width: 900px) {
     .projects-hero {
         flex-direction: column;
@@ -386,7 +384,7 @@
         padding-top: 1.5rem;
     }
 
-    /* Stack Filter Panel Vertical */
+    
     .sticky-filter-panel {
         margin: 0 1rem 1.5rem;
         flex-direction: column;
@@ -406,7 +404,7 @@
         overflow-x: auto;
         justify-content: flex-start;
         padding-bottom: 2px;
-        /* Hide scrollbar visually but keep functional */
+        
         scrollbar-width: none;
         -ms-overflow-style: none;
     }
@@ -444,9 +442,7 @@
         height: 150px;
     }
 }
-/* ============================================
-   LAUNCHPAD SPECIFIC STYLES
-   ============================================ */
+
 
 .launch-badge {
     display: inline-flex;

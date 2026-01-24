@@ -1,6 +1,6 @@
 import { Post, User, Notification } from '../types';
 
-// Mock Users
+
 export const mockUsers: User[] = [
     {
         id: '1',
@@ -52,7 +52,7 @@ export const mockUsers: User[] = [
     },
 ];
 
-// Mock Posts
+
 export const mockPosts: Post[] = [
     {
         id: '1',
@@ -249,7 +249,7 @@ Drop your thoughts in the comments! 💭`,
     },
 ];
 
-// Mock Notifications
+
 export const mockNotifications: Notification[] = [
     {
         id: 'n1',

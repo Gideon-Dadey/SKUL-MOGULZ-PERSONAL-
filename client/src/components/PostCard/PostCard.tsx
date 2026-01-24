@@ -20,7 +20,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
     const [showMenu, setShowMenu] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    // Check if liked by current user
+    
     const isLiked = user && (post.likedBy || []).includes(user.id);
     const isAuthor = user && (user.id === post.author.id || user.id === post.author._id);
 

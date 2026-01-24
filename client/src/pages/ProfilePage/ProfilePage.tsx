@@ -25,7 +25,7 @@ const ProfilePage: React.FC = () => {
         const fetchProfileData = async () => {
             try {
                 setIsLoading(true);
-                // 1. Get User Profile
+                
                 let user;
                 if (username) {
                     user = await authService.getProfile(username);
@@ -35,7 +35,7 @@ const ProfilePage: React.FC = () => {
 
                 if (user) {
                     setProfileUser(user);
-                    // 2. Get User's Projects
+                    
                     const userId = user._id || user.id;
                     const response = await api.get(`/projects?author=${userId}`);
 
@@ -81,7 +81,7 @@ const ProfilePage: React.FC = () => {
             const formData = new FormData();
             formData.append('avatar', file);
 
-            // Directly call api to handle multipart/form-data
+            
             const response = await api.put('/auth/profile', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -90,9 +90,9 @@ const ProfilePage: React.FC = () => {
 
             if (response.data) {
                 const updatedUser = response.data;
-                // Update local state
+                
                 setProfileUser((prev: any) => ({ ...prev, avatar: updatedUser.avatar }));
-                // Update context and localStorage
+                
                 updateProfile(updatedUser);
             }
         } catch (error) {
@@ -114,9 +114,9 @@ const ProfilePage: React.FC = () => {
 
     return (
         <div className="profile-layout">
-            {/* Main Column */}
+            {}
             <main className="profile-main">
-                {/* Profile Header Card */}
+                {}
                 <div className="profile-card profile-hero">
                     <div className="profile-hero__banner"></div>
                     <div className="profile-hero__content">
@@ -190,7 +190,7 @@ const ProfilePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* About Section */}
+                {}
                 <div className="profile-card profile-section">
                     <div className="profile-section__header">
                         <h2>About</h2>
@@ -201,7 +201,7 @@ const ProfilePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Activity Section */}
+                {}
                 <div className="profile-card profile-section">
                     <div className="profile-section__header">
                         <div className="profile-section__header-left">
@@ -241,7 +241,7 @@ const ProfilePage: React.FC = () => {
                     </button>
                 </div>
 
-                {/* Experience Placeholder */}
+                {}
                 <div className="profile-card profile-section">
                     <div className="profile-section__header">
                         <h2>Experience</h2>

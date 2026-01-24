@@ -1,6 +1,6 @@
 .messages-container {
     height: calc(100vh - 64px);
-    /* Full height minus navbar */
+    
     max-width: 1128px;
     margin: 0 auto;
     padding: 1.5rem 0;
@@ -12,11 +12,11 @@
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 8px;
-    /* 0.5rem */
+    
     overflow: hidden;
 }
 
-/* Sidebar */
+
 .messages-sidebar {
     width: 300px;
     border-right: 1px solid var(--border);
@@ -186,7 +186,7 @@
     margin-top: 2px;
 }
 
-/* Main Chat Area */
+
 .messages-main {
     flex: 1;
     display: flex;
@@ -257,7 +257,7 @@
     top: 50%;
     height: 1px;
     background: var(--border);
-    /* Standard professional divider */
+    
 }
 
 .message-bubble {
@@ -291,7 +291,7 @@
 
 .message-bubble.sent .bubble-content {
     background: #fdf2f0;
-    /* Very soft primary tint */
+    
     color: var(--text-main);
     border-radius: 8px 0 8px 8px;
     border-color: rgba(165, 214, 183, 0.2);
@@ -310,7 +310,7 @@
     margin-top: 4px;
 }
 
-/* Input Area */
+
 .chat-input-area {
     padding: 1rem;
     border-top: 1px solid var(--border);
@@ -376,7 +376,7 @@
     cursor: not-allowed;
 }
 
-/* Empty State */
+
 .chat-empty-state {
     display: flex;
     flex-direction: column;
@@ -396,7 +396,7 @@
     margin-bottom: 1.5rem;
 }
 
-/* Responsive */
+
 @media (max-width: 900px) {
     .messages-container {
         padding: 1rem 0;

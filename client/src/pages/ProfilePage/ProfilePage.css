@@ -1,6 +1,4 @@
-/* ============================================
-   PROFILE PAGE - FOUNDER DOSSIER THEME
-   ============================================ */
+
 
 .profile-layout {
     display: grid;
@@ -18,9 +16,7 @@
     gap: 2rem;
 }
 
-/* ============================================
-   PROFILE HERO (THE ID CARD)
-   ============================================ */
+
 .profile-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -124,7 +120,7 @@
     transform: translateY(-2px);
 }
 
-/* Info Section */
+
 .profile-hero__info {
     display: flex;
     flex-direction: column;
@@ -219,9 +215,7 @@
     background: var(--bg-main);
 }
 
-/* ============================================
-   SECTIONS (Cards)
-   ============================================ */
+
 .profile-section {
     padding: 2rem;
 }
@@ -273,7 +267,7 @@
     color: var(--text-muted);
 }
 
-/* Activity Tabs */
+
 .profile-tabs {
     display: flex;
     gap: 1rem;
@@ -310,7 +304,7 @@
     border: 1px dashed var(--border);
 }
 
-/* Experience List */
+
 .profile-list {
     display: flex;
     flex-direction: column;
@@ -355,7 +349,7 @@
     display: block;
 }
 
-/* Skills */
+
 .profile-skills {
     display: flex;
     flex-wrap: wrap;
@@ -378,7 +372,7 @@
     transform: translateY(-2px);
 }
 
-/* Sidebar */
+
 .profile-sidebar {
     display: flex;
     flex-direction: column;
@@ -448,9 +442,7 @@
     border-radius: 6px;
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
+
 @media (max-width: 1000px) {
     .profile-layout {
         grid-template-columns: 1fr;
@@ -502,9 +494,7 @@
     gap: 0.75rem;
 }
 
-/* ============================================
-   PROFILE CARD (Base)
-   ============================================ */
+
 .profile-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -514,9 +504,7 @@
     margin-bottom: 0px;
 }
 
-/* ============================================
-   HERO SECTION
-   ============================================ */
+
 .profile-hero {
     padding-bottom: 1.5rem;
 }
@@ -524,9 +512,9 @@
 .profile-hero__banner {
     height: 200px;
     background: linear-gradient(135deg, #0077b5 0%, #00a0dc 100%);
-    /* LinkedIn-ish blue or user brand color */
+    
     background: linear-gradient(135deg, var(--primary) 0%, #89C29D 50%, #D1EADE 100%);
-    /* Or branded */
+    
     position: relative;
 }
 
@@ -540,7 +528,7 @@
     justify-content: space-between;
     align-items: flex-end;
     margin-top: -112px;
-    /* Pull avatar up */
+    
     margin-bottom: 1rem;
 }
 
@@ -682,9 +670,7 @@
     border-radius: 50%;
 }
 
-/* ============================================
-   SECTIONS (About, Activity, etc)
-   ============================================ */
+
 .profile-section {
     padding: 1.5rem;
 }
@@ -784,9 +770,7 @@
     transform: translateX(4px);
 }
 
-/* ============================================
-   LIST ITEMS (Experience, etc)
-   ============================================ */
+
 .profile-list {
     display: flex;
     flex-direction: column;
@@ -850,9 +834,7 @@
     line-height: 1.4;
 }
 
-/* ============================================
-   SKILLS
-   ============================================ */
+
 .profile-skills {
     display: flex;
     flex-wrap: wrap;
@@ -862,7 +844,7 @@
 .profile-skill {
     padding: 0.4rem 0.8rem;
     background: var(--bg-main);
-    /* Light background for tag */
+    
     border: 1px solid var(--border);
     border-radius: 100px;
     font-size: 0.9rem;
@@ -876,9 +858,7 @@
     border-color: var(--text-muted);
 }
 
-/* ============================================
-   SIDEBAR
-   ============================================ */
+
 .profile-sidebar {
     display: flex;
     flex-direction: column;
@@ -977,9 +957,7 @@
     align-self: flex-start;
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
+
 @media (max-width: 900px) {
     .profile-layout {
         grid-template-columns: 1fr;

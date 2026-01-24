@@ -25,7 +25,7 @@ const PostDetailPage: React.FC = () => {
                     ...p,
                     id: p._id || p.id,
                     likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
-                    likedBy: Array.isArray(p.likes) ? p.likes : [], // Store IDs to check if current user liked
+                    likedBy: Array.isArray(p.likes) ? p.likes : [], 
                     comments: (p.comments || []).map((c: any) => ({
                         ...c,
                         id: c._id || c.id,
@@ -38,7 +38,7 @@ const PostDetailPage: React.FC = () => {
                 };
                 setPost(adaptedPost);
 
-                // Check if current user liked
+                
                 if (user && adaptedPost.likedBy.includes(user.id)) {
                     setIsLiked(true);
                 }
@@ -56,7 +56,7 @@ const PostDetailPage: React.FC = () => {
         if (!post) return;
         try {
             const response = await api.put(`/projects/${post.id}/like`);
-            const updatedLikes = response.data; // List of user IDs
+            const updatedLikes = response.data; 
 
             setPost((prev: any) => ({
                 ...prev,
@@ -178,7 +178,7 @@ const PostDetailPage: React.FC = () => {
                 </button>
 
                 <article className="post-article card">
-                    {/* Header */}
+                    {}
                     <div className="post-article__header">
                         <div className="post-article__author-row">
                             <Link to={`/profile/${post.author.username}`} className="post-article__avatar-link">
@@ -215,7 +215,7 @@ const PostDetailPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Content */}
+                    {}
                     <div className="post-article__content">
                         <div className="post-article__badges">
                             <span
@@ -238,7 +238,7 @@ const PostDetailPage: React.FC = () => {
                             ))}
                         </div>
 
-                        {/* Media Section */}
+                        {}
                         {post.media && post.media.length > 0 && (
                             <div className="post-article__media">
                                 {post.media.map((url: string, idx: number) => (
@@ -249,7 +249,7 @@ const PostDetailPage: React.FC = () => {
                             </div>
                         )}
 
-                        {/* Funding Card */}
+                        {}
                         {fundingProgress !== null && (
                             <div className="funding-widget">
                                 <div className="funding-widget__header">
@@ -273,7 +273,7 @@ const PostDetailPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Stats Bar */}
+                    {}
                     <div className="post-article__stats">
                         <div className="stats-left">
                             <span className="stats-icon-group">
@@ -287,7 +287,7 @@ const PostDetailPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Action Bar */}
+                    {}
                     <div className="post-article__actions">
                         <button
                             className={`action-btn ${isLiked ? 'active' : ''}`}
@@ -310,7 +310,7 @@ const PostDetailPage: React.FC = () => {
                         </button>
                     </div>
 
-                    {/* Comments Section */}
+                    {}
                     <div className="post-article__comments">
                         <div className="comment-input-area">
                             <img

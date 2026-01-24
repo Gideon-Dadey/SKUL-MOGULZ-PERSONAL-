@@ -46,7 +46,7 @@ const CreatePostPage: React.FC = () => {
         }
     }, [editingPost]);
 
-    // Media handling
+    
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -161,7 +161,7 @@ const CreatePostPage: React.FC = () => {
                             onChange={(e) => setContent(e.target.value)}
                         />
 
-                        {/* Previews Section */}
+                        {}
                         {previews.length > 0 && (
                             <div className="create-previews">
                                 {previews.map((src, idx) => (
@@ -209,7 +209,7 @@ const CreatePostPage: React.FC = () => {
                     </div>
 
                     <aside className="create-settings">
-                        {/* ... settings same as before ... */}
+                        {}
                         <section className="settings-group">
                             <h3>Category</h3>
                             <div className="settings-pills">

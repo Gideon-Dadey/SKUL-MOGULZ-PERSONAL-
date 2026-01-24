@@ -25,7 +25,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (savedUser) {
             try {
                 const user = JSON.parse(savedUser);
-                // Ensure id field exists (map _id if needed)
+                
                 if (user._id && !user.id) user.id = user._id;
 
                 setState({
@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const login = async (email: string, password: string) => {
         try {
             const data = await authService.login({ email, password });
-            // Adapt backend response to frontend User type
+            
             const user = { ...data, id: data._id || data.id };
             setState({
                 user,

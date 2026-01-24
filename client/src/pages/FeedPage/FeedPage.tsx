@@ -50,7 +50,7 @@ const FeedPage: React.FC = () => {
 
                 const response = await api.get(url);
 
-                // Adapt API response to Frontend Post type
+                
                 const adaptedPosts = response.data.map((p: any) => ({
                     ...p,
                     id: p._id || p.id,
@@ -67,7 +67,7 @@ const FeedPage: React.FC = () => {
                     }
                 }));
 
-                // Client-side sorting (since API might default to recent)
+                
                 let sortedPosts = [...adaptedPosts];
                 switch (sortBy) {
                     case 'trending':
@@ -95,7 +95,7 @@ const FeedPage: React.FC = () => {
     const handleLike = async (postId: string) => {
         try {
             const response = await api.put(`/projects/${postId}/like`);
-            const updatedLikes = response.data; // Array of user IDs
+            const updatedLikes = response.data; 
 
             setPosts(currentPosts => currentPosts.map(post => {
                 if (post.id === postId) {
@@ -118,7 +118,7 @@ const FeedPage: React.FC = () => {
 
     return (
         <div className="feed-layout">
-            {/* Left Sidebar - Profile Card */}
+            {}
             <aside className="feed-sidebar feed-sidebar--left">
                 <div className="profile-card">
                     <div className="profile-card__banner"></div>
@@ -176,9 +176,9 @@ const FeedPage: React.FC = () => {
                 </div>
             </aside>
 
-            {/* Main Feed */}
+            {}
             <main className="feed-main">
-                {/* Create Post Box */}
+                {}
                 <div className="create-box">
                     <div className="create-box__top">
                         <img
@@ -206,7 +206,7 @@ const FeedPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Sort Bar */}
+                {}
                 <div className="feed-sort-bar">
                     <div className="feed-sort-bar__line"></div>
                     <span className="feed-sort-bar__text">Sort by:</span>
@@ -223,7 +223,7 @@ const FeedPage: React.FC = () => {
                     </button>
                 </div>
 
-                {/* Filter (collapsed by default) */}
+                {}
                 <SearchFilter
                     searchQuery={searchQuery}
                     onSearchChange={setSearchQuery}
@@ -233,7 +233,7 @@ const FeedPage: React.FC = () => {
                     onStageChange={setSelectedStage}
                 />
 
-                {/* Posts */}
+                {}
                 <div className="feed-posts">
                     {isLoading ? <div style={{ padding: '20px', textAlign: 'center' }}>Loading posts...</div> : posts.map(post => (
                         <PostCard key={post.id} post={post} onLike={handleLike} onDelete={handleDeletePost} />
@@ -241,7 +241,7 @@ const FeedPage: React.FC = () => {
                 </div>
             </main>
 
-            {/* Right Sidebar - News & Ads */}
+            {}
             <aside className="feed-sidebar feed-sidebar--right">
                 <div className="news-card">
                     <div className="news-card__header">
