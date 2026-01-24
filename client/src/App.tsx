@@ -44,7 +44,7 @@ function AppContent() {
             <div className="app">
                 <Navbar />
                 <Routes>
-                    {}
+                    { }
                     <Route path="/login" element={
                         isAuthenticated ? <Navigate to="/feed" replace /> : <LoginPage />
                     } />
@@ -52,7 +52,7 @@ function AppContent() {
                         isAuthenticated ? <Navigate to="/feed" replace /> : <RegisterPage />
                     } />
 
-                    {}
+                    { }
                     <Route path="/" element={
                         <ProtectedRoute><Navigate to="/feed" replace /></ProtectedRoute>
                     } />
@@ -86,8 +86,9 @@ function AppContent() {
                     <Route path="/analytics" element={
                         <ProtectedRoute><AnalyticsPage /></ProtectedRoute>
                     } />
+                   
 
-                    {}
+                    { }
                     <Route path="*" element={<Navigate to="/feed" replace />} />
                 </Routes>
             </div>
