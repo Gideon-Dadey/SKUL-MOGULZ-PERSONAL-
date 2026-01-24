@@ -123,7 +123,7 @@ const FeedPage: React.FC = () => {
                 <div className="profile-card">
                     <div className="profile-card__banner"></div>
                     <img
-                        src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=ff6b4a&color=fff`}
+                        src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff`}
                         alt={user?.firstName}
                         className="profile-card__avatar"
                     />
@@ -182,7 +182,7 @@ const FeedPage: React.FC = () => {
                 <div className="create-box">
                     <div className="create-box__top">
                         <img
-                            src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=ff6b4a&color=fff`}
+                            src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff`}
                             alt=""
                             className="create-box__avatar"
                         />
@@ -292,7 +292,7 @@ const FeedPage: React.FC = () => {
                         suggestions.map(person => (
                             <div key={person._id} className="suggestion-item">
                                 <img
-                                    src={person.avatar || `https://ui-avatars.com/api/?name=${person.firstName}&background=ff6b4a&color=fff`}
+                                    src={person.avatar || `https://ui-avatars.com/api/?name=${person.firstName}&background=A5D6B7&color=fff`}
                                     alt=""
                                     className="suggestion-item__avatar"
                                 />

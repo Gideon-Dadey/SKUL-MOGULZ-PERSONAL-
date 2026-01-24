@@ -80,7 +80,7 @@ const NotificationsPage: React.FC = () => {
                                 >
                                     <div className="notif-item__avatar-section">
                                         <img
-                                            src={n.sender?.avatar || `https://ui-avatars.com/api/?name=${n.sender.firstName}+${n.sender.lastName}&background=ff6b4a&color=fff`}
+                                            src={n.sender?.avatar || `https://ui-avatars.com/api/?name=${n.sender.firstName}+${n.sender.lastName}&background=A5D6B7&color=fff`}
                                             alt=""
                                             className="notif-item__avatar"
                                         />

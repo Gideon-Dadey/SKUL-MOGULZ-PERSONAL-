@@ -160,7 +160,7 @@ const LandingPage: React.FC = () => {
 
             {/* CTA Section */}
             <section className="section-padding" style={{ textAlign: 'center' }}>
-                <div className="glass-card" style={{ maxWidth: '800px', margin: '0 auto', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(167, 139, 250, 0.1) 100%)' }}>
+                <div className="glass-card" style={{ maxWidth: '800px', margin: '0 auto', background: 'linear-gradient(135deg, rgba(165, 214, 183, 0.1) 0%, rgba(137, 194, 157, 0.1) 100%)' }}>
                     <h2 style={{ fontSize: '3rem', marginBottom: '1.5rem' }}>Ready to Scale?</h2>
                     <p style={{ fontSize: '1.25rem', color: 'var(--text-muted)', marginBottom: '2.5rem' }}>
                         Join thousands of student moguls already building the future.

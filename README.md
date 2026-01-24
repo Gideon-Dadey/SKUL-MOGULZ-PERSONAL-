@@ -2,7 +2,7 @@
 > **The Operating System for Student Titans.**
 
 ![Status](https://img.shields.io/badge/Status-Stealth_Mode-black?style=for-the-badge&logo=github)
-![Vibe](https://img.shields.io/badge/Vibe-Hardcore-ff6b4a?style=for-the-badge)
+![Vibe](https://img.shields.io/badge/Vibe-Hardcore-A5D6B7?style=for-the-badge)
 
 ## 🧠 The Vision
 We are not building a social network. We are building a utility network for the next generation of Elon Musks and Mark Zuckerbergs.

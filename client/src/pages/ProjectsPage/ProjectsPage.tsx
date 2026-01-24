@@ -111,7 +111,7 @@ const ProjectsPage: React.FC = () => {
                                     <h3 className="project-title">{post.title}</h3>
                                     <div className="project-author-badge">
                                         <img
-                                            src={post.author?.avatar || `https://ui-avatars.com/api/?name=${post.author?.firstName}&background=ff6b4a&color=fff`}
+                                            src={post.author?.avatar || `https://ui-avatars.com/api/?name=${post.author?.firstName}&background=A5D6B7&color=fff`}
                                             alt=""
                                         />
                                     </div>

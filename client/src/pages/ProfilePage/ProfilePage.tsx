@@ -126,7 +126,7 @@ const ProfilePage: React.FC = () => {
                                 onClick={handleAvatarClick}
                             >
                                 <img
-                                    src={profileUser.avatar || `https://ui-avatars.com/api/?name=${profileUser.firstName}+${profileUser.lastName}&background=ff6b4a&color=fff&size=200`}
+                                    src={profileUser.avatar || `https://ui-avatars.com/api/?name=${profileUser.firstName}+${profileUser.lastName}&background=A5D6B7&color=fff&size=200`}
                                     alt={profileUser.firstName}
                                     className="profile-hero__avatar"
                                 />
@@ -345,7 +345,7 @@ const ProfilePage: React.FC = () => {
                         {mockUsers.filter((u: any) => u.id !== (profileUser._id || profileUser.id)).slice(0, 5).map((u: any) => (
                             <div key={u.id} className="sidebar-person">
                                 <img
-                                    src={u.avatar || `https://ui-avatars.com/api/?name=${u.firstName}&background=ff6b4a&color=fff`}
+                                    src={u.avatar || `https://ui-avatars.com/api/?name=${u.firstName}&background=A5D6B7&color=fff`}
                                     className="sidebar-person__avatar"
                                     alt=""
                                 />

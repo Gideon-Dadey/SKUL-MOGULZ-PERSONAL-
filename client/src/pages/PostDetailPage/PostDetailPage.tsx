@@ -183,7 +183,7 @@ const PostDetailPage: React.FC = () => {
                         <div className="post-article__author-row">
                             <Link to={`/profile/${post.author.username}`} className="post-article__avatar-link">
                                 <img
-                                    src={post.author.avatar || `https://ui-avatars.com/api/?name=${post.author.firstName}+${post.author.lastName}&background=ff6b4a&color=fff`}
+                                    src={post.author.avatar || `https://ui-avatars.com/api/?name=${post.author.firstName}+${post.author.lastName}&background=A5D6B7&color=fff`}
                                     alt={post.author.firstName}
                                     className="post-article__avatar"
                                 />
@@ -314,7 +314,7 @@ const PostDetailPage: React.FC = () => {
                     <div className="post-article__comments">
                         <div className="comment-input-area">
                             <img
-                                src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=ff6b4a&color=fff`}
+                                src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff`}
                                 alt="Your avatar"
                                 className="comment-avatar"
                             />
@@ -336,7 +336,7 @@ const PostDetailPage: React.FC = () => {
                             {post.comments.map((comment: any) => (
                                 <div key={comment.id} className="comment-item">
                                     <img
-                                        src={comment.author.avatar || `https://ui-avatars.com/api/?name=${comment.author.firstName}&background=ff6b4a&color=fff`}
+                                        src={comment.author.avatar || `https://ui-avatars.com/api/?name=${comment.author.firstName}&background=A5D6B7&color=fff`}
                                         alt={comment.author.firstName}
                                         className="comment-item__avatar"
                                     />
@@ -367,7 +367,7 @@ const PostDetailPage: React.FC = () => {
                     </div>
                     <div className="sidebar-author">
                         <img
-                            src={post.author.avatar || `https://ui-avatars.com/api/?name=${post.author.firstName}+${post.author.lastName}&background=ff6b4a&color=fff`}
+                            src={post.author.avatar || `https://ui-avatars.com/api/?name=${post.author.firstName}+${post.author.lastName}&background=A5D6B7&color=fff`}
                             alt={post.author.firstName}
                             className="sidebar-author__avatar"
                         />
