@@ -16,7 +16,7 @@ const MessagesPage: React.FC = () => {
     const [loadingMessages, setLoadingMessages] = useState(false);
     const historyRef = useRef<HTMLDivElement>(null);
 
-    // Fetch conversations on mount
+    
     useEffect(() => {
         const fetchConversations = async () => {
             try {
@@ -38,17 +38,17 @@ const MessagesPage: React.FC = () => {
         return () => clearInterval(interval);
     }, []);
 
-    // Listen for real-time messages
+    
     useEffect(() => {
         if (!socket) return;
 
         socket.on('new_message', (message: any) => {
-            // Update messages if the message belongs to the current chat
+            
             if (message.sender._id === selectedChat || message.recipient === selectedChat) {
                 setMessages((prev: any[]) => [...prev, message]);
             }
 
-            // Also refresh conversations to show new snippet/unread status
+            
             const refreshConversations = async () => {
                 const data = await messageService.getConversations();
                 setConversations(data);
@@ -61,7 +61,7 @@ const MessagesPage: React.FC = () => {
         };
     }, [socket, selectedChat]);
 
-    // Fetch messages when selectedChat changes
+    
     useEffect(() => {
         if (!selectedChat) return;
 
@@ -80,7 +80,7 @@ const MessagesPage: React.FC = () => {
         fetchMessages();
     }, [selectedChat]);
 
-    // Scroll to bottom when messages update
+    
     useEffect(() => {
         if (historyRef.current) {
             historyRef.current.scrollTop = historyRef.current.scrollHeight;
@@ -111,7 +111,7 @@ const MessagesPage: React.FC = () => {
     return (
         <div className="messages-container">
             <div className="messages-layout">
-                {/* Sidebar */}
+                {}
                 <aside className="messages-sidebar">
                     <header className="msg-sidebar-header">
                         <h2>Messaging</h2>
@@ -163,7 +163,7 @@ const MessagesPage: React.FC = () => {
                     </div>
                 </aside>
 
-                {/* Main Chat Area */}
+                {}
                 <main className="messages-main">
                     {activeChatPartner ? (
                         <>

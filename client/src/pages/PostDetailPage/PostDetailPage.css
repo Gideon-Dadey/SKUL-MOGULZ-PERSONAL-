@@ -1,6 +1,4 @@
-/* ============================================
-   POST DETAIL PAGE - LinkedIn Style
-   ============================================ */
+
 .post-detail-layout {
     display: grid;
     grid-template-columns: minmax(0, 780px) 300px;
@@ -32,9 +30,7 @@
     color: var(--primary);
 }
 
-/* ============================================
-   POST ARTICLE CARD
-   ============================================ */
+
 .post-article {
     background: var(--bg-card);
     border: 1px solid var(--border);
@@ -104,7 +100,7 @@
     background: var(--bg-main);
 }
 
-/* Content */
+
 .post-article__content {
     padding: 0.5rem 1.25rem 1rem;
 }
@@ -146,7 +142,7 @@
     margin-bottom: 0.75rem;
 }
 
-/* Media Gallery */
+
 .post-article__media {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -185,7 +181,7 @@
     text-decoration: underline;
 }
 
-/* Funding Widget */
+
 .funding-widget {
     margin: 1rem 0;
     padding: 1rem;
@@ -243,7 +239,7 @@
     width: 100%;
 }
 
-/* Stats */
+
 .post-article__stats {
     display: flex;
     justify-content: space-between;
@@ -280,7 +276,7 @@
     cursor: pointer;
 }
 
-/* Action Bar */
+
 .post-article__actions {
     display: flex;
     justify-content: space-between;
@@ -313,7 +309,7 @@
     color: var(--primary);
 }
 
-/* Comments */
+
 .post-article__comments {
     background: var(--bg-card);
     padding: 1rem 1.25rem;
@@ -404,7 +400,7 @@
     display: flex;
     gap: 0.75rem;
     padding-left: 50px;
-    /* Offset for avatar */
+    
     margin-top: 0.25rem;
 }
 
@@ -421,9 +417,7 @@
     text-decoration: underline;
 }
 
-/* ============================================
-   SIDEBAR
-   ============================================ */
+
 .post-detail-sidebar {
     display: flex;
     flex-direction: column;
@@ -472,9 +466,7 @@
     margin-bottom: 0.75rem;
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
+
 @media (max-width: 900px) {
     .post-detail-layout {
         grid-template-columns: 1fr;

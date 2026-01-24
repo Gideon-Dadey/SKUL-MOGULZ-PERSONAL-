@@ -50,7 +50,7 @@ const Navbar: React.FC = () => {
         fetchNotifications();
     }, [isAuthenticated]);
 
-    // Listen for real-time notifications
+    
     useEffect(() => {
         if (!socket) return;
 
@@ -128,7 +128,7 @@ const Navbar: React.FC = () => {
     return (
         <nav className="navbar">
             <div className="navbar__container">
-                {/* Left Section */}
+                {}
                 <div className="navbar__left">
                     <Link to="/feed" className="navbar__logo">
                         <img src={logo} alt="SM" className="navbar__logo-img" />
@@ -149,7 +149,7 @@ const Navbar: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Center Navigation */}
+                {}
                 <div className="navbar__center">
                     {navItems.map(item => (
                         <div key={item.path} className="navbar__nav-item-wrapper"
@@ -229,7 +229,7 @@ const Navbar: React.FC = () => {
                     ))}
                 </div>
 
-                {/* Right Section */}
+                {}
                 <div className="navbar__right">
                     <Link to="/create-post" className="navbar__nav-item navbar__create-btn">
                         <Plus size={20} />
@@ -240,7 +240,7 @@ const Navbar: React.FC = () => {
                         {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
                     </button>
 
-                    {/* Profile Menu */}
+                    {}
                     <div className="navbar__profile-wrapper" ref={profileMenuRef}>
                         <button
                             className={`navbar__nav-item navbar__profile-btn ${showProfileMenu ? 'navbar__profile-btn--active' : ''}`}

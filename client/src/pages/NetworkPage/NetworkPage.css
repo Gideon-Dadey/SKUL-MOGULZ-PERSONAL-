@@ -1,6 +1,4 @@
-/* ============================================
-   NETWORK PAGE - LinkedIn Style
-   ============================================ */
+
 .network-layout {
     display: grid;
     grid-template-columns: 280px minmax(0, 1fr);
@@ -10,7 +8,7 @@
     padding: 1.5rem 0;
 }
 
-/* Sidebar */
+
 .network-sidebar {
     display: flex;
     flex-direction: column;
@@ -93,7 +91,7 @@
     background: var(--bg-main);
 }
 
-/* Ad Placeholder */
+
 .ad-placeholder {
     height: 250px;
     display: flex;
@@ -104,7 +102,7 @@
     font-size: 0.9rem;
 }
 
-/* Main Content */
+
 .network-main {
     display: flex;
     flex-direction: column;
@@ -139,7 +137,7 @@
     color: var(--text-main);
 }
 
-/* Invitations */
+
 .invitations-list {
     display: flex;
     flex-direction: column;
@@ -200,7 +198,7 @@
     gap: 0.5rem;
 }
 
-/* Suggestions Grid */
+
 .suggestions-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -305,10 +303,10 @@
     background: var(--primary-light);
     border-width: 2px;
     padding: calc(0.3rem - 1px) 0;
-    /* Adjust for border width change */
+    
 }
 
-/* Responsive */
+
 @media (max-width: 850px) {
     .network-layout {
         grid-template-columns: 1fr;

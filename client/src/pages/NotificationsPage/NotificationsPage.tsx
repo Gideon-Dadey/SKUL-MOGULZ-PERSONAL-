@@ -10,7 +10,7 @@ const NotificationsPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (!user) return; // Ensure user is logged in
+        if (!user) return; 
         const fetchNotifications = async () => {
             try {
                 setIsLoading(true);
@@ -48,7 +48,7 @@ const NotificationsPage: React.FC = () => {
     return (
         <div className="notif-page-layout">
             <div className="notif-container">
-                {/* Left Sidebar */}
+                {}
                 <aside className="notif-sidebar">
                     <div className="notif-card">
                         <div className="notif-card__header">
@@ -60,7 +60,7 @@ const NotificationsPage: React.FC = () => {
                     </div>
                 </aside>
 
-                {/* Main Content */}
+                {}
                 <main className="notif-main">
                     <div className="notif-list-card">
                         {isLoading ? (
@@ -114,7 +114,7 @@ const NotificationsPage: React.FC = () => {
                     </div>
                 </main>
 
-                {/* Right Sidebar */}
+                {}
                 <aside className="notif-sidebar-right">
                     <div className="notif-ad-card">
                         <span className="notif-ad-label">Ad</span>

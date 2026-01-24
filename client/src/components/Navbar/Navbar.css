@@ -1,4 +1,4 @@
-/* client/src/components/Navbar/Navbar.css */
+
 .navbar {
     position: sticky;
     top: 0;
@@ -18,10 +18,10 @@
     display: flex;
     align-items: center;
     max-width: 1440px;
-    /* Match feed layout max-width */
+    
     margin: 0 auto;
     padding: 0 2rem;
-    /* Match feed layout padding */
+    
     height: 100%;
     width: 100%;
 }
@@ -31,7 +31,7 @@
     align-items: center;
     gap: 8px;
     flex: 1;
-    /* Allow left side to grow to push center to middle */
+    
 }
 
 .navbar__logo {
@@ -91,7 +91,7 @@
     justify-content: center;
     height: 100%;
     flex-shrink: 0;
-    /* Keep centered group together */
+    
 }
 
 .navbar__nav-item {
@@ -172,14 +172,14 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    /* Push content to the right edge */
+    
     height: 100%;
     flex: 1;
-    /* Allow right side to grow to balance the layout */
+    
     padding-left: 12px;
 }
 
-/* Post button styling */
+
 
 .navbar__theme-toggle {
     display: flex;
@@ -198,7 +198,7 @@
     color: var(--text-main);
 }
 
-/* Updated Profile Button */
+
 .navbar__profile-btn {
     min-width: 60px;
 }
@@ -210,7 +210,7 @@
     object-fit: cover;
 }
 
-/* Professional Dropdown Fixes */
+
 .navbar__dropdown {
     position: absolute;
     top: 100%;
@@ -220,7 +220,7 @@
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     width: 260px;
-    /* LinkedIn standard width */
+    
     z-index: 1001;
     overflow: hidden;
     padding: 0;
@@ -248,7 +248,7 @@
     margin: 0;
     color: var(--text-main);
     text-transform: capitalize;
-    /* Ensure Sentence Case */
+    
 }
 
 .navbar__dropdown-user-info p {
@@ -311,7 +311,7 @@
 
 .navbar__dropdown-item svg {
     display: none;
-    /* LinkedIn doesn't use icons here for Me menu */
+    
 }
 
 .navbar__dropdown-item--danger {
@@ -329,7 +329,7 @@
     margin: 4px 0;
 }
 
-/* Notification Dropdown Specifics */
+
 .navbar__dropdown--notifications {
     width: 360px;
     max-height: 480px;
@@ -453,7 +453,7 @@
     background: var(--bg-main);
 }
 
-/* Mobile Styling Fixes */
+
 @media (max-width: 768px) {
     .navbar {
         height: 48px;

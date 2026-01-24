@@ -1,6 +1,4 @@
-/* ============================================
-   CREATE POST PAGE - Modern Editor Style
-   ============================================ */
+
 .create-layout {
     min-height: 100vh;
     background: var(--bg-main);
@@ -18,7 +16,7 @@
     box-shadow: var(--shadow-xl);
 }
 
-/* Header */
+
 .create-header {
     display: flex;
     align-items: center;
@@ -57,13 +55,13 @@
     color: var(--text-main);
 }
 
-/* Main Layout */
+
 .create-main {
     flex: 1;
     display: flex;
 }
 
-/* Content Area */
+
 .create-content-area {
     flex: 1;
     padding: 2rem 3rem;
@@ -109,7 +107,7 @@
     color: var(--text-light);
 }
 
-/* Previews in Editor */
+
 .create-previews {
     display: flex;
     flex-wrap: wrap;
@@ -153,7 +151,7 @@
     background: var(--danger);
 }
 
-/* Tags in Editor */
+
 .create-tags-area {
     display: flex;
     flex-wrap: wrap;
@@ -190,7 +188,7 @@
     min-width: 150px;
 }
 
-/* Toolbar */
+
 .create-toolbar {
     display: flex;
     gap: 0.5rem;
@@ -214,7 +212,7 @@
     color: var(--primary);
 }
 
-/* Visual Settings Sidebar */
+
 .create-settings {
     width: 320px;
     background: var(--bg-main);
@@ -234,7 +232,7 @@
     letter-spacing: 0.05em;
 }
 
-/* Pills (Category) */
+
 .settings-pills {
     display: flex;
     flex-wrap: wrap;
@@ -270,7 +268,7 @@
     font-weight: 600;
 }
 
-/* List Items (Stage) */
+
 .settings-list {
     display: flex;
     flex-direction: column;
@@ -325,7 +323,7 @@
     color: var(--text-muted);
 }
 
-/* Toggle */
+
 .settings-toggle-row {
     display: flex;
     justify-content: space-between;
@@ -415,7 +413,7 @@
     border-color: var(--primary);
 }
 
-/* Responsive */
+
 @media (max-width: 900px) {
     .create-main {
         flex-direction: column;

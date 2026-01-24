@@ -85,7 +85,7 @@
     color: var(--primary);
 }
 
-/* Filter Panel */
+
 .search-filter__panel {
     margin-top: 1rem;
     padding-top: 1rem;
@@ -152,7 +152,7 @@
     color: var(--primary-hover);
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
     .search-filter__toggle span {
         display: none;

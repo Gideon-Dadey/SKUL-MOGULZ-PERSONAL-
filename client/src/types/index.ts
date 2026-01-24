@@ -1,4 +1,4 @@
-// User Types
+
 export interface User {
     id: string;
     email: string;
@@ -17,7 +17,7 @@ export interface User {
     createdAt: string;
 }
 
-// Project Categories
+
 export type ProjectCategory =
     | 'technology'
     | 'healthcare'
@@ -43,7 +43,7 @@ export const PROJECT_CATEGORIES: { value: ProjectCategory; label: string; icon: 
     { value: 'other', label: 'Other', icon: '✨' },
 ];
 
-// Post Types
+
 export interface Post {
     id: string;
     author: User;
@@ -70,7 +70,7 @@ export interface Comment {
     createdAt: string;
 }
 
-// Notification Types
+
 export interface Notification {
     id: string;
     type: 'like' | 'comment' | 'follow' | 'new_post';
@@ -81,7 +81,7 @@ export interface Notification {
     createdAt: string;
 }
 
-// Auth Context Types
+
 export interface AuthState {
     user: User | null;
     isAuthenticated: boolean;

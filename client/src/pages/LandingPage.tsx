@@ -7,7 +7,7 @@ import logo from '../assets/logo.png';
 const LandingPage: React.FC = () => {
     return (
         <div className="landing-page">
-            {/* Hero Section */}
+            {}
             <section className="hero-section">
                 <div className="hero-container">
                     <div className="hero-content">
@@ -68,7 +68,7 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* Stats Section */}
+            {}
             <section className="stats-section">
                 <div className="stats-grid">
                     <div className="stat-item">
@@ -90,7 +90,7 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* Features Section */}
+            {}
             <section className="section-padding" id="features">
                 <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                     <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Built for the Next Generation</h2>
@@ -133,7 +133,7 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* How It Works Section */}
+            {}
             <section className="section-padding" style={{ background: 'rgba(255,255,255,0.02)' }}>
                 <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                     <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>How It Works</h2>
@@ -158,7 +158,7 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* CTA Section */}
+            {}
             <section className="section-padding" style={{ textAlign: 'center' }}>
                 <div className="glass-card" style={{ maxWidth: '800px', margin: '0 auto', background: 'linear-gradient(135deg, rgba(165, 214, 183, 0.1) 0%, rgba(137, 194, 157, 0.1) 100%)' }}>
                     <h2 style={{ fontSize: '3rem', marginBottom: '1.5rem' }}>Ready to Scale?</h2>
@@ -171,7 +171,7 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* Footer */}
+            {}
             <footer className="footer">
                 <div className="footer-grid">
                     <div className="footer-info">

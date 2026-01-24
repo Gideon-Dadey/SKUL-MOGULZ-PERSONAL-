@@ -27,11 +27,11 @@ const ProjectsPage: React.FC = () => {
                     id: p._id || p.id,
                 }));
 
-                // Client-side filtering/sorting
+                
                 if (filter === 'new') {
                     data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
                 } else if (filter === 'trending') {
-                    // Sort by likes as a proxy for trending
+                    
                     data.sort((a: any, b: any) => (b.likes || 0) - (a.likes || 0));
                 } else if (filter === 'funding') {
                     data = data.filter((p: any) => p.fundingGoal && p.fundingGoal > 0);
@@ -50,7 +50,7 @@ const ProjectsPage: React.FC = () => {
 
     return (
         <div className="projects-container">
-            {/* Hero Section */}
+            {}
             <section className="projects-hero">
                 <div className="projects-hero__content">
                     <h1>Explore Innovation</h1>
@@ -68,7 +68,7 @@ const ProjectsPage: React.FC = () => {
                 </div>
             </section>
 
-            {/* Sticky Filter Panel */}
+            {}
             <div className="sticky-filter-panel">
                 <div className="search-wrapper">
                     <Search className="search-icon" size={18} />
@@ -91,7 +91,7 @@ const ProjectsPage: React.FC = () => {
                 </button>
             </div>
 
-            {/* Grid */}
+            {}
             <div className="projects-grid">
                 {isLoading ? <div className="loading-state">Initializing Launchpad...</div> : projects.map(post => {
                     const fundingPercent = post.fundingGoal && post.currentFunding

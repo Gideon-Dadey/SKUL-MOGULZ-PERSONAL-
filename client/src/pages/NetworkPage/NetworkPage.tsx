@@ -41,14 +41,14 @@ const NetworkPage: React.FC = () => {
         try {
             await networkService.acceptRequest(requestId);
             setInvitations(prev => prev.filter(inv => inv._id !== requestId));
-            // In a real app we might also refresh suggestions or show a success message
+            
         } catch (error) {
             console.error("Failed to accept request", error);
         }
     };
 
     const handleIgnore = (requestId: string) => {
-        // Technically we could have a reject endpoint, but for MVP we just remove from UI
+        
         setInvitations(prev => prev.filter(inv => inv._id !== requestId));
     };
 
@@ -63,7 +63,7 @@ const NetworkPage: React.FC = () => {
 
     return (
         <div className="network-layout">
-            {/* Sidebar */}
+            {}
             <aside className="network-sidebar">
                 <div className="network-card sidebar-menu">
                     <h3>Manage my network</h3>
@@ -96,9 +96,9 @@ const NetworkPage: React.FC = () => {
                 </div>
             </aside>
 
-            {/* Main Content */}
+            {}
             <main className="network-main">
-                {/* Invitations */}
+                {}
                 {(invitations.length > 0 || isLoadingInvitations) && (
                     <div className="network-card">
                         <div className="card-header">
@@ -137,7 +137,7 @@ const NetworkPage: React.FC = () => {
                     </div>
                 )}
 
-                {/* Suggestions Grid */}
+                {}
                 <div className="network-card">
                     <div className="card-header">
                         <h3>People you may know</h3>
