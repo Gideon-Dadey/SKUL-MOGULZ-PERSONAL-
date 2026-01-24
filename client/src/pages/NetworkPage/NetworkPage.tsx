@@ -115,7 +115,7 @@ const NetworkPage: React.FC = () => {
                                     <div key={invitation._id} className="invitation-item">
                                         <Link to={`/profile/${invitation.sender.username}`} className="invitation-link">
                                             <img
-                                                src={invitation.sender.avatar || `https://ui-avatars.com/api/?name=${invitation.sender.firstName}&background=ff6b4a&color=fff`}
+                                                src={invitation.sender.avatar || `https://ui-avatars.com/api/?name=${invitation.sender.firstName}&background=A5D6B7&color=fff`}
                                                 alt=""
                                                 className="invitation-avatar"
                                             />
@@ -153,7 +153,7 @@ const NetworkPage: React.FC = () => {
                                 <div key={user._id} className="suggestion-card">
                                     <div className="suggestion-banner"></div>
                                     <img
-                                        src={user.avatar || `https://ui-avatars.com/api/?name=${user.firstName}&background=ff6b4a&color=fff`}
+                                        src={user.avatar || `https://ui-avatars.com/api/?name=${user.firstName}&background=A5D6B7&color=fff`}
                                         alt=""
                                         className="suggestion-avatar"
                                     />

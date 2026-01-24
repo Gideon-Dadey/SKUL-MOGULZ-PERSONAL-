@@ -140,7 +140,7 @@ const MessagesPage: React.FC = () => {
                                 >
                                     <div className="msg-avatar-wrapper">
                                         <img
-                                            src={conv.user.avatar || `https://ui-avatars.com/api/?name=${conv.user.firstName}&background=ff6b4a&color=fff`}
+                                            src={conv.user.avatar || `https://ui-avatars.com/api/?name=${conv.user.firstName}&background=A5D6B7&color=fff`}
                                             alt=""
                                             className="msg-avatar"
                                         />
@@ -190,7 +190,7 @@ const MessagesPage: React.FC = () => {
                                     return (
                                         <div key={msg._id} className={`message-bubble ${isSent ? 'sent' : 'received'}`}>
                                             <img
-                                                src={senderInfo?.avatar || `https://ui-avatars.com/api/?name=${senderInfo?.firstName}+${senderInfo?.lastName}&background=ff6b4a&color=fff`}
+                                                src={senderInfo?.avatar || `https://ui-avatars.com/api/?name=${senderInfo?.firstName}+${senderInfo?.lastName}&background=A5D6B7&color=fff`}
                                                 className="bubble-avatar"
                                                 alt=""
                                             />
