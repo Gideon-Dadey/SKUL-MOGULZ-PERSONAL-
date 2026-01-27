@@ -3,13 +3,13 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
     Home, Users, Rocket, MessageSquare, Bell, Search,
     ChevronDown, Settings, LogOut, HelpCircle,
-    Sun, Moon, Plus, Grid3X3, TrendingUp, Bookmark, Layout
+    Sun, Moon, Plus, Grid3X3, TrendingUp, Bookmark
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import notificationService from '../../services/notificationService';
-import logo from '../../assets/logo.png';
+
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
@@ -104,7 +104,6 @@ const Navbar: React.FC = () => {
         { path: '/projects', icon: Rocket, label: 'Projects' },
         { path: '/messages', icon: MessageSquare, label: 'Messaging' },
         { path: '/notifications', icon: Bell, label: 'Notifications', badge: unreadNotifications },
-        { path: '/mockup', icon: Layout, label: 'Mockup' },
     ];
 
     const isActive = (path: string) => location.pathname === path;
@@ -114,7 +113,7 @@ const Navbar: React.FC = () => {
             <nav className="navbar navbar--guest">
                 <div className="navbar__container">
                     <Link to="/" className="navbar__logo">
-                        <img src={logo} alt="SKUL MOGULZ" className="navbar__logo-img" />
+                        <div className="navbar__logo-icon">SM</div>
                         <span className="navbar__logo-text">SKUL MOGULZ</span>
                     </Link>
                     <div className="navbar__guest-actions">
@@ -132,7 +131,7 @@ const Navbar: React.FC = () => {
                 { }
                 <div className="navbar__left">
                     <Link to="/feed" className="navbar__logo">
-                        <img src={logo} alt="SM" className="navbar__logo-img" />
+                        <div className="navbar__logo-icon">SM</div>
                     </Link>
 
                     <div className={`navbar__search ${searchFocused ? 'navbar__search--focused' : ''}`}>
