@@ -86,7 +86,7 @@ function AppContent() {
                     <Route path="/analytics" element={
                         <ProtectedRoute><AnalyticsPage /></ProtectedRoute>
                     } />
-                   
+
 
                     { }
                     <Route path="*" element={<Navigate to="/feed" replace />} />
@@ -146,7 +146,6 @@ const LoginPage = () => {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="form-input"
-                                placeholder="name@example.com"
                                 required
                             />
                         </div>
@@ -161,7 +160,6 @@ const LoginPage = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="form-input"
-                                placeholder="••••••••"
                                 required
                             />
                         </div>
@@ -300,7 +298,6 @@ const RegisterPage = () => {
                                         value={formData.email}
                                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                         className="form-input"
-                                        placeholder="name@example.com"
                                         required
                                     />
                                 </div>
