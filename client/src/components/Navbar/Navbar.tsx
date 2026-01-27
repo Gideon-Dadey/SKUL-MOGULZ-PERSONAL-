@@ -294,9 +294,25 @@ const Navbar: React.FC = () => {
                                     <Link to="/my-projects" className="navbar__dropdown-item">
                                         <Grid3X3 size={16} /> My Projects
                                     </Link>
-                                    <button className="navbar__dropdown-item" onClick={toggleTheme}>
-                                        {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />} {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
-                                    </button>
+                                </div>
+
+                                <div className="navbar__dropdown-divider" />
+
+                                <div className="navbar__dropdown-section">
+                                    <h5>Appearance</h5>
+                                    <div className="navbar__theme-row">
+                                        <div className="navbar__theme-info">
+                                            {theme === 'light' ? <Sun size={16} /> : <Moon size={16} />}
+                                            <span>{theme === 'light' ? 'Light' : 'Dark'}</span>
+                                        </div>
+                                        <button
+                                            className={`navbar__theme-switch ${theme === 'dark' ? 'navbar__theme-switch--active' : ''}`}
+                                            onClick={toggleTheme}
+                                            aria-label="Toggle theme"
+                                        >
+                                            <span className="navbar__theme-switch-thumb" />
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className="navbar__dropdown-divider" />
