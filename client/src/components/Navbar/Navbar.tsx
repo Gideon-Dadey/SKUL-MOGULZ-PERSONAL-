@@ -236,10 +236,6 @@ const Navbar: React.FC = () => {
                         <span className="navbar__nav-label">Post</span>
                     </Link>
 
-                    <button className="navbar__icon-btn navbar__theme-toggle" onClick={toggleTheme}>
-                        {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-                    </button>
-
                     { }
                     <div className="navbar__profile-wrapper" ref={profileMenuRef}>
                         <button
@@ -298,6 +294,9 @@ const Navbar: React.FC = () => {
                                     <Link to="/my-projects" className="navbar__dropdown-item">
                                         <Grid3X3 size={16} /> My Projects
                                     </Link>
+                                    <button className="navbar__dropdown-item" onClick={toggleTheme}>
+                                        {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />} {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                                    </button>
                                 </div>
 
                                 <div className="navbar__dropdown-divider" />
