@@ -235,7 +235,7 @@
 .navbar__dropdown {
     position: absolute;
     top: calc(100% + 6px);
-    right: 0;
+    right: 10px;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 10px;
