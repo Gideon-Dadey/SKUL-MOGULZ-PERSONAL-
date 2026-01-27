@@ -130,7 +130,6 @@ const LoginPage = () => {
             <div className="auth-container">
                 <div className="auth-left">
                     <div className="auth-brand">
-                        <img src={logo} alt="SM" className="auth-brand__img" />
                         <h1 className="auth-brand__text">SKUL MOGULZ</h1>
                     </div>
                     <h2 className="auth-heading">Welcome back</h2>
@@ -257,7 +256,6 @@ const RegisterPage = () => {
             <div className="auth-container">
                 <div className="auth-left">
                     <div className="auth-brand">
-                        <img src={logo} alt="SM" className="auth-brand__img" />
                         <h1 className="auth-brand__text">SKUL MOGULZ</h1>
                     </div>
                     <h2 className="auth-heading">Make the most of your professional life</h2>
