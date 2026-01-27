@@ -205,16 +205,16 @@ const LoginPage = () => {
                             <p>Join thousands of ambitious students and forward-thinking investors on the premier platform for young entrepreneurs.</p>
                             <div className="auth-visual__stats">
                                 <div className="auth-visual__stat">
-                                    <span className="auth-visual__stat-value">50K+</span>
-                                    <span className="auth-visual__stat-label">Active Users</span>
+                                    <span className="auth-visual__stat-value">Early</span>
+                                    <span className="auth-visual__stat-label">Access Stage</span>
                                 </div>
                                 <div className="auth-visual__stat">
-                                    <span className="auth-visual__stat-value">$12M+</span>
-                                    <span className="auth-visual__stat-label">Funded</span>
+                                    <span className="auth-visual__stat-value">100%</span>
+                                    <span className="auth-visual__stat-label">Student-Led</span>
                                 </div>
                                 <div className="auth-visual__stat">
-                                    <span className="auth-visual__stat-value">2.5K+</span>
-                                    <span className="auth-visual__stat-label">Projects</span>
+                                    <span className="auth-visual__stat-value">Pure</span>
+                                    <span className="auth-visual__stat-label">Innovation</span>
                                 </div>
                             </div>
                         </div>
