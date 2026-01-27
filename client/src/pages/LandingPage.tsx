@@ -7,7 +7,7 @@ import logo from '../assets/logo.png';
 const LandingPage: React.FC = () => {
     return (
         <div className="landing-page">
-            {}
+            { }
             <section className="hero-section">
                 <div className="hero-container">
                     <div className="hero-content">
@@ -68,29 +68,29 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
-            {}
+            { }
             <section className="stats-section">
                 <div className="stats-grid">
                     <div className="stat-item">
-                        <h3>500+</h3>
-                        <p>Projects Funded</p>
+                        <h3>1st</h3>
+                        <p>Student Batch</p>
                     </div>
                     <div className="stat-item">
-                        <h3>$12M+</h3>
-                        <p>Capital Raised</p>
+                        <h3>Early</h3>
+                        <p>Access Stage</p>
                     </div>
                     <div className="stat-item">
-                        <h3>15K+</h3>
-                        <p>Global Students</p>
+                        <h3>Beta</h3>
+                        <p>Phase Live</p>
                     </div>
                     <div className="stat-item">
-                        <h3>200+</h3>
-                        <p>Partner Tech Hubs</p>
+                        <h3>100%</h3>
+                        <p>Student Founded</p>
                     </div>
                 </div>
             </section>
 
-            {}
+            { }
             <section className="section-padding" id="features">
                 <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                     <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Built for the Next Generation</h2>
@@ -133,7 +133,7 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
-            {}
+            { }
             <section className="section-padding" style={{ background: 'rgba(255,255,255,0.02)' }}>
                 <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                     <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>How It Works</h2>
@@ -158,7 +158,7 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
-            {}
+            { }
             <section className="section-padding" style={{ textAlign: 'center' }}>
                 <div className="glass-card" style={{ maxWidth: '800px', margin: '0 auto', background: 'linear-gradient(135deg, rgba(165, 214, 183, 0.1) 0%, rgba(137, 194, 157, 0.1) 100%)' }}>
                     <h2 style={{ fontSize: '3rem', marginBottom: '1.5rem' }}>Ready to Scale?</h2>
@@ -171,7 +171,7 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
-            {}
+            { }
             <footer className="footer">
                 <div className="footer-grid">
                     <div className="footer-info">
