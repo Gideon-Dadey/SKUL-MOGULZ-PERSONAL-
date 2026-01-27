@@ -47,6 +47,27 @@
     border-radius: 4px;
 }
 
+.navbar__logo-icon {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #A5D6B7 0%, #7EC794 100%);
+    color: #1a2f23;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-radius: 6px;
+    letter-spacing: -0.5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.navbar__logo:hover .navbar__logo-icon {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(165, 214, 183, 0.3);
+}
+
 .navbar__logo-text {
     display: none;
 }
