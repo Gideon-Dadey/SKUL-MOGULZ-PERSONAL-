@@ -117,7 +117,6 @@ const Navbar: React.FC = () => {
                         <span className="navbar__logo-text">SKUL MOGULZ</span>
                     </Link>
                     <div className="navbar__guest-actions">
-                        <Link to="/login" className="navbar__guest-link">Sign in</Link>
                         <Link to="/register" className="btn btn-primary btn--sm">Join now</Link>
                     </div>
                 </div>
