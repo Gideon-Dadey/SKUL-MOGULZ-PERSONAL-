@@ -21,12 +21,9 @@ export const initSocket = (server: HttpServer) => {
         });
 
         // Call Signaling
-        socket.on('call_start', (data: { recipientId: string, callerName: string, callerAvatar: string, isVideo: boolean, roomId: string }) => {
-            io.to(data.recipientId).emit('incoming_call', {
-                callerId: data.recipientId, // Technically checking sender/recipient ID logic
-                from: socket.id, // or data.callerId if passed
-                ...data
-            });
+        socket.on('call_start', (data: { recipientId: string, senderId: string, callerName: string, callerAvatar: string, isVideo: boolean, roomId: string }) => {
+            // Emit to the recipient's room
+            io.to(data.recipientId).emit('incoming_call', data);
         });
 
         socket.on('call_response', (data: { callerId: string, accepted: boolean, roomId?: string }) => {
