@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs, router } from 'expo-router';
 import { Platform } from 'react-native';
-import { Home, Users, Zap, MessageCircle, Bell, SquarePlus } from 'lucide-react-native';
+import { Home, Users, Briefcase, MessageCircle, Bell, SquarePlus } from 'lucide-react-native';
 
 import Colors from '../../constants/Colors';
 import { useTheme } from '../../context/ThemeContext';
@@ -63,23 +63,23 @@ export default function TabLayout() {
         })}
       />
       <Tabs.Screen
+        name="notifications"
+        options={{
+          title: 'Notifications',
+          tabBarIcon: ({ color }) => <Bell size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="projects"
         options={{
           title: 'Projects',
-          tabBarIcon: ({ color }) => <Zap size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Briefcase size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="messages"
         options={{
           href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="notifications"
-        options={{
-          title: 'Notifications',
-          tabBarIcon: ({ color }) => <Bell size={24} color={color} />,
         }}
       />
       <Tabs.Screen
