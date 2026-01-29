@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Search, Plus, Bell, MessageSquare, Menu, CircleUser } from 'lucide-react-native';
+import { Search, Plus, Bell, MessageSquare, Menu, CircleUser, Image as ImageIcon, Video, Calendar, Sparkles, Send } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import Colors from '../../constants/Colors';
@@ -75,6 +75,16 @@ export default function FeedScreen() {
   const renderHeader = () => (
     <View style={styles.header}>
       <View style={styles.topBar}>
+        <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
+          <Sparkles size={24} color={activeColors.tint} />
+          <View style={[styles.badge, { backgroundColor: '#ef4444' }]} />
+        </TouchableOpacity>
+
+        <View style={[styles.searchBar, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
+          <Search size={18} color={activeColors.light} />
+          <Text style={[styles.searchText, { color: activeColors.light }]}>Search ecosystem...</Text>
+        </View>
+
         <TouchableOpacity
           onPress={() => router.push('/profile')}
           style={[styles.profileButton, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}
@@ -88,25 +98,36 @@ export default function FeedScreen() {
             <CircleUser size={30} color={activeColors.tint} />
           )}
         </TouchableOpacity>
-        <View style={[styles.searchBar, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
-          <Search size={18} color={activeColors.light} />
-          <Text style={[styles.searchText, { color: activeColors.light }]}>Search projects...</Text>
-        </View>
-        <TouchableOpacity onPress={() => router.push('/messages')}>
-          <MessageSquare size={24} color={activeColors.light} />
-        </TouchableOpacity>
       </View>
 
-      <View style={styles.createBox}>
-        <TouchableOpacity
-          style={[styles.createInput, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}
-          onPress={() => router.push('/modal')}
-        >
-          <Text style={{ color: activeColors.light }}>Share a project update...</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.plusBtn, { backgroundColor: activeColors.tint }]}>
-          <Plus size={24} color="#fff" />
-        </TouchableOpacity>
+      <View style={[styles.createCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
+        <View style={styles.createTop}>
+          <Image
+            source={{ uri: getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
+            style={styles.createAvatar}
+          />
+          <TouchableOpacity
+            style={[styles.createButtonTrigger, { backgroundColor: theme === 'dark' ? '#2d2d2d' : '#f3f4f6' }]}
+            onPress={() => router.push('/modal')}
+          >
+            <Text style={[styles.createPlaceholder, { color: activeColors.light }]}>Share your next breakthrough...</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={[styles.createDivider, { backgroundColor: activeColors.border }]} />
+        <View style={styles.createActions}>
+          <TouchableOpacity style={styles.createActionItem}>
+            <ImageIcon size={18} color="#3b82f6" />
+            <Text style={[styles.createActionText, { color: activeColors.muted }]}>Media</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.createActionItem}>
+            <Sparkles size={18} color="#8b5cf6" />
+            <Text style={[styles.createActionText, { color: activeColors.muted }]}>Goal</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.createActionItem}>
+            <Calendar size={18} color="#f59e0b" />
+            <Text style={[styles.createActionText, { color: activeColors.muted }]}>Event</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.sectionHeader}>
@@ -184,31 +205,73 @@ const styles = StyleSheet.create({
   searchText: {
     fontSize: 14,
   },
-  createBox: {
+  iconBtn: {
+    padding: 4,
+    position: 'relative',
+  },
+  badge: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    borderWidth: 1.5,
+    borderColor: '#fff',
+  },
+  createCard: {
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 12,
+    marginBottom: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
+  },
+  createTop: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    marginBottom: 24,
+    marginBottom: 12,
   },
-  createInput: {
+  createAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
+  createButtonTrigger: {
     flex: 1,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 1,
-    paddingHorizontal: 20,
+    height: 38,
+    borderRadius: 19,
+    paddingHorizontal: 16,
     justifyContent: 'center',
   },
-  plusBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+  createPlaceholder: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  createDivider: {
+    height: 1,
+    width: '100%',
+    marginBottom: 8,
+  },
+  createActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 4,
+  },
+  createActionItem: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    gap: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  createActionText: {
+    fontSize: 13,
+    fontWeight: '600',
   },
   sectionHeader: {
     flexDirection: 'row',
