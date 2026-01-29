@@ -45,7 +45,10 @@ export default function ConnectionsScreen() {
                 <Text style={[styles.headline, { color: activeColors.muted }]} numberOfLines={1}>{item.headline || item.role}</Text>
             </View>
             <View style={styles.actions}>
-                <TouchableOpacity style={[styles.actionBtn, { borderColor: activeColors.border }]}>
+                <TouchableOpacity
+                    style={[styles.actionBtn, { borderColor: activeColors.border }]}
+                    onPress={() => router.push(('/messages/' + item._id) as any)}
+                >
                     <MessageCircle size={20} color={activeColors.text} />
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.actionBtn, { borderColor: activeColors.border }]}>
