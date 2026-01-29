@@ -107,6 +107,7 @@ function RootLayoutNav() {
         <Stack.Screen name="(auth)/login" options={{ headerShown: false, animation: 'fade' }} />
         <Stack.Screen name="(auth)/register" options={{ headerShown: false, animation: 'fade' }} />
         <Stack.Screen name="profile" options={{ headerShown: false, animation: 'slide_from_right' }} />
+        <Stack.Screen name="edit-profile" options={{ headerShown: false, animation: 'slide_from_bottom' }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>
     </NavThemeProvider>
