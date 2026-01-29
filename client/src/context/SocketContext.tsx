@@ -18,14 +18,19 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     useEffect(() => {
         if (isAuthenticated && user) {
-            
-            const newSocket = io('http://localhost:5000'); 
+
+            const newSocket = io('http://localhost:5000');
 
             newSocket.on('connect', () => {
                 setIsConnected(true);
                 console.log('Socket connected:', newSocket.id);
-                
-                newSocket.emit('join_room', user.id);
+
+                // Join room using _id (MongoDB) or id
+                const userId = (user as any)?._id || user?.id;
+                if (userId) {
+                    newSocket.emit('join_room', userId);
+                    console.log('Joined room:', userId);
+                }
             });
 
             newSocket.on('disconnect', () => {
