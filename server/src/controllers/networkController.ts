@@ -144,3 +144,65 @@ export const getInvitations = async (req: any, res: Response) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// @desc    Search users
+// @route   GET /api/network/search
+export const searchUsers = async (req: any, res: Response) => {
+    try {
+        const { q } = req.query;
+        if (!q) {
+            res.status(400).json({ message: 'Query parameter required' });
+            return;
+        }
+
+        const users = await User.find({
+            $or: [
+                { firstName: { $regex: q, $options: 'i' } },
+                { lastName: { $regex: q, $options: 'i' } },
+                { username: { $regex: q, $options: 'i' } },
+                { headline: { $regex: q, $options: 'i' } }
+            ]
+        }).select('firstName lastName username avatar headline role').limit(20);
+
+        res.status(200).json(users);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Get network stats (connection count)
+// @route   GET /api/network/stats
+export const getNetworkStats = async (req: any, res: Response) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+        res.status(200).json({
+            connectionsCount: user.connections ? user.connections.length : 0
+        });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Reject/Ignore connection request
+// @route   DELETE /api/network/request/:requestId
+export const rejectRequest = async (req: any, res: Response) => {
+    try {
+        const deleted = await ConnectionRequest.findOneAndDelete({
+            _id: req.params.requestId,
+            recipient: req.user.id
+        });
+
+        if (!deleted) {
+            res.status(404).json({ message: 'Request not found or unauthorized' });
+            return;
+        }
+
+        res.status(200).json({ message: 'Request rejected' });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
