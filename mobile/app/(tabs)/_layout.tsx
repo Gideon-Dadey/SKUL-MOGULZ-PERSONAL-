@@ -1,6 +1,7 @@
 import React from 'react';
-import { Tabs } from 'expo-router';
-import { Home, Users, Zap, MessageCircle, Bell } from 'lucide-react-native';
+import { Tabs, router } from 'expo-router';
+import { Platform } from 'react-native';
+import { Home, Users, Zap, MessageCircle, Bell, SquarePlus } from 'lucide-react-native';
 
 import Colors from '../../constants/Colors';
 import { useTheme } from '../../context/ThemeContext';
@@ -17,9 +18,20 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: activeColors.card,
           borderTopColor: activeColors.border,
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
+          borderTopWidth: 1,
+          height: Platform.OS === 'ios' ? 88 : 68,
+          paddingBottom: Platform.OS === 'ios' ? 28 : 10,
+          paddingTop: 10,
+          elevation: 8,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600',
+          marginTop: 2,
         },
         headerShown: false,
       }}>
@@ -36,6 +48,19 @@ export default function TabLayout() {
           title: 'Network',
           tabBarIcon: ({ color }) => <Users size={24} color={color} />,
         }}
+      />
+      <Tabs.Screen
+        name="post"
+        options={{
+          title: 'Post',
+          tabBarIcon: ({ color }) => <SquarePlus size={26} color={color} />,
+        }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            router.push('/modal');
+          },
+        })}
       />
       <Tabs.Screen
         name="projects"
