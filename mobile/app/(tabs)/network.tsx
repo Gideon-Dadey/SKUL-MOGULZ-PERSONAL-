@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, View, Text, FlatList, Image, TouchableOpacity, RefreshControl, ActivityIndicator, Alert, Dimensions, TextInput } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { UserPlus, Users, Check, X, Search, Filter, ArrowLeft } from 'lucide-react-native';
 import { useTheme } from '../../context/ThemeContext';
@@ -13,6 +14,7 @@ const CARD_WIDTH = (width - 48) / COLUMN_count;
 
 export default function NetworkScreen() {
     const { theme } = useTheme();
+    const router = useRouter();
     const activeColors = Colors[theme];
     const insets = useSafeAreaInsets();
 
@@ -266,13 +268,16 @@ export default function NetworkScreen() {
                             {!searchMode && (
                                 <>
                                     {/* Manage Network Section */}
-                                    <View style={[styles.manageSection, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
+                                    <TouchableOpacity
+                                        style={[styles.manageSection, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}
+                                        onPress={() => router.push('/network/connections')}
+                                    >
                                         <Text style={[styles.manageTitle, { color: activeColors.text }]}>Manage my network</Text>
                                         <View style={styles.manageRow}>
                                             <Text style={[styles.manageLabel, { color: activeColors.muted }]}>Connections</Text>
                                             <Text style={[styles.manageCount, { color: activeColors.text }]}>{stats.connectionsCount}</Text>
                                         </View>
-                                    </View>
+                                    </TouchableOpacity>
 
                                     {/* Invitations Section */}
                                     {invitations.length > 0 && (
