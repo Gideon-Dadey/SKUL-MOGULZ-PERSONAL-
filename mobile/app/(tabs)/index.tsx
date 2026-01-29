@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Search, Plus, Bell, MessageSquare, Menu, CircleUser, Image as ImageIcon, Video, Calendar, Sparkles, Send } from 'lucide-react-native';
+import { Search, Plus, Bell, MessageSquare, MessageSquareMore, Menu, CircleUser, Image as ImageIcon, Video, Calendar, Sparkles, Send } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import Colors from '../../constants/Colors';
@@ -76,7 +76,7 @@ export default function FeedScreen() {
     <View style={styles.header}>
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
-          <Sparkles size={24} color={activeColors.tint} />
+          <MessageSquareMore size={24} color={activeColors.text} fill={activeColors.text} />
           <View style={[styles.badge, { backgroundColor: '#ef4444' }]} />
         </TouchableOpacity>
 
