@@ -129,8 +129,8 @@ export default function ModalScreen() {
         <Text style={[styles.headerTitle, { color: activeColors.text }]}>New Project</Text>
         <TouchableOpacity
           onPress={handleSubmit}
-          disabled={isSubmitting || !title.trim()}
-          style={[styles.postBtn, { backgroundColor: title.trim() ? activeColors.tint : activeColors.border }]}
+          disabled={isSubmitting}
+          style={[styles.postBtn, { backgroundColor: activeColors.tint, opacity: isSubmitting ? 0.7 : 1 }]}
         >
           {isSubmitting ? (
             <ActivityIndicator color="#fff" size="small" />
