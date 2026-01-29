@@ -310,7 +310,7 @@ export default function ModalScreen() {
             {
               backgroundColor: activeColors.card,
               borderTopColor: activeColors.border,
-              paddingBottom: (Platform.OS === 'ios' && insets.bottom > 0) ? insets.bottom + 10 : 20
+              paddingBottom: Platform.OS === 'ios' ? Math.max(insets.bottom, 20) : 12
             }
           ]}
         >
