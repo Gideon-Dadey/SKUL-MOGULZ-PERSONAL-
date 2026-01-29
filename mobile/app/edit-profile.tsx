@@ -1,12 +1,13 @@
 
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Platform, KeyboardAvoidingView, Alert, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Platform, KeyboardAvoidingView, Alert, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Save, User as UserIcon, Briefcase, MapPin, AlignLeft, Info } from 'lucide-react-native';
+import { ArrowLeft, Save, User as UserIcon, Briefcase, MapPin, AlignLeft, Info, Camera, X } from 'lucide-react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Colors from '../constants/Colors';
-import authService from '../services/authService';
+import { getImageUrl } from '../services/api';
 
 export default function EditProfileScreen() {
     const { user, updateProfile } = useAuth();
@@ -22,7 +23,28 @@ export default function EditProfileScreen() {
         location: user?.location || '',
     });
 
+    const [avatarUri, setAvatarUri] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
+
+    const pickImage = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (status !== 'granted') {
+            Alert.alert('Permission Denied', 'We need permission to access your photos to change your avatar.');
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.7,
+        });
+
+        if (!result.canceled) {
+            setAvatarUri(result.assets[0].uri);
+        }
+    };
 
     const handleSave = async () => {
         if (!formData.firstName || !formData.lastName) {
@@ -32,7 +54,28 @@ export default function EditProfileScreen() {
 
         try {
             setIsSaving(true);
-            await updateProfile(formData);
+
+            // Use FormData for multipart upload (avatar + text)
+            const data = new FormData();
+            data.append('firstName', formData.firstName);
+            data.append('lastName', formData.lastName);
+            data.append('headline', formData.headline);
+            data.append('bio', formData.bio);
+            data.append('location', formData.location);
+
+            if (avatarUri) {
+                const filename = avatarUri.split('/').pop() || 'avatar.jpg';
+                const match = /\.(\w+)$/.exec(filename);
+                const type = match ? `image/${match[1]}` : `image/jpeg`;
+
+                data.append('avatar', {
+                    uri: Platform.OS === 'ios' ? avatarUri.replace('file://', '') : avatarUri,
+                    name: filename,
+                    type,
+                } as any);
+            }
+
+            await updateProfile(data);
             Alert.alert('Success', 'Profile updated successfully', [
                 { text: 'OK', onPress: () => router.back() }
             ]);
@@ -90,6 +133,25 @@ export default function EditProfileScreen() {
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
+                {/* Avatar Edit */}
+                <View style={styles.avatarSection}>
+                    <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
+                        <Image
+                            source={{ uri: avatarUri || getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=A5D6B7&color=fff` }}
+                            style={styles.avatarLarge}
+                        />
+                        <View style={[styles.cameraIcon, { backgroundColor: activeColors.tint }]}>
+                            <Camera size={20} color="#fff" />
+                        </View>
+                    </TouchableOpacity>
+                    {avatarUri && (
+                        <TouchableOpacity onPress={() => setAvatarUri(null)} style={styles.removeImageBtn}>
+                            <X size={14} color="#ef4444" />
+                            <Text style={{ color: '#ef4444', fontSize: 12, fontWeight: '600' }}>Remove pending photo</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
+
                 <View style={[styles.infoBox, { backgroundColor: activeColors.tint + '10', borderColor: activeColors.tint + '30' }]}>
                     <Info size={16} color={activeColors.tint} />
                     <Text style={[styles.infoText, { color: activeColors.text }]}>
@@ -172,6 +234,39 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         padding: 16,
+    },
+    avatarSection: {
+        alignItems: 'center',
+        marginBottom: 24,
+    },
+    avatarContainer: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        position: 'relative',
+    },
+    avatarLarge: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+    },
+    cameraIcon: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 3,
+        borderColor: '#fff',
+    },
+    removeImageBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 12,
+        gap: 4,
     },
     infoBox: {
         flexDirection: 'row',

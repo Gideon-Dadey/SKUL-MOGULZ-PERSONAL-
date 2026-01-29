@@ -5,8 +5,8 @@ import { Platform } from 'react-native';
 
 // For Android Emulator, localhost is 10.0.2.2
 // For physical devices, you should use your machine's local IP address
-// Use your machine's local IP address (192.168.0.135) so both simulators and physical devices can connect
-const API_URL = 'http://192.168.0.135:5000/api';
+const BASE_URL = 'http://192.168.0.135:5000';
+const API_URL = `${BASE_URL}/api`;
 
 const api = axios.create({
     baseURL: API_URL,
@@ -35,4 +35,11 @@ api.interceptors.request.use(
     }
 );
 
+export const getImageUrl = (path: string | null | undefined) => {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    return `${BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
+};
+
+export { BASE_URL, API_URL };
 export default api;

@@ -33,7 +33,12 @@ const getProfile = async (username: string) => {
 };
 
 const updateProfile = async (userData: any) => {
-    const response = await api.put('/auth/profile', userData);
+    const isFormData = userData instanceof FormData;
+    const response = await api.put('/auth/profile', userData, {
+        headers: {
+            'Content-Type': isFormData ? 'multipart/form-data' : 'application/json',
+        },
+    });
     if (response.data) {
         const userStr = await AsyncStorage.getItem('user');
         const savedUser = JSON.parse(userStr || '{}');

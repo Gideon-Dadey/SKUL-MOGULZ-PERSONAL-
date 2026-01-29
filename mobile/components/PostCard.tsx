@@ -7,6 +7,7 @@ import { Post } from '../types';
 import Colors from '../constants/Colors';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import { getImageUrl } from '../services/api';
 
 interface PostCardProps {
     post: any;
@@ -59,7 +60,7 @@ export default function PostCard({ post, onLike }: PostCardProps) {
             <View style={styles.header}>
                 <View style={styles.authorInfo}>
                     <Image
-                        source={{ uri: post.author.avatar || `https://ui-avatars.com/api/?name=${post.author.firstName}+${post.author.lastName}&background=A5D6B7&color=fff` }}
+                        source={{ uri: getImageUrl(post.author.avatar) || `https://ui-avatars.com/api/?name=${post.author.firstName}+${post.author.lastName}&background=A5D6B7&color=fff` }}
                         style={styles.avatar}
                     />
                     <View>
@@ -88,7 +89,7 @@ export default function PostCard({ post, onLike }: PostCardProps) {
 
             {post.media && post.media.length > 0 && (
                 <View style={styles.mediaContainer}>
-                    <Image source={{ uri: post.media[0] }} style={styles.mainMedia} />
+                    <Image source={{ uri: getImageUrl(post.media[0]) || '' }} style={styles.mainMedia} />
                 </View>
             )}
 
