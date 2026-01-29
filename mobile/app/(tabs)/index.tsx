@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Search, Plus, Bell, MessageSquare, Menu } from 'lucide-react-native';
+import { Search, Plus, Bell, MessageSquare, Menu, CircleUser } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import Colors from '../../constants/Colors';
@@ -75,11 +75,18 @@ export default function FeedScreen() {
   const renderHeader = () => (
     <View style={styles.header}>
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => router.push('/profile')}>
-          <Image
-            source={{ uri: user?.avatar || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
-            style={styles.profilePic}
-          />
+        <TouchableOpacity
+          onPress={() => router.push('/profile')}
+          style={[styles.profileButton, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}
+        >
+          {user?.avatar ? (
+            <Image
+              source={{ uri: user.avatar }}
+              style={styles.profilePic}
+            />
+          ) : (
+            <CircleUser size={30} color={activeColors.tint} />
+          )}
         </TouchableOpacity>
         <View style={[styles.searchBar, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
           <Search size={18} color={activeColors.light} />
@@ -151,10 +158,18 @@ const styles = StyleSheet.create({
     gap: 12,
     marginBottom: 20,
   },
+  profileButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
   profilePic: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: '100%',
+    height: '100%',
   },
   searchBar: {
     flex: 1,
