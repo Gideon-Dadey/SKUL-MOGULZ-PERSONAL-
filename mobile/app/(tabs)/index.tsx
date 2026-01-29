@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Search, Plus, Bell, MessageSquare, MessageSquareMore, Menu, CircleUser, Image as ImageIcon, Video, Calendar, Sparkles, Send } from 'lucide-react-native';
+import { Search, Plus, Bell, MessageSquare, MessageSquareMore, Menu, CircleUser, Image as ImageIcon, Video, Calendar, Sparkles, Send, X } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import Colors from '../../constants/Colors';
@@ -18,6 +18,10 @@ export default function FeedScreen() {
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [commentModalVisible, setCommentModalVisible] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [commentText, setCommentText] = useState('');
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   const fetchPosts = async () => {
     try {
@@ -29,6 +33,7 @@ export default function FeedScreen() {
         likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
         likedBy: Array.isArray(p.likes) ? p.likes : [],
         comments: p.comments || [],
+        bookmarkedBy: p.bookmarkedBy || [],
         author: {
           ...p.author,
           id: p.author?._id || p.author?.id
@@ -69,6 +74,63 @@ export default function FeedScreen() {
       }));
     } catch (error) {
       console.error("Failed to like post", error);
+    }
+  };
+
+  const handleComment = (postId: string) => {
+    setSelectedPostId(postId);
+    setCommentModalVisible(true);
+  };
+
+  const handleSubmitComment = async () => {
+    if (!commentText.trim() || !selectedPostId) return;
+
+    try {
+      setIsSubmittingComment(true);
+      const response = await api.post(`/projects/${selectedPostId}/comment`, {
+        content: commentText
+      });
+
+      setPosts(currentPosts => currentPosts.map(post => {
+        if (post.id === selectedPostId) {
+          return {
+            ...post,
+            comments: response.data
+          };
+        }
+        return post;
+      }));
+
+      setCommentText('');
+      setCommentModalVisible(false);
+      Alert.alert('Success', 'Comment added!');
+    } catch (error) {
+      console.error('Failed to comment', error);
+      Alert.alert('Error', 'Failed to post comment');
+    } finally {
+      setIsSubmittingComment(false);
+    }
+  };
+
+  const handleBookmark = async (postId: string) => {
+    try {
+      // For now, just toggle locally - you'll need to add a bookmark API endpoint
+      setPosts(currentPosts => currentPosts.map(post => {
+        if (post.id === postId) {
+          const isCurrentlyBookmarked = (post.bookmarkedBy || []).includes(user?.id);
+          const newBookmarkedBy = isCurrentlyBookmarked
+            ? (post.bookmarkedBy || []).filter((id: string) => id !== user?.id)
+            : [...(post.bookmarkedBy || []), user?.id];
+
+          return {
+            ...post,
+            bookmarkedBy: newBookmarkedBy
+          };
+        }
+        return post;
+      }));
+    } catch (error) {
+      console.error('Failed to bookmark', error);
     }
   };
 
@@ -144,7 +206,7 @@ export default function FeedScreen() {
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <PostCard post={item} onLike={handleLike} />}
+        renderItem={({ item }) => <PostCard post={item} onLike={handleLike} onComment={handleComment} onBookmark={handleBookmark} />}
         ListHeaderComponent={renderHeader}
         contentContainerStyle={styles.listContent}
         refreshControl={
@@ -158,6 +220,64 @@ export default function FeedScreen() {
           )
         }
       />
+
+      {/* Comment Modal */}
+      <Modal
+        visible={commentModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setCommentModalVisible(false)}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalOverlay}
+        >
+          <TouchableOpacity
+            style={styles.modalBackdrop}
+            activeOpacity={1}
+            onPress={() => setCommentModalVisible(false)}
+          />
+          <View style={[styles.commentModal, { backgroundColor: activeColors.card }]}>
+            <View style={[styles.modalHeader, { borderBottomColor: activeColors.border }]}>
+              <Text style={[styles.modalTitle, { color: activeColors.text }]}>Add Comment</Text>
+              <TouchableOpacity onPress={() => setCommentModalVisible(false)}>
+                <X size={24} color={activeColors.muted} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.commentInputContainer}>
+              <Image
+                source={{ uri: getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
+                style={styles.commentAvatar}
+              />
+              <TextInput
+                style={[styles.commentInput, { backgroundColor: activeColors.background, color: activeColors.text, borderColor: activeColors.border }]}
+                placeholder="Share your thoughts..."
+                placeholderTextColor={activeColors.light}
+                value={commentText}
+                onChangeText={setCommentText}
+                multiline
+                autoFocus
+              />
+            </View>
+
+            <TouchableOpacity
+              style={[styles.submitCommentBtn, { backgroundColor: activeColors.tint, opacity: commentText.trim() ? 1 : 0.5 }]}
+              onPress={handleSubmitComment}
+              disabled={!commentText.trim() || isSubmittingComment}
+            >
+              {isSubmittingComment ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <>
+                  <Send size={18} color="#fff" />
+                  <Text style={styles.submitCommentText}>Post Comment</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </View>
   );
 }
@@ -290,5 +410,63 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     textAlign: 'center',
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  commentModal: {
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    maxHeight: '80%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  commentInputContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 16,
+  },
+  commentAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  commentInput: {
+    flex: 1,
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 12,
+    minHeight: 100,
+    textAlignVertical: 'top',
+    fontSize: 15,
+  },
+  submitCommentBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 14,
+    borderRadius: 12,
+    gap: 8,
+  },
+  submitCommentText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });

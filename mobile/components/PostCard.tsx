@@ -12,14 +12,17 @@ import { getImageUrl } from '../services/api';
 interface PostCardProps {
     post: any;
     onLike?: (postId: string) => void;
+    onComment?: (postId: string) => void;
+    onBookmark?: (postId: string) => void;
 }
 
-export default function PostCard({ post, onLike }: PostCardProps) {
+export default function PostCard({ post, onLike, onComment, onBookmark }: PostCardProps) {
     const { theme } = useTheme();
     const { user } = useAuth();
     const activeColors = Colors[theme];
 
     const isLiked = user && (post.likedBy || []).includes(user.id);
+    const isBookmarked = user && (post.bookmarkedBy || []).includes(user.id);
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -106,7 +109,7 @@ export default function PostCard({ post, onLike }: PostCardProps) {
                     <Text style={[styles.actionText, { color: isLiked ? activeColors.tint : activeColors.muted }]}>{post.likes}</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.actionBtn}>
+                <TouchableOpacity style={styles.actionBtn} onPress={() => onComment?.(post.id)}>
                     <MessageCircle size={20} color={activeColors.light} />
                     <Text style={[styles.actionText, { color: activeColors.muted }]}>{post.comments?.length || 0}</Text>
                 </TouchableOpacity>
@@ -115,8 +118,8 @@ export default function PostCard({ post, onLike }: PostCardProps) {
                     <Share2 size={20} color={activeColors.light} />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.actionBtn}>
-                    <Bookmark size={20} color={activeColors.light} />
+                <TouchableOpacity style={styles.actionBtn} onPress={() => onBookmark?.(post.id)}>
+                    <Bookmark size={20} color={isBookmarked ? activeColors.tint : activeColors.light} fill={isBookmarked ? activeColors.tint : 'transparent'} />
                 </TouchableOpacity>
             </View>
         </View>
