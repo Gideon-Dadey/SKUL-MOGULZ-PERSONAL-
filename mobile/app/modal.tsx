@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Platform, KeyboardAvoidingView, Switch, Image, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { X, Image as ImageIcon, Sparkles, Hash, DollarSign, Briefcase, ChevronRight, Target } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useTheme } from '../context/ThemeContext';
@@ -20,6 +21,7 @@ const STAGES = [
 export default function ModalScreen() {
   const { theme } = useTheme();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const activeColors = Colors[theme];
 
   const [title, setTitle] = useState('');
@@ -303,7 +305,14 @@ export default function ModalScreen() {
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
-          style={[styles.toolbar, { backgroundColor: activeColors.card, borderTopColor: activeColors.border }]}
+          style={[
+            styles.toolbar,
+            {
+              backgroundColor: activeColors.card,
+              borderTopColor: activeColors.border,
+              paddingBottom: (Platform.OS === 'ios' && insets.bottom > 0) ? insets.bottom + 10 : 20
+            }
+          ]}
         >
           <TouchableOpacity onPress={pickImage} style={styles.toolbarBtn}>
             <ImageIcon size={24} color={activeColors.tint} />
@@ -498,7 +507,6 @@ const styles = StyleSheet.create({
   toolbar: {
     flexDirection: 'row',
     padding: 12,
-    paddingBottom: Platform.OS === 'ios' ? 28 : 12,
     borderTopWidth: 1,
     gap: 20,
   },
