@@ -2,19 +2,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, TextInput, FlatList, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator, Image } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { io } from 'socket.io-client';
 import { Send, ArrowLeft } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
+import { useSocket } from '../../context/SocketContext';
 import Colors from '../../constants/Colors';
-import api, { BASE_URL, getImageUrl } from '../../services/api';
+import api, { getImageUrl } from '../../services/api';
 
 export default function ChatScreen() {
     const { id } = useLocalSearchParams(); // This is the partner ID
     const router = useRouter();
     const { theme } = useTheme();
     const { user } = useAuth();
+    const { socket } = useSocket();
     const activeColors = Colors[theme];
     const insets = useSafeAreaInsets();
 
@@ -22,7 +23,6 @@ export default function ChatScreen() {
     const [messages, setMessages] = useState<any[]>([]);
     const [inputText, setInputText] = useState('');
     const [loading, setLoading] = useState(true);
-    const socketRef = useRef<any>(null);
 
     // Fetch partner details and initial messages
     useEffect(() => {
@@ -34,7 +34,6 @@ export default function ChatScreen() {
 
                 // Fetch messages
                 const msgRes = await api.get(`/messages/${id}`);
-                // API returns oldest first. We want inverted list (newest first).
                 setMessages(msgRes.data.reverse());
             } catch (error) {
                 console.error("Chat init error:", error);
@@ -47,38 +46,31 @@ export default function ChatScreen() {
 
     // Socket connections
     useEffect(() => {
-        if (!user || !user.id && !user._id) return;
+        if (!socket || !user) return;
 
-        socketRef.current = io(BASE_URL, {
-            transports: ['websocket'],
-        });
-
-        const socket = socketRef.current;
-
-        socket.on('connect', () => {
-            const userId = user.id || user._id;
-            socket.emit('join_room', userId);
-        });
-
-        socket.on('new_message', (msg: any) => {
+        // Listener for new messages
+        const handleNewMessage = (msg: any) => {
             // Only add if it belongs to this conversation
             const msgPartnerId = msg.sender._id || msg.sender.id;
             const currentPartnerId = typeof id === 'string' ? id : id[0];
 
-            // If I sent it (echo) or if partner sent it
-            // Echo is usually handled optimistically or via response, but if we receive it via socket:
-            // Check duplications carefully
-            setMessages(prev => {
-                const exists = prev.some(m => (m._id === msg._id && m._id));
-                if (exists) return prev;
-                return [msg, ...prev];
-            });
-        });
+            // If from partner, or if I sent it (echo handled here if needed, but usually redundant if optimistic)
+            // Assuming backend reflects back or sends to room
+            if (msgPartnerId === currentPartnerId || (msg.recipient === currentPartnerId)) {
+                setMessages(prev => {
+                    const exists = prev.some(m => m._id === msg._id);
+                    if (exists) return prev;
+                    return [msg, ...prev];
+                });
+            }
+        };
+
+        socket.on('new_message', handleNewMessage);
 
         return () => {
-            socket.disconnect();
+            socket.off('new_message', handleNewMessage);
         };
-    }, [user, id]);
+    }, [socket, user, id]);
 
     const handleSend = async () => {
         if (!inputText.trim()) return;
@@ -91,12 +83,10 @@ export default function ChatScreen() {
                 recipientId: id,
                 content: content
             });
-            // Add to list immediately (optimistic or robust via response)
-            // Response 'res.data' is the message object
+            // Add to list immediately
             setMessages(prev => [res.data, ...prev]);
         } catch (error) {
             console.error("Send error:", error);
-            // Ideally show error toast
         }
     };
 
