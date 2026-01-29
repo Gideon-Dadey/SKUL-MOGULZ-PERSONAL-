@@ -177,15 +177,15 @@ export default function FeedScreen() {
         </View>
         <View style={[styles.createDivider, { backgroundColor: activeColors.border }]} />
         <View style={styles.createActions}>
-          <TouchableOpacity style={styles.createActionItem}>
+          <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
             <ImageIcon size={18} color="#3b82f6" />
             <Text style={[styles.createActionText, { color: activeColors.muted }]}>Media</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.createActionItem}>
+          <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
             <Sparkles size={18} color="#8b5cf6" />
             <Text style={[styles.createActionText, { color: activeColors.muted }]}>Goal</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.createActionItem}>
+          <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
             <Calendar size={18} color="#f59e0b" />
             <Text style={[styles.createActionText, { color: activeColors.muted }]}>Event</Text>
           </TouchableOpacity>
