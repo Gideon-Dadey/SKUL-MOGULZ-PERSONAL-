@@ -317,12 +317,6 @@ export default function ModalScreen() {
           <TouchableOpacity onPress={pickImage} style={styles.toolbarBtn}>
             <ImageIcon size={24} color={activeColors.tint} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.toolbarBtn}>
-            <Hash size={24} color={activeColors.text} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.toolbarBtn}>
-            <Sparkles size={24} color={activeColors.text} />
-          </TouchableOpacity>
         </KeyboardAvoidingView>
       </View>
 
