@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import { useSocket } from './SocketContext';
 import { useAuth } from './AuthContext';
 import { getImageUrl } from '../services/api';
-import { Phone, Video, X, PhoneOff } from 'lucide-react';
+import { Phone, X, PhoneOff } from 'lucide-react';
 
 interface CallContextType {
     startCall: (recipientId: string, recipientName: string, recipientAvatar: string, isVideo: boolean) => void;

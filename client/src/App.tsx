@@ -14,7 +14,6 @@ import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
 import MessagesPage from './pages/MessagesPage/MessagesPage';
 import NotificationsPage from './pages/NotificationsPage/NotificationsPage';
 import AnalyticsPage from './pages/AnalyticsPage/AnalyticsPage';
-import logo from './assets/logo.png';
 import './styles/index.css';
 
 
