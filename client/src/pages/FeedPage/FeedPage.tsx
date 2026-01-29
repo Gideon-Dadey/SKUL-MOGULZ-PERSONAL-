@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../../services/api';
+import api, { getImageUrl } from '../../services/api';
 import { Link } from 'react-router-dom';
 import {
     Plus, TrendingUp, Image, Calendar, FileText,
@@ -50,7 +50,7 @@ const FeedPage: React.FC = () => {
 
                 const response = await api.get(url);
 
-                
+
                 const adaptedPosts = response.data.map((p: any) => ({
                     ...p,
                     id: p._id || p.id,
@@ -67,7 +67,7 @@ const FeedPage: React.FC = () => {
                     }
                 }));
 
-                
+
                 let sortedPosts = [...adaptedPosts];
                 switch (sortBy) {
                     case 'trending':
@@ -95,7 +95,7 @@ const FeedPage: React.FC = () => {
     const handleLike = async (postId: string) => {
         try {
             const response = await api.put(`/projects/${postId}/like`);
-            const updatedLikes = response.data; 
+            const updatedLikes = response.data;
 
             setPosts(currentPosts => currentPosts.map(post => {
                 if (post.id === postId) {
@@ -118,12 +118,12 @@ const FeedPage: React.FC = () => {
 
     return (
         <div className="feed-layout">
-            {}
+            { }
             <aside className="feed-sidebar feed-sidebar--left">
                 <div className="profile-card">
                     <div className="profile-card__banner"></div>
                     <img
-                        src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff`}
+                        src={getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff`}
                         alt={user?.firstName}
                         className="profile-card__avatar"
                     />
@@ -176,13 +176,13 @@ const FeedPage: React.FC = () => {
                 </div>
             </aside>
 
-            {}
+            { }
             <main className="feed-main">
-                {}
+                { }
                 <div className="create-box">
                     <div className="create-box__top">
                         <img
-                            src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff`}
+                            src={getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff`}
                             alt=""
                             className="create-box__avatar"
                         />
@@ -206,7 +206,7 @@ const FeedPage: React.FC = () => {
                     </div>
                 </div>
 
-                {}
+                { }
                 <div className="feed-sort-bar">
                     <div className="feed-sort-bar__line"></div>
                     <span className="feed-sort-bar__text">Sort by:</span>
@@ -223,7 +223,7 @@ const FeedPage: React.FC = () => {
                     </button>
                 </div>
 
-                {}
+                { }
                 <SearchFilter
                     searchQuery={searchQuery}
                     onSearchChange={setSearchQuery}
@@ -233,7 +233,7 @@ const FeedPage: React.FC = () => {
                     onStageChange={setSelectedStage}
                 />
 
-                {}
+                { }
                 <div className="feed-posts">
                     {isLoading ? <div style={{ padding: '20px', textAlign: 'center' }}>Loading posts...</div> : posts.map(post => (
                         <PostCard key={post.id} post={post} onLike={handleLike} onDelete={handleDeletePost} />
@@ -241,7 +241,7 @@ const FeedPage: React.FC = () => {
                 </div>
             </main>
 
-            {}
+            { }
             <aside className="feed-sidebar feed-sidebar--right">
                 <div className="news-card">
                     <div className="news-card__header">
@@ -292,7 +292,7 @@ const FeedPage: React.FC = () => {
                         suggestions.map(person => (
                             <div key={person._id} className="suggestion-item">
                                 <img
-                                    src={person.avatar || `https://ui-avatars.com/api/?name=${person.firstName}&background=A5D6B7&color=fff`}
+                                    src={getImageUrl(person.avatar) || `https://ui-avatars.com/api/?name=${person.firstName}&background=A5D6B7&color=fff`}
                                     alt=""
                                     className="suggestion-item__avatar"
                                 />

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Users, Briefcase, ChevronRight, UserCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import networkService from '../../services/networkService';
+import { getImageUrl } from '../../services/api';
 import './NetworkPage.css';
 
 const NetworkPage: React.FC = () => {
@@ -41,14 +42,14 @@ const NetworkPage: React.FC = () => {
         try {
             await networkService.acceptRequest(requestId);
             setInvitations(prev => prev.filter(inv => inv._id !== requestId));
-            
+
         } catch (error) {
             console.error("Failed to accept request", error);
         }
     };
 
     const handleIgnore = (requestId: string) => {
-        
+
         setInvitations(prev => prev.filter(inv => inv._id !== requestId));
     };
 
@@ -63,7 +64,7 @@ const NetworkPage: React.FC = () => {
 
     return (
         <div className="network-layout">
-            {}
+            { }
             <aside className="network-sidebar">
                 <div className="network-card sidebar-menu">
                     <h3>Manage my network</h3>
@@ -96,9 +97,9 @@ const NetworkPage: React.FC = () => {
                 </div>
             </aside>
 
-            {}
+            { }
             <main className="network-main">
-                {}
+                { }
                 {(invitations.length > 0 || isLoadingInvitations) && (
                     <div className="network-card">
                         <div className="card-header">
@@ -115,7 +116,7 @@ const NetworkPage: React.FC = () => {
                                     <div key={invitation._id} className="invitation-item">
                                         <Link to={`/profile/${invitation.sender.username}`} className="invitation-link">
                                             <img
-                                                src={invitation.sender.avatar || `https://ui-avatars.com/api/?name=${invitation.sender.firstName}&background=A5D6B7&color=fff`}
+                                                src={getImageUrl(invitation.sender.avatar) || `https://ui-avatars.com/api/?name=${invitation.sender.firstName}&background=A5D6B7&color=fff`}
                                                 alt=""
                                                 className="invitation-avatar"
                                             />
@@ -137,7 +138,7 @@ const NetworkPage: React.FC = () => {
                     </div>
                 )}
 
-                {}
+                { }
                 <div className="network-card">
                     <div className="card-header">
                         <h3>People you may know</h3>
@@ -153,7 +154,7 @@ const NetworkPage: React.FC = () => {
                                 <div key={user._id} className="suggestion-card">
                                     <div className="suggestion-banner"></div>
                                     <img
-                                        src={user.avatar || `https://ui-avatars.com/api/?name=${user.firstName}&background=A5D6B7&color=fff`}
+                                        src={getImageUrl(user.avatar) || `https://ui-avatars.com/api/?name=${user.firstName}&background=A5D6B7&color=fff`}
                                         alt=""
                                         className="suggestion-avatar"
                                     />

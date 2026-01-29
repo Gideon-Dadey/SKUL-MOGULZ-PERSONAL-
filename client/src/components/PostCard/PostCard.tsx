@@ -3,7 +3,7 @@ import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Trash2, Edit } 
 import { Link, useNavigate } from 'react-router-dom';
 import { Post } from '../../types';
 import { useAuth } from '../../context/AuthContext';
-import api from '../../services/api';
+import api, { getImageUrl } from '../../services/api';
 import './PostCard.css';
 import './PostCardMenu.css';
 
@@ -20,7 +20,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
     const [showMenu, setShowMenu] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    
+
     const isLiked = user && (post.likedBy || []).includes(user.id);
     const isAuthor = user && (user.id === post.author.id || user.id === post.author._id);
 
@@ -81,7 +81,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
             <div className="post-card__header">
                 <Link to={`/profile/${post.author.username}`} className="post-card__author">
                     <img
-                        src={post.author.avatar || `https://ui-avatars.com/api/?name=${post.author.firstName}+${post.author.lastName}&background=A5D6B7&color=fff`}
+                        src={getImageUrl(post.author.avatar) || `https://ui-avatars.com/api/?name=${post.author.firstName}+${post.author.lastName}&background=A5D6B7&color=fff`}
                         alt={post.author.firstName}
                         className="post-card__avatar"
                     />
@@ -135,7 +135,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
                     <div className="post-card__media">
                         {post.media.slice(0, 3).map((url: string, idx: number) => (
                             <div key={idx} className="post-card__image-wrapper">
-                                <img src={url} alt="" className="post-card__image" />
+                                <img src={getImageUrl(url) || ''} alt="" className="post-card__image" />
                                 {idx === 2 && post.media.length > 3 && (
                                     <div className="post-card__media-overlay">+{post.media.length - 3}</div>
                                 )}

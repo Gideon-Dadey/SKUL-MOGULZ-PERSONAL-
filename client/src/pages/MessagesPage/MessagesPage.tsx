@@ -3,6 +3,7 @@ import { Search, MoreHorizontal, Video, Edit, Phone, Image, Paperclip, Smile } f
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import messageService from '../../services/messageService';
+import { getImageUrl } from '../../services/api';
 import './MessagesPage.css';
 
 const MessagesPage: React.FC = () => {
@@ -16,7 +17,7 @@ const MessagesPage: React.FC = () => {
     const [loadingMessages, setLoadingMessages] = useState(false);
     const historyRef = useRef<HTMLDivElement>(null);
 
-    
+
     useEffect(() => {
         const fetchConversations = async () => {
             try {
@@ -38,17 +39,17 @@ const MessagesPage: React.FC = () => {
         return () => clearInterval(interval);
     }, []);
 
-    
+
     useEffect(() => {
         if (!socket) return;
 
         socket.on('new_message', (message: any) => {
-            
+
             if (message.sender._id === selectedChat || message.recipient === selectedChat) {
                 setMessages((prev: any[]) => [...prev, message]);
             }
 
-            
+
             const refreshConversations = async () => {
                 const data = await messageService.getConversations();
                 setConversations(data);
@@ -61,7 +62,7 @@ const MessagesPage: React.FC = () => {
         };
     }, [socket, selectedChat]);
 
-    
+
     useEffect(() => {
         if (!selectedChat) return;
 
@@ -80,7 +81,7 @@ const MessagesPage: React.FC = () => {
         fetchMessages();
     }, [selectedChat]);
 
-    
+
     useEffect(() => {
         if (historyRef.current) {
             historyRef.current.scrollTop = historyRef.current.scrollHeight;
@@ -111,7 +112,7 @@ const MessagesPage: React.FC = () => {
     return (
         <div className="messages-container">
             <div className="messages-layout">
-                {}
+                { }
                 <aside className="messages-sidebar">
                     <header className="msg-sidebar-header">
                         <h2>Messaging</h2>
@@ -140,7 +141,7 @@ const MessagesPage: React.FC = () => {
                                 >
                                     <div className="msg-avatar-wrapper">
                                         <img
-                                            src={conv.user.avatar || `https://ui-avatars.com/api/?name=${conv.user.firstName}&background=A5D6B7&color=fff`}
+                                            src={getImageUrl(conv.user.avatar) || `https://ui-avatars.com/api/?name=${conv.user.firstName}&background=A5D6B7&color=fff`}
                                             alt=""
                                             className="msg-avatar"
                                         />
@@ -163,7 +164,7 @@ const MessagesPage: React.FC = () => {
                     </div>
                 </aside>
 
-                {}
+                { }
                 <main className="messages-main">
                     {activeChatPartner ? (
                         <>
@@ -190,7 +191,7 @@ const MessagesPage: React.FC = () => {
                                     return (
                                         <div key={msg._id} className={`message-bubble ${isSent ? 'sent' : 'received'}`}>
                                             <img
-                                                src={senderInfo?.avatar || `https://ui-avatars.com/api/?name=${senderInfo?.firstName}+${senderInfo?.lastName}&background=A5D6B7&color=fff`}
+                                                src={getImageUrl(senderInfo?.avatar) || `https://ui-avatars.com/api/?name=${senderInfo?.firstName}+${senderInfo?.lastName}&background=A5D6B7&color=fff`}
                                                 className="bubble-avatar"
                                                 alt=""
                                             />
