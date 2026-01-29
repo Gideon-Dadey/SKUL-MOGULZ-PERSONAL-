@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import api from '../../services/api';
+import api, { getImageUrl } from '../../services/api';
 import './ProjectsPage.css';
 
 const ProjectsPage: React.FC = () => {
@@ -27,11 +27,11 @@ const ProjectsPage: React.FC = () => {
                     id: p._id || p.id,
                 }));
 
-                
+
                 if (filter === 'new') {
                     data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
                 } else if (filter === 'trending') {
-                    
+
                     data.sort((a: any, b: any) => (b.likes || 0) - (a.likes || 0));
                 } else if (filter === 'funding') {
                     data = data.filter((p: any) => p.fundingGoal && p.fundingGoal > 0);
@@ -50,7 +50,7 @@ const ProjectsPage: React.FC = () => {
 
     return (
         <div className="projects-container">
-            {}
+            { }
             <section className="projects-hero">
                 <div className="projects-hero__content">
                     <h1>Explore Innovation</h1>
@@ -68,7 +68,7 @@ const ProjectsPage: React.FC = () => {
                 </div>
             </section>
 
-            {}
+            { }
             <div className="sticky-filter-panel">
                 <div className="search-wrapper">
                     <Search className="search-icon" size={18} />
@@ -91,7 +91,7 @@ const ProjectsPage: React.FC = () => {
                 </button>
             </div>
 
-            {}
+            { }
             <div className="projects-grid">
                 {isLoading ? <div className="loading-state">Initializing Launchpad...</div> : projects.map(post => {
                     const fundingPercent = post.fundingGoal && post.currentFunding
@@ -111,7 +111,7 @@ const ProjectsPage: React.FC = () => {
                                     <h3 className="project-title">{post.title}</h3>
                                     <div className="project-author-badge">
                                         <img
-                                            src={post.author?.avatar || `https://ui-avatars.com/api/?name=${post.author?.firstName}&background=A5D6B7&color=fff`}
+                                            src={getImageUrl(post.author?.avatar) || `https://ui-avatars.com/api/?name=${post.author?.firstName}&background=A5D6B7&color=fff`}
                                             alt=""
                                         />
                                     </div>

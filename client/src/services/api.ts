@@ -1,7 +1,8 @@
 
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const BASE_URL = 'http://localhost:5000';
+const API_URL = `${BASE_URL}/api`;
 
 const api = axios.create({
     baseURL: API_URL,
@@ -27,4 +28,11 @@ api.interceptors.request.use(
     }
 );
 
+export const getImageUrl = (path: string | null | undefined) => {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    return `${BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
+};
+
+export { BASE_URL, API_URL };
 export default api;

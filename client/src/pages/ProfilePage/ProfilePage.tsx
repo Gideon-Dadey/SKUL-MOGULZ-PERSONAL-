@@ -8,7 +8,7 @@ import PostCard from '../../components/PostCard/PostCard';
 import { mockUsers } from '../../data/mockData';
 import { useAuth } from '../../context/AuthContext';
 import authService from '../../services/authService';
-import api from '../../services/api';
+import api, { getImageUrl } from '../../services/api';
 import './ProfilePage.css';
 
 const ProfilePage: React.FC = () => {
@@ -25,7 +25,7 @@ const ProfilePage: React.FC = () => {
         const fetchProfileData = async () => {
             try {
                 setIsLoading(true);
-                
+
                 let user;
                 if (username) {
                     user = await authService.getProfile(username);
@@ -35,7 +35,7 @@ const ProfilePage: React.FC = () => {
 
                 if (user) {
                     setProfileUser(user);
-                    
+
                     const userId = user._id || user.id;
                     const response = await api.get(`/projects?author=${userId}`);
 
@@ -81,7 +81,7 @@ const ProfilePage: React.FC = () => {
             const formData = new FormData();
             formData.append('avatar', file);
 
-            
+
             const response = await api.put('/auth/profile', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -90,9 +90,9 @@ const ProfilePage: React.FC = () => {
 
             if (response.data) {
                 const updatedUser = response.data;
-                
+
                 setProfileUser((prev: any) => ({ ...prev, avatar: updatedUser.avatar }));
-                
+
                 updateProfile(updatedUser);
             }
         } catch (error) {
@@ -114,9 +114,9 @@ const ProfilePage: React.FC = () => {
 
     return (
         <div className="profile-layout">
-            {}
+            { }
             <main className="profile-main">
-                {}
+                { }
                 <div className="profile-card profile-hero">
                     <div className="profile-hero__banner"></div>
                     <div className="profile-hero__content">
@@ -126,7 +126,7 @@ const ProfilePage: React.FC = () => {
                                 onClick={handleAvatarClick}
                             >
                                 <img
-                                    src={profileUser.avatar || `https://ui-avatars.com/api/?name=${profileUser.firstName}+${profileUser.lastName}&background=A5D6B7&color=fff&size=200`}
+                                    src={getImageUrl(profileUser.avatar) || `https://ui-avatars.com/api/?name=${profileUser.firstName}+${profileUser.lastName}&background=A5D6B7&color=fff&size=200`}
                                     alt={profileUser.firstName}
                                     className="profile-hero__avatar"
                                 />
@@ -190,7 +190,7 @@ const ProfilePage: React.FC = () => {
                     </div>
                 </div>
 
-                {}
+                { }
                 <div className="profile-card profile-section">
                     <div className="profile-section__header">
                         <h2>About</h2>
@@ -201,7 +201,7 @@ const ProfilePage: React.FC = () => {
                     </div>
                 </div>
 
-                {}
+                { }
                 <div className="profile-card profile-section">
                     <div className="profile-section__header">
                         <div className="profile-section__header-left">
@@ -241,7 +241,7 @@ const ProfilePage: React.FC = () => {
                     </button>
                 </div>
 
-                {}
+                { }
                 <div className="profile-card profile-section">
                     <div className="profile-section__header">
                         <h2>Experience</h2>
@@ -345,7 +345,7 @@ const ProfilePage: React.FC = () => {
                         {mockUsers.filter((u: any) => u.id !== (profileUser._id || profileUser.id)).slice(0, 5).map((u: any) => (
                             <div key={u.id} className="sidebar-person">
                                 <img
-                                    src={u.avatar || `https://ui-avatars.com/api/?name=${u.firstName}&background=A5D6B7&color=fff`}
+                                    src={getImageUrl(u.avatar) || `https://ui-avatars.com/api/?name=${u.firstName}&background=A5D6B7&color=fff`}
                                     className="sidebar-person__avatar"
                                     alt=""
                                 />
