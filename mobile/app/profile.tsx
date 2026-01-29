@@ -18,6 +18,20 @@ export default function ProfileScreen() {
     const [myProjects, setMyProjects] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [connectionCount, setConnectionCount] = useState(0);
+
+    const fetchStats = async () => {
+        try {
+            const res = await api.get('/network/stats');
+            setConnectionCount(res.data.connectionsCount);
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    useEffect(() => {
+        fetchStats();
+    }, []);
 
     const fetchMyProjects = async () => {
         try {
@@ -113,7 +127,7 @@ export default function ProfileScreen() {
                                 )}
                                 <View style={styles.metaItem}>
                                     <Users size={14} color={activeColors.tint} />
-                                    <Text style={[styles.metaText, { color: activeColors.tint, fontWeight: '600' }]}>{user?.connections?.length || 0} connections</Text>
+                                    <Text style={[styles.metaText, { color: activeColors.tint, fontWeight: '600' }]}>{connectionCount} connections</Text>
                                 </View>
                             </View>
                         </View>
