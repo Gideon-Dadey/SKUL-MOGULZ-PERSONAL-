@@ -2,7 +2,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, Share } from 'react-native';
 import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from 'lucide-react-native';
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Post } from '../types';
 import Colors from '../constants/Colors';
 import { useTheme } from '../context/ThemeContext';
@@ -17,6 +17,7 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post, onLike, onComment, onBookmark }: PostCardProps) {
+    const router = useRouter();
     const { theme } = useTheme();
     const { user } = useAuth();
     const activeColors = Colors[theme];
@@ -83,7 +84,7 @@ export default function PostCard({ post, onLike, onComment, onBookmark }: PostCa
                 </View>
             </View>
 
-            <TouchableOpacity style={styles.content}>
+            <TouchableOpacity style={styles.content} activeOpacity={0.7} onPress={() => router.push(`/post/${post.id}`)}>
                 <Text style={[styles.title, { color: activeColors.text }]}>{post.title}</Text>
                 <Text style={[styles.body, { color: activeColors.muted }]} numberOfLines={3}>
                     {post.content}
@@ -91,9 +92,9 @@ export default function PostCard({ post, onLike, onComment, onBookmark }: PostCa
             </TouchableOpacity>
 
             {post.media && post.media.length > 0 && (
-                <View style={styles.mediaContainer}>
+                <TouchableOpacity style={styles.mediaContainer} activeOpacity={0.9} onPress={() => router.push(`/post/${post.id}`)}>
                     <Image source={{ uri: getImageUrl(post.media[0]) || '' }} style={styles.mainMedia} />
-                </View>
+                </TouchableOpacity>
             )}
 
             <View style={styles.tagsContainer}>
