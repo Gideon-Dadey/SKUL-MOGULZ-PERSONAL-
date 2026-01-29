@@ -1,17 +1,56 @@
 
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, RefreshControl, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Settings, LogOut } from 'lucide-react-native';
+import { ArrowLeft, Settings, LogOut, MapPin, Calendar, Edit2, Plus, Users, BarChart2, Eye, Info, PenTool, ExternalLink } from 'lucide-react-native';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Colors from '../constants/Colors';
+import api from '../services/api';
+import PostCard from '../components/PostCard';
 
 export default function ProfileScreen() {
     const { user, logout } = useAuth();
     const { theme } = useTheme();
     const router = useRouter();
     const activeColors = Colors[theme];
+
+    const [myProjects, setMyProjects] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const fetchMyProjects = async () => {
+        try {
+            if (!user?.id && !user?._id) return;
+            const response = await api.get(`/projects?author=${user.id || user._id}`);
+            const adaptedPosts = response.data.map((p: any) => ({
+                ...p,
+                id: p._id || p.id,
+                likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
+                likedBy: Array.isArray(p.likes) ? p.likes : [],
+                comments: p.comments || [],
+                author: {
+                    ...p.author,
+                    id: p.author?._id || p.author?.id
+                }
+            }));
+            setMyProjects(adaptedPosts);
+        } catch (error) {
+            console.error("Failed to fetch my projects", error);
+        } finally {
+            setIsLoading(false);
+            setRefreshing(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchMyProjects();
+    }, [user]);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        fetchMyProjects();
+    };
 
     const handleLogout = async () => {
         await logout();
@@ -20,36 +59,174 @@ export default function ProfileScreen() {
 
     return (
         <View style={[styles.container, { backgroundColor: activeColors.background }]}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()}>
+            {/* Nav Header */}
+            <View style={[styles.navHeader, { backgroundColor: activeColors.card }]}>
+                <TouchableOpacity onPress={() => router.back()} style={styles.iconBtn}>
                     <ArrowLeft size={24} color={activeColors.text} />
                 </TouchableOpacity>
-                <Text style={[styles.headerTitle, { color: activeColors.text }]}>Profile</Text>
-                <TouchableOpacity>
-                    <Settings size={24} color={activeColors.text} />
+                <Text style={[styles.headerTitle, { color: activeColors.text }]}>{user?.username || 'Profile'}</Text>
+                <TouchableOpacity onPress={() => { }} style={styles.iconBtn}>
+                    <Settings size={22} color={activeColors.text} />
                 </TouchableOpacity>
             </View>
 
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                <View style={[styles.profileCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
-                    <Image
-                        source={{ uri: user?.avatar || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
-                        style={styles.avatar}
-                    />
-                    <Text style={[styles.name, { color: activeColors.text }]}>{user?.firstName} {user?.lastName}</Text>
-                    <Text style={[styles.username, { color: activeColors.muted }]}>@{user?.username}</Text>
-                    <Text style={[styles.bio, { color: activeColors.text }]}>{user?.bio || 'No bio yet'}</Text>
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={activeColors.tint} />}
+            >
+                {/* Header Section (Banner & Profile Pic) */}
+                <View style={[styles.profileHeader, { backgroundColor: activeColors.card }]}>
+                    <View style={[styles.banner, { backgroundColor: activeColors.tint + '40' }]}>
+                        <TouchableOpacity style={styles.editBannerBtn}>
+                            <PenTool size={18} color="#fff" />
+                        </TouchableOpacity>
+                    </View>
 
-                    <View style={styles.statsRow}>
-                        <View style={styles.stat}>
-                            <Text style={[styles.statValue, { color: activeColors.text }]}>{user?.connections?.length || 0}</Text>
-                            <Text style={[styles.statLabel, { color: activeColors.muted }]}>Connections</Text>
+                    <View style={styles.profileInfoContainer}>
+                        <View style={[styles.avatarWrapper, { borderColor: activeColors.card }]}>
+                            <Image
+                                source={{ uri: user?.avatar || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
+                                style={styles.avatar}
+                            />
+                            <TouchableOpacity style={styles.editAvatarBtn}>
+                                <Plus size={16} color="#fff" />
+                            </TouchableOpacity>
                         </View>
-                        <View style={styles.stat}>
-                            <Text style={[styles.statValue, { color: activeColors.text }]}>{user?.viewedProfile || 0}</Text>
-                            <Text style={[styles.statLabel, { color: activeColors.muted }]}>Views</Text>
+
+                        <TouchableOpacity style={styles.editProfileIcon} onPress={() => router.push('/edit-profile')}>
+                            <Edit2 size={20} color={activeColors.muted} />
+                        </TouchableOpacity>
+
+                        <View style={styles.userDetails}>
+                            <Text style={[styles.name, { color: activeColors.text }]}>{user?.firstName} {user?.lastName}</Text>
+                            <Text style={[styles.headline, { color: activeColors.text }]}>{user?.headline || (user?.role === 'student' ? 'Student Entrepreneur' : 'Investor')}</Text>
+
+                            <View style={styles.metaRow}>
+                                {user?.location && (
+                                    <View style={styles.metaItem}>
+                                        <MapPin size={14} color={activeColors.muted} />
+                                        <Text style={[styles.metaText, { color: activeColors.muted }]}>{user.location}</Text>
+                                    </View>
+                                )}
+                                <View style={styles.metaItem}>
+                                    <Users size={14} color={activeColors.tint} />
+                                    <Text style={[styles.metaText, { color: activeColors.tint, fontWeight: '600' }]}>{user?.connections?.length || 0} connections</Text>
+                                </View>
+                            </View>
+                        </View>
+
+                        <View style={styles.actionButtons}>
+                            <TouchableOpacity style={[styles.actionBtnPrimary, { backgroundColor: activeColors.tint }]}>
+                                <Text style={styles.actionBtnTextPrimary}>Open to</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.actionBtnSecondary, { borderColor: activeColors.tint }]}>
+                                <Text style={[styles.actionBtnTextSecondary, { color: activeColors.tint }]}>Add profile section</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.actionBtnTertiary, { borderColor: activeColors.muted }]}>
+                                <Text style={[styles.actionBtnTextTertiary, { color: activeColors.muted }]}>More</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
+                </View>
+
+                {/* Analytics Section */}
+                <View style={[styles.section, { backgroundColor: activeColors.card }]}>
+                    <View style={styles.sectionHeader}>
+                        <View>
+                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Analytics</Text>
+                            <View style={styles.privateRow}>
+                                <Eye size={12} color={activeColors.muted} />
+                                <Text style={[styles.privateLabel, { color: activeColors.muted }]}>Private to you</Text>
+                            </View>
+                        </View>
+                    </View>
+
+                    <View style={styles.analyticsGrid}>
+                        <View style={styles.analyticsItem}>
+                            <View style={styles.analyticsHeader}>
+                                <Users size={20} color={activeColors.text} />
+                                <Text style={[styles.analyticsValue, { color: activeColors.text }]}>{user?.viewedProfile || 0}</Text>
+                            </View>
+                            <Text style={[styles.analyticsLabel, { color: activeColors.text }]}>profile views</Text>
+                            <Text style={[styles.analyticsSub, { color: activeColors.muted }]}>See who's viewed your profile.</Text>
+                        </View>
+                        <View style={[styles.analyticsItem, { borderLeftWidth: 1, borderLeftColor: activeColors.border }]}>
+                            <View style={styles.analyticsHeader}>
+                                <BarChart2 size={20} color={activeColors.text} />
+                                <Text style={[styles.analyticsValue, { color: activeColors.text }]}>{user?.impressions || 0}</Text>
+                            </View>
+                            <Text style={[styles.analyticsLabel, { color: activeColors.text }]}>post impressions</Text>
+                            <Text style={[styles.analyticsSub, { color: activeColors.muted }]}>Check out who's engaging with your posts.</Text>
+                        </View>
+                    </View>
+                </View>
+
+                {/* About Section */}
+                <View style={[styles.section, { backgroundColor: activeColors.card }]}>
+                    <View style={styles.sectionHeader}>
+                        <Text style={[styles.sectionTitle, { color: activeColors.text }]}>About</Text>
+                        <TouchableOpacity onPress={() => router.push('/edit-profile')}>
+                            <Edit2 size={20} color={activeColors.muted} />
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={[styles.aboutText, { color: activeColors.text }]}>
+                        {user?.bio || "You haven't added an about section yet. Adding a summary is a great way to showcase your passion and goals."}
+                    </Text>
+                </View>
+
+                {/* Projects Section */}
+                <View style={[styles.section, { backgroundColor: activeColors.card }]}>
+                    <View style={styles.sectionHeader}>
+                        <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Projects</Text>
+                        <View style={styles.sectionActions}>
+                            <TouchableOpacity onPress={() => router.push('/modal')} style={styles.iconBtn}>
+                                <Plus size={24} color={activeColors.muted} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    {myProjects.length > 0 ? (
+                        <View style={styles.projectsList}>
+                            {myProjects.slice(0, 3).map((project) => (
+                                <View key={project.id} style={[styles.projectItem, { borderBottomColor: activeColors.border }]}>
+                                    <View style={styles.projectInfo}>
+                                        <Text style={[styles.projectTitle, { color: activeColors.text }]} numberOfLines={1}>{project.title}</Text>
+                                        <Text style={[styles.projectStage, { color: activeColors.tint }]}>{project.projectStage.toUpperCase()}</Text>
+                                        <Text style={[styles.projectDesc, { color: activeColors.muted }]} numberOfLines={2}>{project.content}</Text>
+                                    </View>
+                                    {project.media && project.media.length > 0 && (
+                                        <Image source={{ uri: project.media[0] }} style={styles.projectImage} />
+                                    )}
+                                </View>
+                            ))}
+                            {myProjects.length > 3 && (
+                                <TouchableOpacity style={styles.showAllBtn}>
+                                    <Text style={[styles.showAllText, { color: activeColors.muted }]}>Show all {myProjects.length} projects</Text>
+                                    <ArrowLeft size={16} color={activeColors.muted} style={{ transform: [{ rotate: '180deg' }] }} />
+                                </TouchableOpacity>
+                            )}
+                        </View>
+                    ) : (
+                        <Text style={[styles.emptyText, { color: activeColors.muted }]}>No projects showcased yet.</Text>
+                    )}
+                </View>
+
+                {/* Activity Section */}
+                <View style={[styles.section, { backgroundColor: activeColors.card, marginBottom: 20 }]}>
+                    <View style={styles.sectionHeader}>
+                        <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Activity</Text>
+                        <TouchableOpacity style={[styles.outlineBtnSmall, { borderColor: activeColors.tint }]}>
+                            <Text style={{ color: activeColors.tint, fontSize: 13, fontWeight: '600' }}>Create a post</Text>
+                        </TouchableOpacity>
+                    </View>
+                    {myProjects.length > 0 ? (
+                        <View>
+                            <Text style={[styles.activityCount, { color: activeColors.tint }]}>{user?.connections?.length || 0} followers</Text>
+                            <PostCard post={myProjects[0]} />
+                        </View>
+                    ) : (
+                        <Text style={[styles.emptyText, { color: activeColors.muted }]}>No recent activity to show.</Text>
+                    )}
                 </View>
 
                 <TouchableOpacity
@@ -59,6 +236,7 @@ export default function ProfileScreen() {
                     <LogOut size={20} color="#ef4444" />
                     <Text style={styles.logoutText}>Sign Out</Text>
                 </TouchableOpacity>
+                <View style={{ height: 40 }} />
             </ScrollView>
         </View>
     );
@@ -68,80 +246,275 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    header: {
+    navHeader: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingTop: 60,
-        paddingBottom: 20,
+        paddingHorizontal: 16,
+        paddingTop: Platform.OS === 'ios' ? 50 : 36,
+        paddingBottom: 12,
+        height: Platform.OS === 'ios' ? 100 : 86,
     },
     headerTitle: {
-        fontSize: 18,
+        fontSize: 17,
         fontWeight: '700',
+    },
+    iconBtn: {
+        padding: 4,
     },
     scrollContent: {
-        padding: 20,
+        flexGrow: 1,
     },
-    profileCard: {
-        borderRadius: 20,
-        padding: 24,
+    profileHeader: {
+        marginBottom: 8,
+    },
+    banner: {
+        height: 100,
+        width: '100%',
+    },
+    editBannerBtn: {
+        position: 'absolute',
+        right: 16,
+        top: 16,
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        backgroundColor: 'rgba(0,0,0,0.3)',
         alignItems: 'center',
-        borderWidth: 1,
-        marginBottom: 24,
+        justifyContent: 'center',
+    },
+    profileInfoContainer: {
+        paddingHorizontal: 16,
+        paddingBottom: 20,
+    },
+    avatarWrapper: {
+        marginTop: -60,
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        borderWidth: 4,
+        overflow: 'hidden',
+        position: 'relative',
     },
     avatar: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        marginBottom: 16,
+        width: '100%',
+        height: '100%',
+    },
+    editAvatarBtn: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        backgroundColor: '#0a66c2',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 2,
+        borderColor: '#fff',
+    },
+    editProfileIcon: {
+        position: 'absolute',
+        top: 16,
+        right: 16,
+        padding: 4,
+    },
+    userDetails: {
+        marginTop: 12,
     },
     name: {
-        fontSize: 22,
-        fontWeight: '800',
-        marginBottom: 4,
+        fontSize: 24,
+        fontWeight: '700',
     },
-    username: {
+    headline: {
         fontSize: 16,
-        marginBottom: 16,
-    },
-    bio: {
-        fontSize: 14,
-        textAlign: 'center',
+        marginTop: 4,
         lineHeight: 20,
-        marginBottom: 24,
     },
-    statsRow: {
+    metaRow: {
         flexDirection: 'row',
-        width: '100%',
-        justifyContent: 'space-around',
-        borderTopWidth: 1,
-        borderTopColor: 'rgba(0,0,0,0.05)',
-        paddingTop: 20,
+        marginTop: 12,
+        gap: 16,
     },
-    stat: {
+    metaItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+    },
+    metaText: {
+        fontSize: 14,
+    },
+    actionButtons: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+        marginTop: 20,
+    },
+    actionBtnPrimary: {
+        paddingHorizontal: 16,
+        height: 36,
+        borderRadius: 18,
+        justifyContent: 'center',
         alignItems: 'center',
     },
-    statValue: {
+    actionBtnTextPrimary: {
+        color: '#fff',
+        fontWeight: '700',
+        fontSize: 15,
+    },
+    actionBtnSecondary: {
+        paddingHorizontal: 16,
+        height: 36,
+        borderRadius: 18,
+        borderWidth: 1.5,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    actionBtnTextSecondary: {
+        fontWeight: '700',
+        fontSize: 15,
+    },
+    actionBtnTertiary: {
+        paddingHorizontal: 16,
+        height: 36,
+        borderRadius: 18,
+        borderWidth: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    actionBtnTextTertiary: {
+        fontWeight: '700',
+        fontSize: 15,
+    },
+    section: {
+        padding: 16,
+        marginBottom: 8,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    sectionTitle: {
+        fontSize: 20,
+        fontWeight: '700',
+    },
+    sectionActions: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+    privateRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        marginTop: 2,
+    },
+    privateLabel: {
+        fontSize: 12,
+    },
+    analyticsGrid: {
+        flexDirection: 'row',
+        marginTop: 8,
+    },
+    analyticsItem: {
+        flex: 1,
+        paddingRight: 12,
+    },
+    analyticsHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+    },
+    analyticsValue: {
         fontSize: 18,
         fontWeight: '700',
     },
-    statLabel: {
-        fontSize: 12,
+    analyticsLabel: {
+        fontSize: 14,
+        fontWeight: '600',
         marginTop: 4,
+    },
+    analyticsSub: {
+        fontSize: 12,
+        marginTop: 2,
+        lineHeight: 16,
+    },
+    aboutText: {
+        fontSize: 14,
+        lineHeight: 20,
+    },
+    projectsList: {
+        gap: 16,
+    },
+    projectItem: {
+        flexDirection: 'row',
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        gap: 12,
+    },
+    projectInfo: {
+        flex: 1,
+    },
+    projectTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+    },
+    projectStage: {
+        fontSize: 11,
+        fontWeight: '800',
+        marginTop: 2,
+    },
+    projectDesc: {
+        fontSize: 13,
+        marginTop: 4,
+        lineHeight: 18,
+    },
+    projectImage: {
+        width: 80,
+        height: 80,
+        borderRadius: 8,
+    },
+    showAllBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        gap: 8,
+    },
+    showAllText: {
+        fontSize: 15,
+        fontWeight: '600',
+    },
+    activityCount: {
+        fontSize: 14,
+        fontWeight: '600',
+        marginBottom: 12,
+    },
+    emptyText: {
+        fontSize: 14,
+        fontStyle: 'italic',
+    },
+    outlineBtnSmall: {
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 100,
+        borderWidth: 1,
     },
     logoutButton: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        height: 56,
-        borderRadius: 12,
+        height: 50,
+        borderRadius: 8,
         borderWidth: 1,
         gap: 12,
+        marginHorizontal: 16,
+        marginTop: 12,
     },
     logoutText: {
         color: '#ef4444',
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: '600',
     },
 });

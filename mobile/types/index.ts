@@ -1,6 +1,7 @@
 
 export interface User {
     id: string;
+    _id?: string;
     email: string;
     firstName: string;
     lastName: string;
@@ -44,6 +45,7 @@ export const PROJECT_CATEGORIES: { value: ProjectCategory; label: string; icon: 
 
 export interface Post {
     id: string;
+    _id?: string;
     author: User;
     title: string;
     content: string;
