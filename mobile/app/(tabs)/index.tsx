@@ -76,8 +76,8 @@ export default function FeedScreen() {
     <View style={styles.header}>
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
-          <MessageSquareMore size={24} color={activeColors.text} fill={activeColors.text} />
-          <View style={[styles.badge, { backgroundColor: '#ef4444' }]} />
+          <MessageSquareMore size={24} color={activeColors.muted} fill={activeColors.muted} />
+          <View style={[styles.badge, { backgroundColor: '#ef4444', borderColor: activeColors.card }]} />
         </TouchableOpacity>
 
         <View style={[styles.searchBar, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
