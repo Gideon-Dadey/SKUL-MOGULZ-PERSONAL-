@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-ro
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { SocketProvider } from './context/SocketContext';
+import { CallProvider } from './context/CallContext';
 import Navbar from './components/Navbar/Navbar';
 import FeedPage from './pages/FeedPage/FeedPage';
 import CreatePostPage from './pages/CreatePostPage/CreatePostPage';
@@ -101,7 +102,9 @@ function App() {
         <ThemeProvider>
             <AuthProvider>
                 <SocketProvider>
-                    <AppContent />
+                    <CallProvider>
+                        <AppContent />
+                    </CallProvider>
                 </SocketProvider>
             </AuthProvider>
         </ThemeProvider>

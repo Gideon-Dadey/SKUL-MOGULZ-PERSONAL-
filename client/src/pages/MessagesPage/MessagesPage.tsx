@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, MoreHorizontal, Video, Edit, Phone, Image, Paperclip, Smile } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
+import { useCall } from '../../context/CallContext';
 import messageService from '../../services/messageService';
 import { getImageUrl } from '../../services/api';
 import './MessagesPage.css';
@@ -9,6 +10,7 @@ import './MessagesPage.css';
 const MessagesPage: React.FC = () => {
     const { user: currentUser } = useAuth();
     const { socket } = useSocket();
+    const { startCall } = useCall();
     const [conversations, setConversations] = useState<any[]>([]);
     const [selectedChat, setSelectedChat] = useState<string | null>(null);
     const [messages, setMessages] = useState<any[]>([]);
@@ -177,8 +179,12 @@ const MessagesPage: React.FC = () => {
                                 </div>
                                 <div className="chat-actions">
                                     <button className="icon-btn"><MoreHorizontal size={20} /></button>
-                                    <button className="icon-btn"><Video size={20} /></button>
-                                    <button className="icon-btn"><Phone size={20} /></button>
+                                    <button className="icon-btn" onClick={() => startCall(activeChatPartner._id, activeChatPartner.firstName, activeChatPartner.avatar, true)}>
+                                        <Video size={20} />
+                                    </button>
+                                    <button className="icon-btn" onClick={() => startCall(activeChatPartner._id, activeChatPartner.firstName, activeChatPartner.avatar, false)}>
+                                        <Phone size={20} />
+                                    </button>
                                 </div>
                             </header>
 
