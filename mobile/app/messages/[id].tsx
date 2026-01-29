@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
+import { useCall } from '../../context/CallContext';
 import Colors from '../../constants/Colors';
 import api, { getImageUrl } from '../../services/api';
 
@@ -16,6 +17,7 @@ export default function ChatScreen() {
     const { theme } = useTheme();
     const { user } = useAuth();
     const { socket } = useSocket();
+    const { startCall } = useCall();
     const activeColors = Colors[theme];
     const insets = useSafeAreaInsets();
 
@@ -143,10 +145,10 @@ export default function ChatScreen() {
                     )}
                 </View>
                 <View style={styles.headerRight}>
-                    <TouchableOpacity style={styles.iconBtn}>
+                    <TouchableOpacity style={styles.iconBtn} onPress={() => startCall(id as string, partner?.firstName || 'User', partner?.avatar, false)}>
                         <Phone size={20} color={activeColors.text} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconBtn}>
+                    <TouchableOpacity style={styles.iconBtn} onPress={() => startCall(id as string, partner?.firstName || 'User', partner?.avatar, true)}>
                         <Video size={20} color={activeColors.text} />
                     </TouchableOpacity>
                 </View>

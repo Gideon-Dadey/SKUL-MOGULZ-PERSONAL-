@@ -20,6 +20,21 @@ export const initSocket = (server: HttpServer) => {
             console.log(`User ${userId} joined their personal room`);
         });
 
+        // Call Signaling
+        socket.on('call_start', (data: { recipientId: string, callerName: string, callerAvatar: string, isVideo: boolean, roomId: string }) => {
+            io.to(data.recipientId).emit('incoming_call', {
+                callerId: data.recipientId, // Technically checking sender/recipient ID logic
+                from: socket.id, // or data.callerId if passed
+                ...data
+            });
+        });
+
+        socket.on('call_response', (data: { callerId: string, accepted: boolean, roomId?: string }) => {
+            // callerId is the ID of the person who STAYED on the line (the original caller)
+            // But we emit to their room
+            io.to(data.callerId).emit('call_status', data);
+        });
+
         socket.on('disconnect', () => {
             console.log('User disconnected:', socket.id);
         });
