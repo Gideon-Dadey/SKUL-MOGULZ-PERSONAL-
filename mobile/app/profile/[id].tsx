@@ -86,7 +86,10 @@ export default function UserProfileScreen() {
                     </View>
 
                     <View style={styles.actions}>
-                        <TouchableOpacity style={[styles.primaryBtn, { backgroundColor: activeColors.tint }]}>
+                        <TouchableOpacity
+                            style={[styles.primaryBtn, { backgroundColor: activeColors.tint }]}
+                            onPress={() => router.push(('/messages/' + user._id || user.id) as any)}
+                        >
                             <MessageCircle size={20} color="#fff" />
                             <Text style={styles.primaryBtnText}>Message</Text>
                         </TouchableOpacity>
