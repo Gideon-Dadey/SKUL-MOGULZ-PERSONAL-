@@ -84,7 +84,7 @@ export default function PostCard({ post, onLike, onComment, onBookmark }: PostCa
                 </View>
             </View>
 
-            <TouchableOpacity style={styles.content} activeOpacity={0.7} onPress={() => router.push(`/post/${post.id}`)}>
+            <TouchableOpacity style={styles.content} activeOpacity={0.7} onPress={() => router.push(('/post/' + post.id) as any)}>
                 <Text style={[styles.title, { color: activeColors.text }]}>{post.title}</Text>
                 <Text style={[styles.body, { color: activeColors.muted }]} numberOfLines={3}>
                     {post.content}
@@ -92,7 +92,7 @@ export default function PostCard({ post, onLike, onComment, onBookmark }: PostCa
             </TouchableOpacity>
 
             {post.media && post.media.length > 0 && (
-                <TouchableOpacity style={styles.mediaContainer} activeOpacity={0.9} onPress={() => router.push(`/post/${post.id}`)}>
+                <TouchableOpacity style={styles.mediaContainer} activeOpacity={0.9} onPress={() => router.push(('/post/' + post.id) as any)}>
                     <Image source={{ uri: getImageUrl(post.media[0]) || '' }} style={styles.mainMedia} />
                 </TouchableOpacity>
             )}
