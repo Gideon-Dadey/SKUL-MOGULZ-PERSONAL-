@@ -8,7 +8,7 @@ interface AuthContextType extends AuthState {
     login: (email: string, password: string) => Promise<void>;
     register: (userData: any) => Promise<void>;
     logout: () => Promise<void>;
-    updateProfile: (data: Partial<User>) => Promise<void>;
+    updateProfile: (data: any) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -83,7 +83,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
     };
 
-    const updateProfile = async (data: Partial<User>) => {
+    const updateProfile = async (data: any) => {
         try {
             const updatedUser = await authService.updateProfile(data);
             const user = { ...updatedUser, id: updatedUser._id || updatedUser.id };
