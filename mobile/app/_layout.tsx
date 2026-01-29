@@ -9,6 +9,7 @@ import 'react-native-reanimated';
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import { ThemeProvider, useTheme } from '../context/ThemeContext';
 import { SocketProvider } from '../context/SocketContext';
+import { CallProvider } from '../context/CallContext';
 import Colors from '../constants/Colors';
 
 export {
@@ -49,7 +50,9 @@ export default function RootLayout() {
     <ThemeProvider>
       <AuthProvider>
         <SocketProvider>
-          <RootLayoutNav />
+          <CallProvider>
+            <RootLayoutNav />
+          </CallProvider>
         </SocketProvider>
       </AuthProvider>
     </ThemeProvider>
