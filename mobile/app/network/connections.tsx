@@ -33,7 +33,7 @@ export default function ConnectionsScreen() {
 
     const renderItem = ({ item }: { item: any }) => (
         <TouchableOpacity
-            style={[styles.card, { backgroundColor: activeColors.card, shadowColor: activeColors.shadow }]}
+            style={[styles.card, { backgroundColor: activeColors.card, shadowColor: '#000' }]}
             onPress={() => router.push(('/profile/' + item._id) as any)}
             activeOpacity={0.9}
         >
