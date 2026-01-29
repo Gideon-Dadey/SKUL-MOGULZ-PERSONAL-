@@ -161,6 +161,12 @@ export default function ModalScreen() {
             onChangeText={setContent}
           />
 
+          {/* Add Media Button */}
+          <TouchableOpacity onPress={pickImage} style={[styles.addMediaBtn, { borderColor: activeColors.border }]}>
+            <ImageIcon size={20} color={activeColors.tint} />
+            <Text style={[styles.addMediaText, { color: activeColors.tint }]}>Add Photos</Text>
+          </TouchableOpacity>
+
           {/* Media Previews */}
           {images.length > 0 && (
             <ScrollView horizontal style={styles.mediaPreviewScroll}>
@@ -300,24 +306,6 @@ export default function ModalScreen() {
 
           <View style={{ height: 100 }} />
         </ScrollView>
-
-        {/* Keyboard Toolbar */}
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
-          style={[
-            styles.toolbar,
-            {
-              backgroundColor: activeColors.card,
-              borderTopColor: activeColors.border,
-              paddingBottom: Platform.OS === 'ios' ? Math.max(insets.bottom, 20) : 12
-            }
-          ]}
-        >
-          <TouchableOpacity onPress={pickImage} style={styles.toolbarBtn}>
-            <ImageIcon size={24} color={activeColors.tint} />
-          </TouchableOpacity>
-        </KeyboardAvoidingView>
       </View>
 
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
@@ -498,13 +486,15 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     fontSize: 16,
   },
-  toolbar: {
+  addMediaBtn: {
     flexDirection: 'row',
-    padding: 12,
-    borderTopWidth: 1,
-    gap: 20,
+    alignItems: 'center',
+    paddingVertical: 12,
+    gap: 8,
+    marginTop: 8,
   },
-  toolbarBtn: {
-    padding: 8,
-  }
+  addMediaText: {
+    fontSize: 15,
+    fontWeight: '600',
+  },
 });
