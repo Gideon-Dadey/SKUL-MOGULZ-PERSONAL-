@@ -25,7 +25,7 @@ export const CallProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Call State
     const [callState, setCallState] = useState<'idle' | 'calling' | 'incoming' | 'connected'>('idle');
     const [callInfo, setCallInfo] = useState<{
-        partnerId: string;
+        partnerId: string; // Recipient ID (outgoing) OR Caller ID (incoming)
         partnerName: string;
         partnerAvatar: string;
         isVideo: boolean;
@@ -40,7 +40,7 @@ export const CallProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             if (callState !== 'idle') return; // Busy
 
             setCallInfo({
-                partnerId: data.recipientId,
+                partnerId: data.senderId, // The person calling ME
                 partnerName: data.callerName,
                 partnerAvatar: data.callerAvatar,
                 isVideo: data.isVideo,
@@ -83,8 +83,10 @@ export const CallProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setCallState('calling');
 
         // Emit call start
+        const userId = (user as any)?._id || user?.id;
         socket.emit('call_start', {
             recipientId,
+            senderId: userId,
             callerName: `${user.firstName} ${user.lastName}`,
             callerAvatar: user.avatar,
             isVideo,
@@ -95,9 +97,9 @@ export const CallProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const answerCall = () => {
         if (!socket || !callInfo) return;
 
-        const userId = (user as any)?._id || user?.id;
+        // Emit acceptance to the ORIGINAL CALLER
         socket.emit('call_response', {
-            callerId: userId,
+            callerId: callInfo.partnerId,
             accepted: true,
             roomId: callInfo.roomId
         });

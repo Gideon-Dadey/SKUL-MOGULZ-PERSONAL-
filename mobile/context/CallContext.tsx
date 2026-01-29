@@ -26,7 +26,7 @@ export const CallProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Call State
     const [callState, setCallState] = useState<'idle' | 'calling' | 'incoming' | 'connected'>('idle');
     const [callInfo, setCallInfo] = useState<{
-        partnerId: string;
+        partnerId: string; // Recipient ID (outgoing) OR Caller ID (incoming)
         partnerName: string;
         partnerAvatar: string;
         isVideo: boolean;
@@ -41,7 +41,7 @@ export const CallProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             if (callState !== 'idle') return; // Busy
 
             setCallInfo({
-                partnerId: data.recipientId, // Actually the sender's ID is needed here, need fix in server logic but workaround: sender is caller
+                partnerId: data.senderId, // The person calling ME
                 partnerName: data.callerName,
                 partnerAvatar: data.callerAvatar,
                 isVideo: data.isVideo,
@@ -86,6 +86,7 @@ export const CallProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         // Emit call start
         socket.emit('call_start', {
             recipientId,
+            senderId: user.id || user._id,
             callerName: `${user.firstName} ${user.lastName}`,
             callerAvatar: user.avatar,
             isVideo,
@@ -96,34 +97,13 @@ export const CallProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const answerCall = () => {
         if (!socket || !callInfo) return;
 
+        // Emit acceptance to the ORIGINAL CALLER (partnerId in incoming state)
         socket.emit('call_response', {
-            callerId: user?._id || user?.id, // Actually we need the ORIGINAL CALLER ID to emit back to. 
-            // My Server logic emitted to `recipientId` room, which is WRONG for 1-to-1 rooms if they are userIds.
-            // But let's assume we reply to the roomId or broadcast?
-            // Actually, in 'incoming_call', we received 'from' socket ID?
-            // Simple fix: We open the link directly.
+            callerId: callInfo.partnerId,
             accepted: true,
             roomId: callInfo.roomId
         });
 
-        // Since server logic might be imperfect for 2-way routing without proper ID tracking:
-        // We accept -> We open link.
-        // We emit accept so caller opens link.
-        // But caller needs to know WHO accepted. 
-        // For MVP: Both just open link.
-
-        // Wait, I need to emit to the caller.
-        // The server expects `callerId` to emit to `io.to(callerId)`.
-        // The `incoming_call` event gave `from` (socket id) or implicit sender data.
-        // I'll emit with the `roomId` and rely on a simpler flow:
-        // The Backend logic Step 1255: `io.to(data.callerId).emit` -> My incoming `call_start` event payload had `recipientId`?
-        // Ah, the payload I sent in `startCall` has `recipientId`.
-        // The `incoming_call` receives THAT payload.
-        // So `data.recipientId` is ME (the receiver).
-        // I need the Sender's ID.
-        // I'll fix the logic:
-
-        // For now, assume success:
         openMeeting(callInfo.roomId);
         setCallState('idle');
     };
