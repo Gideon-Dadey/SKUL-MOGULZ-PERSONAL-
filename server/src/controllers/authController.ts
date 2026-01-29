@@ -131,7 +131,9 @@ export const getMe = async (req: Request, res: Response) => {
                 bio: user.bio,
                 location: user.location,
                 connections: user.connections,
+                connections: user.connections,
                 avatar: user.avatar,
+                banner: user.banner,
                 interests: user.skills || []
             });
         } else {
@@ -162,6 +164,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
                 bio: user.bio,
                 location: user.location,
                 avatar: user.avatar,
+                banner: user.banner,
                 interests: user.skills || [],
                 connectionsCount: user.connections.length
             });
@@ -188,13 +191,25 @@ export const updateProfile = async (req: any, res: Response) => {
             user.headline = req.body.headline || user.headline;
             user.location = req.body.location || user.location;
             user.skills = req.body.interests || req.body.skills || user.skills;
-            // Avatar update: handle file upload or URL
-            if (req.file) {
+            // Handle file uploads
+            const files = (req as any).files;
+            if (files) {
+                if (files.avatar && files.avatar[0]) {
+                    const filePath = files.avatar[0].path.replace(/\\/g, '/');
+                    user.avatar = `/${filePath}`;
+                }
+                if (files.banner && files.banner[0]) {
+                    const filePath = files.banner[0].path.replace(/\\/g, '/');
+                    user.banner = `/${filePath}`;
+                }
+            } else if (req.file) {
+                // Fallback for single file upload if route somehow reverted or testing
                 const filePath = req.file.path.replace(/\\/g, '/');
                 user.avatar = `/${filePath}`;
-            } else if (req.body.avatar) {
-                user.avatar = req.body.avatar;
             }
+
+            if (req.body.avatar) user.avatar = req.body.avatar;
+            // if (req.body.banner) user.banner = req.body.banner; // Optional if we want updating via URL string
 
             const updatedUser = await user.save();
 
@@ -209,6 +224,7 @@ export const updateProfile = async (req: any, res: Response) => {
                 bio: updatedUser.bio,
                 location: updatedUser.location,
                 avatar: updatedUser.avatar,
+                banner: updatedUser.banner,
                 interests: updatedUser.skills || []
             });
         } else {

@@ -10,6 +10,6 @@ router.post('/register', register);
 router.post('/login', login);
 router.get('/me', protect, getMe);
 router.get('/profile/:username', getUserProfile);
-router.put('/profile', protect, upload.single('avatar'), updateProfile);
+router.put('/profile', protect, upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'banner', maxCount: 1 }]), updateProfile);
 
 export default router;

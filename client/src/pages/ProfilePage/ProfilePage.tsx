@@ -118,7 +118,11 @@ const ProfilePage: React.FC = () => {
             <main className="profile-main">
                 { }
                 <div className="profile-card profile-hero">
-                    <div className="profile-hero__banner"></div>
+                    <div className="profile-hero__banner" style={{
+                        backgroundImage: profileUser.banner ? `url(${getImageUrl(profileUser.banner)})` : undefined,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                    }}></div>
                     <div className="profile-hero__content">
                         <div className="profile-hero__top">
                             <div

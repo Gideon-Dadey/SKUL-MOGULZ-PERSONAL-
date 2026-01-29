@@ -10,6 +10,7 @@ export interface IUser extends Document {
     role: 'student' | 'investor' | 'admin';
     googleId?: string;
     avatar?: string;
+    banner?: string;
     bio?: string;
     headline?: string;
     location?: string;
@@ -31,6 +32,7 @@ const userSchema = new Schema<IUser>({
     role: { type: String, enum: ['student', 'investor', 'admin'], default: 'student' },
     googleId: { type: String, unique: true, sparse: true },
     avatar: { type: String },
+    banner: { type: String },
     bio: { type: String, maxlength: 500 },
     headline: { type: String, maxlength: 100 },
     location: { type: String },
