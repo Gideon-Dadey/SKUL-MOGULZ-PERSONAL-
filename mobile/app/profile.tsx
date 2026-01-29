@@ -1,17 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, RefreshControl, Platform } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, RefreshControl, Platform, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Settings, LogOut, MapPin, Calendar, Edit2, Plus, Users, BarChart2, Eye, Info, PenTool, ExternalLink } from 'lucide-react-native';
+import { ArrowLeft, Settings, LogOut, MapPin, Calendar, Edit2, Plus, Users, BarChart2, Eye, Info, PenTool, ExternalLink, Moon, Sun } from 'lucide-react-native';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Colors from '../constants/Colors';
-import api from '../services/api';
+import api, { getImageUrl } from '../services/api';
 import PostCard from '../components/PostCard';
 
 export default function ProfileScreen() {
     const { user, logout } = useAuth();
-    const { theme } = useTheme();
+    const { theme, toggleTheme } = useTheme();
     const router = useRouter();
     const activeColors = Colors[theme];
 
@@ -83,14 +83,11 @@ export default function ProfileScreen() {
                     </View>
 
                     <View style={styles.profileInfoContainer}>
-                        <View style={[styles.avatarWrapper, { borderColor: activeColors.card }]}>
+                        <View style={[styles.avatarWrapper, { borderColor: activeColors.card, backgroundColor: activeColors.card }]}>
                             <Image
-                                source={{ uri: user?.avatar || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
+                                source={{ uri: getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
                                 style={styles.avatar}
                             />
-                            <TouchableOpacity style={styles.editAvatarBtn}>
-                                <Plus size={16} color="#fff" />
-                            </TouchableOpacity>
                         </View>
 
                         <TouchableOpacity style={styles.editProfileIcon} onPress={() => router.push('/edit-profile')}>
@@ -122,10 +119,26 @@ export default function ProfileScreen() {
                             <TouchableOpacity style={[styles.actionBtnSecondary, { borderColor: activeColors.tint }]}>
                                 <Text style={[styles.actionBtnTextSecondary, { color: activeColors.tint }]}>Add profile section</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.actionBtnTertiary, { borderColor: activeColors.muted }]}>
-                                <Text style={[styles.actionBtnTextTertiary, { color: activeColors.muted }]}>More</Text>
-                            </TouchableOpacity>
                         </View>
+                    </View>
+                </View>
+
+                {/* Theme Switcher Section */}
+                <View style={[styles.section, { backgroundColor: activeColors.card }]}>
+                    <View style={styles.settingItem}>
+                        <View style={styles.settingLabelContainer}>
+                            {theme === 'dark' ? <Moon size={20} color={activeColors.text} /> : <Sun size={20} color={activeColors.text} />}
+                            <View style={{ marginLeft: 12 }}>
+                                <Text style={[styles.settingLabel, { color: activeColors.text }]}>Dark Mode</Text>
+                                <Text style={[styles.settingSublabel, { color: activeColors.muted }]}>{theme === 'dark' ? 'On' : 'Off'}</Text>
+                            </View>
+                        </View>
+                        <Switch
+                            value={theme === 'dark'}
+                            onValueChange={toggleTheme}
+                            trackColor={{ false: '#767577', true: activeColors.tint }}
+                            thumbColor={theme === 'dark' ? '#fff' : '#f4f3f4'}
+                        />
                     </View>
                 </View>
 
@@ -170,7 +183,7 @@ export default function ProfileScreen() {
                         </TouchableOpacity>
                     </View>
                     <Text style={[styles.aboutText, { color: activeColors.text }]}>
-                        {user?.bio || "You haven't added an about section yet. Adding a summary is a great way to showcase your passion and goals."}
+                        {user?.bio || "You haven't added an about section yet."}
                     </Text>
                 </View>
 
@@ -178,11 +191,9 @@ export default function ProfileScreen() {
                 <View style={[styles.section, { backgroundColor: activeColors.card }]}>
                     <View style={styles.sectionHeader}>
                         <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Projects</Text>
-                        <View style={styles.sectionActions}>
-                            <TouchableOpacity onPress={() => router.push('/modal')} style={styles.iconBtn}>
-                                <Plus size={24} color={activeColors.muted} />
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity onPress={() => router.push('/modal')}>
+                            <Plus size={24} color={activeColors.muted} />
+                        </TouchableOpacity>
                     </View>
 
                     {myProjects.length > 0 ? (
@@ -191,41 +202,17 @@ export default function ProfileScreen() {
                                 <View key={project.id} style={[styles.projectItem, { borderBottomColor: activeColors.border }]}>
                                     <View style={styles.projectInfo}>
                                         <Text style={[styles.projectTitle, { color: activeColors.text }]} numberOfLines={1}>{project.title}</Text>
-                                        <Text style={[styles.projectStage, { color: activeColors.tint }]}>{project.projectStage.toUpperCase()}</Text>
+                                        <Text style={[styles.projectStage, { color: activeColors.tint }]}>{project.projectStage?.toUpperCase()}</Text>
                                         <Text style={[styles.projectDesc, { color: activeColors.muted }]} numberOfLines={2}>{project.content}</Text>
                                     </View>
                                     {project.media && project.media.length > 0 && (
-                                        <Image source={{ uri: project.media[0] }} style={styles.projectImage} />
+                                        <Image source={{ uri: getImageUrl(project.media[0]) || '' }} style={styles.projectImage} />
                                     )}
                                 </View>
                             ))}
-                            {myProjects.length > 3 && (
-                                <TouchableOpacity style={styles.showAllBtn}>
-                                    <Text style={[styles.showAllText, { color: activeColors.muted }]}>Show all {myProjects.length} projects</Text>
-                                    <ArrowLeft size={16} color={activeColors.muted} style={{ transform: [{ rotate: '180deg' }] }} />
-                                </TouchableOpacity>
-                            )}
                         </View>
                     ) : (
                         <Text style={[styles.emptyText, { color: activeColors.muted }]}>No projects showcased yet.</Text>
-                    )}
-                </View>
-
-                {/* Activity Section */}
-                <View style={[styles.section, { backgroundColor: activeColors.card, marginBottom: 20 }]}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Activity</Text>
-                        <TouchableOpacity style={[styles.outlineBtnSmall, { borderColor: activeColors.tint }]}>
-                            <Text style={{ color: activeColors.tint, fontSize: 13, fontWeight: '600' }}>Create a post</Text>
-                        </TouchableOpacity>
-                    </View>
-                    {myProjects.length > 0 ? (
-                        <View>
-                            <Text style={[styles.activityCount, { color: activeColors.tint }]}>{user?.connections?.length || 0} followers</Text>
-                            <PostCard post={myProjects[0]} />
-                        </View>
-                    ) : (
-                        <Text style={[styles.emptyText, { color: activeColors.muted }]}>No recent activity to show.</Text>
                     )}
                 </View>
 
@@ -294,24 +281,10 @@ const styles = StyleSheet.create({
         borderRadius: 60,
         borderWidth: 4,
         overflow: 'hidden',
-        position: 'relative',
     },
     avatar: {
         width: '100%',
         height: '100%',
-    },
-    editAvatarBtn: {
-        position: 'absolute',
-        bottom: 0,
-        right: 0,
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        backgroundColor: '#0a66c2',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 2,
-        borderColor: '#fff',
     },
     editProfileIcon: {
         position: 'absolute',
@@ -374,21 +347,25 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         fontSize: 15,
     },
-    actionBtnTertiary: {
-        paddingHorizontal: 16,
-        height: 36,
-        borderRadius: 18,
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    actionBtnTextTertiary: {
-        fontWeight: '700',
-        fontSize: 15,
-    },
     section: {
         padding: 16,
         marginBottom: 8,
+    },
+    settingItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    settingLabelContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    settingLabel: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    settingSublabel: {
+        fontSize: 12,
     },
     sectionHeader: {
         flexDirection: 'row',
@@ -399,10 +376,6 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 20,
         fontWeight: '700',
-    },
-    sectionActions: {
-        flexDirection: 'row',
-        gap: 8,
     },
     privateRow: {
         flexDirection: 'row',
@@ -475,31 +448,9 @@ const styles = StyleSheet.create({
         height: 80,
         borderRadius: 8,
     },
-    showAllBtn: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 12,
-        gap: 8,
-    },
-    showAllText: {
-        fontSize: 15,
-        fontWeight: '600',
-    },
-    activityCount: {
-        fontSize: 14,
-        fontWeight: '600',
-        marginBottom: 12,
-    },
     emptyText: {
         fontSize: 14,
         fontStyle: 'italic',
-    },
-    outlineBtnSmall: {
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 100,
-        borderWidth: 1,
     },
     logoutButton: {
         flexDirection: 'row',

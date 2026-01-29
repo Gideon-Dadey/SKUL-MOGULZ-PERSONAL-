@@ -21,12 +21,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             const savedTheme = await AsyncStorage.getItem('theme');
             if (savedTheme) {
                 setTheme(savedTheme as Theme);
-            } else if (systemColorScheme) {
-                setTheme(systemColorScheme);
+            } else {
+                // Default to light as per user request
+                setTheme('light');
             }
         };
         loadTheme();
-    }, [systemColorScheme]);
+    }, []);
 
     const toggleTheme = async () => {
         const newTheme = theme === 'light' ? 'dark' : 'light';

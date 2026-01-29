@@ -6,7 +6,7 @@ import { Search, Plus, Bell, MessageSquare, Menu, CircleUser } from 'lucide-reac
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import Colors from '../../constants/Colors';
-import api from '../../services/api';
+import api, { getImageUrl } from '../../services/api';
 import PostCard from '../../components/PostCard';
 
 export default function FeedScreen() {
@@ -81,7 +81,7 @@ export default function FeedScreen() {
         >
           {user?.avatar ? (
             <Image
-              source={{ uri: user.avatar }}
+              source={{ uri: getImageUrl(user.avatar) || '' }}
               style={styles.profilePic}
             />
           ) : (
