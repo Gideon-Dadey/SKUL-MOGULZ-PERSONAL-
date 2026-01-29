@@ -24,6 +24,7 @@ export default function EditProfileScreen() {
     });
 
     const [avatarUri, setAvatarUri] = useState<string | null>(null);
+    const [bannerUri, setBannerUri] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
 
     const pickImage = async () => {
@@ -43,6 +44,26 @@ export default function EditProfileScreen() {
 
         if (!result.canceled) {
             setAvatarUri(result.assets[0].uri);
+        }
+    };
+
+    const pickBanner = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (status !== 'granted') {
+            Alert.alert('Permission Denied', 'We need permission to access your photos to change your banner.');
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [3, 1],
+            quality: 0.7,
+        });
+
+        if (!result.canceled) {
+            setBannerUri(result.assets[0].uri);
         }
     };
 
@@ -70,6 +91,18 @@ export default function EditProfileScreen() {
 
                 data.append('avatar', {
                     uri: Platform.OS === 'ios' ? avatarUri.replace('file://', '') : avatarUri,
+                    name: filename,
+                    type,
+                } as any);
+            }
+
+            if (bannerUri) {
+                const filename = bannerUri.split('/').pop() || 'banner.jpg';
+                const match = /\.(\w+)$/.exec(filename);
+                const type = match ? `image/${match[1]}` : `image/jpeg`;
+
+                data.append('banner', {
+                    uri: Platform.OS === 'ios' ? bannerUri.replace('file://', '') : bannerUri,
                     name: filename,
                     type,
                 } as any);
@@ -133,9 +166,28 @@ export default function EditProfileScreen() {
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
+                {/* Banner Edit */}
+                <View style={styles.bannerSection}>
+                    <TouchableOpacity onPress={pickBanner} style={[styles.bannerContainer, { backgroundColor: activeColors.tint + '20' }]}>
+                        {(bannerUri || user?.banner) ? (
+                            <Image
+                                source={{ uri: bannerUri || getImageUrl(user?.banner) || '' }}
+                                style={styles.bannerImage}
+                            />
+                        ) : (
+                            <View style={styles.bannerPlaceholder}>
+                                <Text style={[styles.bannerPlaceholderText, { color: activeColors.tint }]}>Add Background Photo</Text>
+                            </View>
+                        )}
+                        <View style={[styles.cameraIcon, styles.bannerCamera, { backgroundColor: activeColors.tint }]}>
+                            <Camera size={20} color="#fff" />
+                        </View>
+                    </TouchableOpacity>
+                </View>
+
                 {/* Avatar Edit */}
                 <View style={styles.avatarSection}>
-                    <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
+                    <TouchableOpacity onPress={pickImage} style={[styles.avatarContainer, { borderColor: activeColors.background }]}>
                         <Image
                             source={{ uri: avatarUri || getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=A5D6B7&color=fff` }}
                             style={styles.avatarLarge}
@@ -233,22 +285,52 @@ const styles = StyleSheet.create({
         fontWeight: '700',
     },
     scrollContent: {
-        padding: 16,
+        paddingBottom: 40,
+    },
+    bannerSection: {
+        marginBottom: -60, // Overlap effect
+        position: 'relative',
+        zIndex: 1,
+    },
+    bannerContainer: {
+        width: '100%',
+        height: 120,
+        position: 'relative',
+    },
+    bannerImage: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
+    },
+    bannerPlaceholder: {
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    bannerPlaceholderText: {
+        fontWeight: '600',
     },
     avatarSection: {
         alignItems: 'center',
         marginBottom: 24,
+        zIndex: 2,
     },
     avatarContainer: {
         width: 120,
         height: 120,
         borderRadius: 60,
         position: 'relative',
+        borderWidth: 4,
     },
     avatarLarge: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
+        width: '100%', // Changed to % to match parent container width minus border
+        height: '100%',
+        borderRadius: 56, // Adjusted for border
+    },
+    bannerCamera: {
+        right: 16,
+        bottom: 16,
     },
     cameraIcon: {
         position: 'absolute',

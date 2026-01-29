@@ -77,7 +77,13 @@ export default function ProfileScreen() {
                 {/* Header Section (Banner & Profile Pic) */}
                 <View style={[styles.profileHeader, { backgroundColor: activeColors.card }]}>
                     <View style={[styles.banner, { backgroundColor: activeColors.tint + '40' }]}>
-                        <TouchableOpacity style={styles.editBannerBtn}>
+                        {user?.banner && (
+                            <Image
+                                source={{ uri: getImageUrl(user.banner) || '' }}
+                                style={styles.bannerImage}
+                            />
+                        )}
+                        <TouchableOpacity style={styles.editBannerBtn} onPress={() => router.push('/edit-profile')}>
                             <PenTool size={18} color="#fff" />
                         </TouchableOpacity>
                     </View>
@@ -258,6 +264,12 @@ const styles = StyleSheet.create({
     banner: {
         height: 100,
         width: '100%',
+        position: 'relative',
+    },
+    bannerImage: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
     },
     editBannerBtn: {
         position: 'absolute',
