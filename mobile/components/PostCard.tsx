@@ -128,9 +128,8 @@ export default function PostCard({ post, onLike, onComment, onBookmark }: PostCa
 
 const styles = StyleSheet.create({
     container: {
-        borderRadius: 16,
         borderWidth: 1,
-        marginBottom: 16,
+        marginBottom: 0,
         overflow: 'hidden',
     },
     header: {
