@@ -28,6 +28,10 @@ export default function FeedScreen() {
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   const fetchPosts = async () => {
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
     try {
       const response = await api.get('/projects');
       // Adapt posts like in web app
@@ -53,6 +57,7 @@ export default function FeedScreen() {
   };
 
   const fetchUnreadCount = async () => {
+    if (!user) return;
     try {
       const response = await api.get('/messages/conversations');
       const totalUnread = response.data.reduce((acc: number, conv: any) => acc + (conv.unreadCount || 0), 0);
@@ -63,14 +68,18 @@ export default function FeedScreen() {
   };
 
   useEffect(() => {
-    fetchPosts();
-    fetchUnreadCount();
-  }, []);
+    if (user) {
+      fetchPosts();
+      fetchUnreadCount();
+    }
+  }, [user]);
 
   useFocusEffect(
     React.useCallback(() => {
-      fetchUnreadCount();
-    }, [])
+      if (user) {
+        fetchUnreadCount();
+      }
+    }, [user])
   );
 
   useEffect(() => {
