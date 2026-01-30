@@ -53,7 +53,7 @@ export default function RegisterScreen() {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={[styles.container, { backgroundColor: activeColors.background }]}
+            style={[styles.container, { backgroundColor: '#ffffff' }]}
         >
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
@@ -73,7 +73,7 @@ export default function RegisterScreen() {
                     </View>
                 </View>
 
-                <View style={[styles.authCard, { backgroundColor: isDark ? '#161b22' : '#ffffff', shadowColor: isDark ? '#000' : '#888' }]}>
+                <View style={[styles.authCard, { backgroundColor: '#ffffff', shadowColor: '#000' }]}>
                     {error ? (
                         <View style={styles.errorContainer}>
                             <Text style={styles.errorText}>{error}</Text>

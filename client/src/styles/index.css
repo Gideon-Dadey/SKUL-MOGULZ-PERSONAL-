@@ -310,7 +310,7 @@ a:hover {
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  background: var(--bg-main);
+  background: #ffffff;
 }
 
 .auth-container {
@@ -318,7 +318,7 @@ a:hover {
   grid-template-columns: 1fr 1fr;
   max-width: 1000px;
   width: 100%;
-  background: var(--bg-card);
+  background: #ffffff;
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-xl);
