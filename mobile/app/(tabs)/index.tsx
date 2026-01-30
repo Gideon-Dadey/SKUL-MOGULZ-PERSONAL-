@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, Briefcase, MessagesSquare } from 'lucide-react-native';
+import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, Briefcase, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -34,17 +34,17 @@ export default function FeedScreen() {
   const [selectedStage, setSelectedStage] = useState('all');
 
   const categories = [
-    { id: 'all', label: 'All', icon: '✨' },
-    { id: 'technology', label: 'Technology', icon: '💻' },
-    { id: 'healthcare', label: 'Healthcare', icon: '🏥' },
-    { id: 'fintech', label: 'FinTech', icon: '💰' },
-    { id: 'education', label: 'Education', icon: '📚' },
-    { id: 'sustainability', label: 'Sustainability', icon: '🌱' },
-    { id: 'entertainment', label: 'Entertainment', icon: '🎬' },
-    { id: 'ecommerce', label: 'E-Commerce', icon: '🛒' },
-    { id: 'social', label: 'Social Impact', icon: '🤝' },
-    { id: 'ai', label: 'AI & Machine Learning', icon: '🤖' },
-    { id: 'other', label: 'Other', icon: '✨' },
+    { id: 'all', label: 'All', icon: Layers },
+    { id: 'technology', label: 'Technology', icon: Cpu },
+    { id: 'healthcare', label: 'Healthcare', icon: Activity },
+    { id: 'fintech', label: 'FinTech', icon: Landmark },
+    { id: 'education', label: 'Education', icon: GraduationCap },
+    { id: 'sustainability', label: 'Sustainability', icon: Leaf },
+    { id: 'entertainment', label: 'Entertainment', icon: Film },
+    { id: 'ecommerce', label: 'E-Commerce', icon: ShoppingBag },
+    { id: 'social', label: 'Social Impact', icon: Globe },
+    { id: 'ai', label: 'AI & Machine Learning', icon: Bot },
+    { id: 'other', label: 'Other', icon: Sparkles },
   ];
 
   const stages = [
@@ -402,12 +402,18 @@ export default function FeedScreen() {
                           setSelectedCategory(cat.id);
                         }}
                       >
-                        <Text style={[
-                          styles.filterChipText,
-                          { color: selectedCategory === cat.id ? '#fff' : activeColors.text }
-                        ]}>
-                          {cat.icon} {cat.label}
-                        </Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                          <cat.icon
+                            size={16}
+                            color={selectedCategory === cat.id ? '#fff' : activeColors.text}
+                          />
+                          <Text style={[
+                            styles.filterChipText,
+                            { color: selectedCategory === cat.id ? '#fff' : activeColors.text }
+                          ]}>
+                            {cat.label}
+                          </Text>
+                        </View>
                       </TouchableOpacity>
                     ))}
                   </View>
