@@ -34,8 +34,16 @@ npm install
 cd client
 npm install
 
-# Start the development server
+# Start the web development server
 npm run dev
+
+# --- MOBILE SETUP ---
+# Navigate to mobile directory
+cd ../mobile
+npm install
+
+# Start the Expo development server
+npx expo start
 ```
 
 The application will be available at `http://localhost:5173`
@@ -77,8 +85,12 @@ SKUL MOGULZ/
 │   ├── package.json             # Client dependencies
 │   ├── tsconfig.json            # TypeScript configuration
 │   └── vite.config.ts           # Vite configuration
-├── server/                      # Backend Node.js application (future)
-├── docs/                        # Documentation
+├── server/                      # Backend Node.js application (Express/Socket.io)
+├── mobile/                      # Mobile application (Expo/React Native)
+│   ├── app/                     # Expo Router navigation
+│   ├── assets/                  # Brand assets & images
+│   └── components/              # Mobile-specific UI components
+├── docs/                        # Project documentation & vision
 ├── implementation_plan.md       # MVP implementation plan
 ├── package.json                 # Root package.json
 └── README.md                    # This file
@@ -104,16 +116,15 @@ SKUL MOGULZ/
 | **Search & Filter** | Find posts, people, and projects by keyword or category | ✅ |
 | **Like & Comment** | Rich interactions on posts and projects | ✅ |
 | **Theme Toggle** | Switch between light and dark mode | ✅ |
+| **Mobile App** | fully functional Expo/React Native companion app | ✅ |
 | **Responsive Design** | Fully responsive layout for all devices | ✅ |
 
 ### Future Enhancements (Planned)
 
-- [ ] File uploads (Images/Documents) for posts
 - [ ] Advanced Analytics Dashboard
 - [ ] Payment gateway for funding projects
 - [ ] Community groups for specific niches
 - [ ] Email notifications
-- [ ] Mobile app (React Native)
 
 ---
 
@@ -139,6 +150,14 @@ SKUL MOGULZ/
 | **Socket.io** | ✅ Active | Real-time communication |
 | **JWT** | ✅ Active | Secure authentication |
 | **Jitsi Meet** | ✅ Active | Video/Audio conferencing |
+
+### Mobile
+| Technology | Status | Purpose |
+|------------|---------|---------|
+| **React Native** | ✅ Active | Cross-platform mobile framework |
+| **Expo** | ✅ Active | Development workflow & SDK |
+| **Expo Router** | ✅ Active | File-based routing for mobile |
+| **Lucide Native** | ✅ Active | Mobile-optimized icon set |
 
 ### Design
 | Aspect | Choice |

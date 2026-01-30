@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X } from 'lucide-react-native';
+import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, Briefcase } from 'lucide-react-native';
+import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useSocket } from '../../context/SocketContext';
@@ -178,10 +179,11 @@ export default function FeedScreen() {
   };
 
   const renderHeader = () => (
-    <View style={styles.header}>
+    <View style={[styles.header, { backgroundColor: '#074B43' }]}>
+      <StatusBar style="light" />
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
-          <MessageCircle size={28} color={activeColors.text} strokeWidth={1.5} />
+          <MessageCircle size={28} color="#fff" strokeWidth={1.5} />
           {unreadMessages > 0 && (
             <View style={[styles.iOSBadge, { backgroundColor: '#FF3B30' }]}>
               <Text style={styles.iOSBadgeText}>{unreadMessages}</Text>
@@ -189,14 +191,14 @@ export default function FeedScreen() {
           )}
         </TouchableOpacity>
 
-        <View style={[styles.searchBar, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
-          <Search size={18} color={activeColors.light} />
-          <Text style={[styles.searchText, { color: activeColors.light }]}>Search ecosystem...</Text>
+        <View style={styles.searchBar}>
+          <Search size={18} color="#074B43" />
+          <Text style={styles.searchText}>Search ecosystem...</Text>
         </View>
 
         <TouchableOpacity
-          onPress={() => router.push('/profile')}
-          style={[styles.profileButton, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}
+          onPress={() => router.push('/profile/details')}
+          style={styles.profileButton}
         >
           {user?.avatar ? (
             <Image
@@ -204,45 +206,45 @@ export default function FeedScreen() {
               style={styles.profilePic}
             />
           ) : (
-            <CircleUser size={30} color={activeColors.tint} />
+            <CircleUser size={30} color="#fff" />
           )}
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.createCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
+      <View style={[styles.createCard, { backgroundColor: '#FFFFFF', borderColor: 'rgba(0,0,0,0.05)' }]}>
         <View style={styles.createTop}>
           <Image
             source={user?.avatar ? { uri: getImageUrl(user.avatar) } : require('../../assets/images/icon.png')}
             style={styles.createAvatar}
           />
           <TouchableOpacity
-            style={[styles.createButtonTrigger, { backgroundColor: theme === 'dark' ? '#2d2d2d' : '#f3f4f6' }]}
+            style={[styles.createButtonTrigger, { backgroundColor: '#F3F4F6' }]}
             onPress={() => router.push('/modal')}
           >
-            <Text style={[styles.createPlaceholder, { color: activeColors.light }]}>Share your next breakthrough...</Text>
+            <Text style={[styles.createPlaceholder, { color: '#6B7280' }]}>Share your next breakthrough...</Text>
           </TouchableOpacity>
         </View>
-        <View style={[styles.createDivider, { backgroundColor: activeColors.border }]} />
+        <View style={[styles.createDivider, { backgroundColor: '#F3F4F6' }]} />
         <View style={styles.createActions}>
           <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
-            <ImageIcon size={18} color="#3b82f6" />
-            <Text style={[styles.createActionText, { color: activeColors.muted }]}>Media</Text>
+            <ImageIcon size={18} color="#3B82F6" />
+            <Text style={[styles.createActionText, { color: '#4B5563' }]}>Media</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
-            <Calendar size={18} color="#f59e0b" />
-            <Text style={[styles.createActionText, { color: activeColors.muted }]}>Event</Text>
+            <Calendar size={18} color="#F59E0B" />
+            <Text style={[styles.createActionText, { color: '#4B5563' }]}>Event</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
-            <FileText size={18} color="#10b981" />
-            <Text style={[styles.createActionText, { color: activeColors.muted }]}>Article</Text>
+            <FileText size={18} color="#10B981" />
+            <Text style={[styles.createActionText, { color: '#4B5563' }]}>Article</Text>
           </TouchableOpacity>
         </View>
       </View>
 
       <View style={styles.sectionHeader}>
-        <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Explore Innovation</Text>
+        <Text style={[styles.sectionTitle, { color: '#FFFFFF' }]}>Explore Innovation</Text>
         <TouchableOpacity>
-          <Menu size={20} color={activeColors.light} />
+          <Menu size={20} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
     </View>
@@ -339,6 +341,7 @@ const styles = StyleSheet.create({
   header: {
     padding: 16,
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    paddingBottom: 24,
   },
   topBar: {
     flexDirection: 'row',
@@ -351,9 +354,11 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+    backgroundColor: 'rgba(255,255,255,0.1)',
   },
   profilePic: {
     width: '100%',
@@ -363,14 +368,16 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    height: 36,
-    borderRadius: 18,
-    borderWidth: 1,
-    paddingHorizontal: 12,
+    height: 40,
+    borderRadius: 20,
+    paddingHorizontal: 16,
     gap: 8,
+    backgroundColor: '#fff',
   },
   searchText: {
     fontSize: 14,
+    color: '#074B43',
+    fontWeight: '500',
   },
   iconBtn: {
     padding: 4,
@@ -386,7 +393,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: '#fff',
+    borderColor: '#074B43',
     paddingHorizontal: 2,
   },
   iOSBadgeText: {
@@ -398,12 +405,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     padding: 12,
-    marginBottom: 24,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.1,
     shadowRadius: 10,
-    elevation: 2,
+    elevation: 4,
   },
   createTop: {
     flexDirection: 'row',
@@ -453,6 +459,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
+    marginTop: 16,
   },
   sectionTitle: {
     fontSize: 20,
