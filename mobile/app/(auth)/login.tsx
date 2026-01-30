@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
         lineHeight: 22,
     },
     authCard: {
-        borderRadius: 0.5,
+        borderRadius: 8,
         padding: 28,
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.1,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     errorContainer: {
         backgroundColor: 'rgba(255, 68, 68, 0.1)',
         padding: 12,
-        borderRadius: 0.5,
+        borderRadius: 6,
         marginBottom: 20,
     },
     errorText: {
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1.5,
-        borderRadius: 0.5,
+        borderRadius: 8,
         paddingHorizontal: 16,
         height: 60,
     },
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     },
     primaryButton: {
         height: 60,
-        borderRadius: 0.5,
+        borderRadius: 8,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     socialIconBtn: {
         flex: 1,
         height: 52,
-        borderRadius: 0.5,
+        borderRadius: 8,
         borderWidth: 1.5,
         alignItems: 'center',
         justifyContent: 'center',
