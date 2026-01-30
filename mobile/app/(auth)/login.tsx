@@ -6,6 +6,7 @@ import { Mail, Lock, ArrowRight } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import Colors from '../../constants/Colors';
 import { useTheme } from '../../context/ThemeContext';
+import Logo from '../../components/Logo';
 
 export default function LoginScreen() {
     const { login } = useAuth();
@@ -42,6 +43,7 @@ export default function LoginScreen() {
         >
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={styles.header}>
+                    <Logo size={60} />
                     <Text style={[styles.brandText, { color: activeColors.tint }]}>SKUL MOGULZ</Text>
                     <Text style={[styles.title, { color: activeColors.text }]}>Welcome back</Text>
                     <Text style={[styles.subtitle, { color: activeColors.muted }]}>

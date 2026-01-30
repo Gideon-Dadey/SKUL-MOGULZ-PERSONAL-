@@ -10,6 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import notificationService from '../../services/notificationService';
 import { getImageUrl } from '../../services/api';
+import Logo from '../Logo';
 
 import './Navbar.css';
 
@@ -114,7 +115,7 @@ const Navbar: React.FC = () => {
             <nav className="navbar navbar--guest">
                 <div className="navbar__container">
                     <Link to="/" className="navbar__logo">
-                        <div className="navbar__logo-icon">SM</div>
+                        <Logo size={32} />
                         <span className="navbar__logo-text">SKUL MOGULZ</span>
                     </Link>
                     <div className="navbar__guest-actions">
@@ -131,7 +132,7 @@ const Navbar: React.FC = () => {
                 { }
                 <div className="navbar__left">
                     <Link to="/feed" className="navbar__logo">
-                        <div className="navbar__logo-icon">SM</div>
+                        <Logo size={32} />
                     </Link>
 
                     <div className={`navbar__search ${searchFocused ? 'navbar__search--focused' : ''}`}>
