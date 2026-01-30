@@ -384,7 +384,7 @@ export default function ProfileScreen() {
                 <TouchableOpacity onPress={() => router.back()} style={styles.iconBtn}>
                     <ArrowLeft size={24} color={activeColors.text} />
                 </TouchableOpacity>
-                <Text style={[styles.headerTitle, { color: activeColors.text }]}>{user?.username || 'Profile'}</Text>
+                <Text style={[styles.headerTitle, { color: activeColors.text }]}>Profile</Text>
                 <TouchableOpacity onPress={() => router.push('/edit-profile')} style={styles.iconBtn}>
                     <Settings size={22} color={activeColors.text} />
                 </TouchableOpacity>
