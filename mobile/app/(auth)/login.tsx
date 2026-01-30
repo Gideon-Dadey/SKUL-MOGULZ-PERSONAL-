@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
     },
     headerLink: {
-        color: '#0a66c2',
+        color: '#A5D6B7',
         fontSize: 16,
         fontWeight: '600',
     },
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
         top: 16,
     },
     showPasswordText: {
-        color: '#0a66c2',
+        color: '#A5D6B7',
         fontWeight: '600',
         fontSize: 14,
     },
@@ -200,19 +200,19 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
     },
     forgotPasswordText: {
-        color: '#0a66c2',
+        color: '#A5D6B7',
         fontWeight: '600',
         fontSize: 16,
     },
     submitBtn: {
-        backgroundColor: '#0a66c2',
+        backgroundColor: '#A5D6B7',
         height: 52,
         borderRadius: 26, // Fully rounded
         alignItems: 'center',
         justifyContent: 'center',
     },
     submitBtnText: {
-        color: '#fff',
+        color: '#000',
         fontSize: 18,
         fontWeight: 'bold',
     },
