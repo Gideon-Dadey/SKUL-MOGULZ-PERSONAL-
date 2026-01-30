@@ -1,36 +1,60 @@
 
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Platform, Switch } from 'react-native';
-import { useRouter } from 'expo-router';
+import React from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Platform, Dimensions } from 'react-native';
+import { useRouter, Stack } from 'expo-router';
 import {
-    Settings, Bookmark, Gamepad2, Users, ChevronRight, BarChart2, Briefcase, MapPin, X, Crown
+    Settings, Bookmark, Gamepad2, Users, ChevronRight, Briefcase, X, Crown, BarChart2
 } from 'lucide-react-native';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Colors from '../constants/Colors';
 import { getImageUrl } from '../services/api';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ProfileMenuScreen() {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const { theme } = useTheme();
     const router = useRouter();
+    const insets = useSafeAreaInsets();
     const activeColors = Colors[theme];
+    const isDark = theme === 'dark';
 
-    // Navigate to full profile details
     const goToProfileDetails = () => {
         router.push('/profile/details');
     };
 
+    // Helper to format name to Title Case
+    const formatName = (str?: string) => {
+        if (!str) return '';
+        return str.split(' ')
+            .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+            .join(' ');
+    };
+
+    const fullName = formatName((user?.firstName || '') + ' ' + (user?.lastName || ''));
+
+    // Custom "Organic" Background colors
+    const topSectionColor = isDark ? '#1a1a1a' : '#ffffff';
+    const bottomSectionColor = isDark ? '#121212' : '#f8f9fa'; // Slightly off-white for menu
+    const separatorColor = isDark ? '#333' : '#e5e7eb';
+
     return (
-        <View style={[styles.container, { backgroundColor: activeColors.background }]}>
-            <View style={[styles.header, { backgroundColor: activeColors.card }]}>
-                {/* Top Bar with Close button maybe? Or just back */}
-                <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
-                    <X size={24} color={activeColors.text} />
+        <View style={[styles.container, { backgroundColor: topSectionColor }]}>
+            <Stack.Screen options={{ headerShown: false }} />
+            {/* Header / Info Section */}
+            <View style={[styles.topSection, { paddingTop: insets.top + 10, backgroundColor: topSectionColor }]}>
+                {/* Close Button */}
+                <TouchableOpacity
+                    onPress={() => router.back()}
+                    style={styles.closeBtn}
+                    hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+                >
+                    <X size={26} color={activeColors.text} />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.userInfo} onPress={goToProfileDetails}>
-                    <View style={styles.avatarContainer}>
+                {/* User Info Block */}
+                <TouchableOpacity activeOpacity={0.8} onPress={goToProfileDetails} style={styles.profileBlock}>
+                    <View style={styles.avatarRow}>
                         <Image
                             source={{ uri: getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}+${user?.lastName || ''}&background=A5D6B7&color=fff` }}
                             style={styles.avatar}
@@ -38,72 +62,77 @@ export default function ProfileMenuScreen() {
                     </View>
 
                     <Text style={[styles.name, { color: activeColors.text }]}>
-                        {user?.firstName} {user?.lastName}
+                        {fullName || 'User'}
                     </Text>
 
-                    <Text style={[styles.headline, { color: activeColors.muted }]} numberOfLines={2}>
+                    <Text style={[styles.headline, { color: activeColors.muted }]}>
                         {user?.headline || (user?.role === 'student' ? 'Student Entrepreneur' : 'Investor')}
                     </Text>
 
-                    {user?.location && (
-                        <Text style={[styles.location, { color: activeColors.muted }]}>
-                            {user.location}
-                        </Text>
-                    )}
-
-                    <View style={styles.companyRow}>
-                        <View style={{ width: 24, height: 24, backgroundColor: '#e0f2f1', borderRadius: 4, alignItems: 'center', justifyContent: 'center', marginRight: 8 }}>
-                            <Briefcase size={14} color="#00695c" />
-                        </View>
-                        <Text style={[styles.companyText, { color: activeColors.text }]}>
+                    {/* Company Badge - "Organic" Pill Style */}
+                    <View style={[styles.companyBadge, { backgroundColor: isDark ? '#2c3e50' : '#f0f9ff' }]}>
+                        <Briefcase size={14} color={isDark ? '#a0aec0' : '#0077b5'} strokeWidth={2.5} />
+                        <Text style={[styles.companyText, { color: isDark ? '#e2e8f0' : '#0077b5' }]}>
                             {user?.experience?.[0]?.company || 'PragmaHealth LLC'}
                         </Text>
                     </View>
-                </TouchableOpacity>
 
-                <View style={styles.statsRow}>
-                    <Text style={[styles.statsCount, { color: '#3b82f6' }]}>{user?.viewedProfile || 281}</Text>
-                    <Text style={[styles.statsLabel, { color: activeColors.muted }]}> profile viewers</Text>
-                </View>
-
-                <TouchableOpacity activeOpacity={0.7} style={styles.analyticsLink}>
-                    <Text style={[styles.analyticsLinkText, { color: activeColors.text }]}>View all analytics</Text>
+                    {/* Analytics Preview */}
+                    <View style={styles.analyticsRow}>
+                        <View style={styles.viewCountContainer}>
+                            <Text style={styles.viewCount}>{user?.viewedProfile || 281}</Text>
+                            <Text style={[styles.viewLabel, { color: activeColors.muted }]}> profile viewers</Text>
+                        </View>
+                        <TouchableOpacity onPress={() => router.push('/profile/details')}>
+                            <Text style={styles.analyticsLink}>View all analytics</Text>
+                        </TouchableOpacity>
+                    </View>
                 </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.menuContainer}>
-                <TouchableOpacity style={styles.menuItem}>
-                    <View style={styles.menuIconInfo}>
-                        <Gamepad2 size={24} color={activeColors.text} />
+            {/* Menu Section - Different Background for "Standard" Separation */}
+            <View style={[styles.menuSection, { backgroundColor: bottomSectionColor, borderTopColor: separatorColor }]}>
+                <ScrollView contentContainerStyle={styles.menuScroll} showsVerticalScrollIndicator={false}>
+
+                    {/* Menu Items */}
+                    <TouchableOpacity style={styles.menuItem}>
+                        <View style={styles.iconContainer}>
+                            <Gamepad2 size={22} color={activeColors.text} strokeWidth={1.5} />
+                        </View>
                         <Text style={[styles.menuText, { color: activeColors.text }]}>Puzzle games</Text>
-                    </View>
-                </TouchableOpacity>
+                    </TouchableOpacity>
 
-                <TouchableOpacity style={styles.menuItem}>
-                    <View style={styles.menuIconInfo}>
-                        <Bookmark size={24} color={activeColors.text} />
+                    <TouchableOpacity style={styles.menuItem}>
+                        <View style={styles.iconContainer}>
+                            <Bookmark size={22} color={activeColors.text} strokeWidth={1.5} />
+                        </View>
                         <Text style={[styles.menuText, { color: activeColors.text }]}>Saved posts</Text>
-                    </View>
-                </TouchableOpacity>
+                    </TouchableOpacity>
 
-                <TouchableOpacity style={styles.menuItem}>
-                    <View style={styles.menuIconInfo}>
-                        <Users size={24} color={activeColors.text} />
+                    <TouchableOpacity style={styles.menuItem}>
+                        <View style={styles.iconContainer}>
+                            <Users size={22} color={activeColors.text} strokeWidth={1.5} />
+                        </View>
                         <Text style={[styles.menuText, { color: activeColors.text }]}>Groups</Text>
-                    </View>
-                </TouchableOpacity>
-            </ScrollView>
+                    </TouchableOpacity>
 
-            <View style={[styles.footer, { borderTopColor: activeColors.border }]}>
-                <TouchableOpacity style={styles.footerItem}>
-                    <Settings size={24} color={activeColors.text} />
-                    <Text style={[styles.footerText, { color: activeColors.text }]}>Settings</Text>
-                </TouchableOpacity>
+                </ScrollView>
 
-                <TouchableOpacity style={styles.premiumBtn}>
-                    <Crown size={20} color="#5a3a00" />
-                    <Text style={styles.premiumBtnText}>Reactivate Premium: 50% Off</Text>
-                </TouchableOpacity>
+                {/* Footer Actions */}
+                <View style={[styles.footer, { borderColor: separatorColor, backgroundColor: bottomSectionColor }]}>
+                    <TouchableOpacity style={styles.menuItem} onPress={() => router.push('/settings')}>
+                        <View style={styles.iconContainer}>
+                            <Settings size={22} color={activeColors.text} strokeWidth={1.5} />
+                        </View>
+                        <Text style={[styles.menuText, { color: activeColors.text }]}>Settings</Text>
+                    </TouchableOpacity>
+
+                    {/* Premium Button - Gold Organic Pill */}
+                    <TouchableOpacity style={styles.premiumButton}>
+                        <Crown size={18} color="#78350f" fill="#f59e0b" fillOpacity={0.2} />
+                        <Text style={styles.premiumText}>Reactivate Premium: 50% Off</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     );
@@ -113,125 +142,125 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    header: {
-        paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    topSection: {
         paddingHorizontal: 24,
-        paddingBottom: 24,
-        borderBottomWidth: 1,
-        borderBottomColor: 'rgba(0,0,0,0.05)',
+        paddingBottom: 32,
     },
     closeBtn: {
-        alignSelf: 'flex-start',
-        padding: 4,
-        marginBottom: 16,
-        marginLeft: -4
-    },
-    userInfo: {
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        marginLeft: -12,
         marginBottom: 16,
     },
-    avatarContainer: {
-        marginBottom: 16,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+    profileBlock: {
+        gap: 8,
     },
-    avatar: {
-        width: 72,
-        height: 72,
-        borderRadius: 36,
-        borderWidth: 2,
-        borderColor: '#fff',
-    },
-    name: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        marginBottom: 4,
-    },
-    headline: {
-        fontSize: 14,
-        lineHeight: 20,
+    avatarRow: {
         marginBottom: 8,
     },
-    location: {
-        fontSize: 14,
-        marginBottom: 12,
+    avatar: {
+        width: 64,
+        height: 64,
+        borderRadius: 32,
     },
-    companyRow: {
+    name: {
+        fontSize: 24, // Standard, big but not huge
+        fontWeight: '800', // Professional heavy weight
+        letterSpacing: -0.5,
+    },
+    headline: {
+        fontSize: 15,
+        fontWeight: '400',
+    },
+    companyBadge: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 16,
+        alignSelf: 'flex-start',
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 8,
+        gap: 8,
+        marginTop: 4,
+        marginBottom: 8,
     },
     companyText: {
         fontSize: 14,
         fontWeight: '600',
     },
-    statsRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 8,
+    analyticsRow: {
+        marginTop: 12,
+        gap: 6,
     },
-    statsCount: {
+    viewCountContainer: {
+        flexDirection: 'row',
+        alignItems: 'baseline',
+    },
+    viewCount: {
         fontSize: 14,
         fontWeight: '700',
+        color: '#0a66c2', // Professional blue
     },
-    statsLabel: {
+    viewLabel: {
         fontSize: 14,
     },
     analyticsLink: {
-        paddingVertical: 8,
-    },
-    analyticsLinkText: {
         fontSize: 14,
         fontWeight: '600',
+        color: '#555',
         textDecorationLine: 'underline',
+        opacity: 0.8,
     },
-    menuContainer: {
-        paddingVertical: 16,
+    menuSection: {
+        flex: 1,
+        borderTopWidth: 1,
+        borderTopRightRadius: 24, // Organic touch
+        borderTopLeftRadius: 24, // Organic touch
+        marginTop: -20, // Overlap slightly for layered focus? Or just visually separate.
+        // Let's not do negative margin, just standard separation
+        marginTop: 0,
+        paddingTop: 32,
+    },
+    menuScroll: {
         paddingHorizontal: 24,
     },
     menuItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 16,
-    },
-    menuIconInfo: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        paddingVertical: 18,
         gap: 16,
     },
+    iconContainer: {
+        width: 24,
+        alignItems: 'center',
+    },
     menuText: {
-        fontSize: 18,
-        fontWeight: '600',
+        fontSize: 17,
+        fontWeight: '500', // Standard readable weight
     },
     footer: {
-        padding: 24,
+        paddingHorizontal: 24,
         paddingBottom: 40,
-        borderTopWidth: 1,
+        paddingTop: 20,
     },
-    footerItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 24,
-        gap: 12,
-    },
-    footerText: {
-        fontSize: 16,
-        fontWeight: '600',
-    },
-    premiumBtn: {
-        backgroundColor: '#ffd580', // Gold/Warning color
+    premiumButton: {
+        backgroundColor: '#fde68a', // Soft gold
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 12,
-        borderRadius: 24,
-        gap: 8,
+        paddingVertical: 14,
+        borderRadius: 16, // Organic rounded
+        gap: 10,
+        marginTop: 12,
+        shadowColor: "#d97706",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
     },
-    premiumBtnText: {
-        color: '#5a3a00',
-        fontWeight: '700',
+    premiumText: {
+        color: '#78350f', // Dark amber text
         fontSize: 15,
-    }
+        fontWeight: '700',
+    },
 });
