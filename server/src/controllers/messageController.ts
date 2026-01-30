@@ -22,7 +22,7 @@ export const getConversations = async (req: any, res: Response) => {
                 }
             },
             {
-                $sort: { createdAt: -1 }
+                $sort: { createdAt: 1 }
             },
             {
                 $group: {
@@ -33,8 +33,8 @@ export const getConversations = async (req: any, res: Response) => {
                             "$sender"
                         ]
                     },
-                    lastMessage: { $first: "$content" },
-                    lastMessageDate: { $first: "$createdAt" },
+                    lastMessage: { $last: "$content" },
+                    lastMessageDate: { $last: "$createdAt" },
                     unreadCount: {
                         $sum: {
                             $cond: [
