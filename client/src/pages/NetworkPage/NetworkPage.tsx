@@ -72,7 +72,7 @@ const NetworkPage: React.FC = () => {
             { }
             <aside className="network-sidebar">
                 <div className="network-card sidebar-menu">
-                    <h3>Manage my network</h3>
+                    <h3>Manage networks</h3>
                     <ul className="sidebar-menu-list">
                         <li>
                             <Link to="/connections" className="sidebar-menu-item">

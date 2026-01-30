@@ -160,6 +160,7 @@ const ProfilePage: React.FC = () => {
                                     className="hidden-input"
                                     accept="image/*"
                                     onChange={handleAvatarChange}
+                                    style={{ display: 'none' }}
                                 />
                             </div>
                             {isOwnProfile && (

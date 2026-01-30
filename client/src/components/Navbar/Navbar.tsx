@@ -129,7 +129,7 @@ const Navbar: React.FC = () => {
 
     const navItems = [
         { path: '/feed', icon: Home, label: 'Home' },
-        { path: '/network', icon: Users, label: 'My Network' },
+        { path: '/network', icon: Users, label: 'Network' },
         { path: '/projects', icon: Briefcase, label: 'Projects' },
         { path: '/messages', icon: MessageCircle, label: 'Messaging', badge: unreadMessages },
         { path: '/notifications', icon: Bell, label: 'Notifications', badge: unreadNotifications },
