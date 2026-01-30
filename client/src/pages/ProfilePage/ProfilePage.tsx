@@ -19,7 +19,9 @@ const ProfilePage: React.FC = () => {
     const [userPosts, setUserPosts] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isUploading, setIsUploading] = useState(false);
+    const [isBannerUploading, setIsBannerUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const bannerInputRef = useRef<HTMLInputElement>(null);
     const { updateProfile } = useAuth();
 
     useEffect(() => {
@@ -114,6 +116,40 @@ const ProfilePage: React.FC = () => {
         }
     };
 
+    const handleBannerClick = () => {
+        if (isOwnProfile && bannerInputRef.current) {
+            bannerInputRef.current.click();
+        }
+    };
+
+    const handleBannerChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setIsBannerUploading(true);
+            const formData = new FormData();
+            formData.append('banner', file);
+
+            const response = await api.put('/auth/profile', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            if (response.data) {
+                const updatedUser = response.data;
+                setProfileUser((prev: any) => ({ ...prev, banner: updatedUser.banner }));
+                updateProfile(updatedUser);
+            }
+        } catch (error) {
+            console.error("Failed to upload banner", error);
+            alert("Failed to upload banner image. Please try again.");
+        } finally {
+            setIsBannerUploading(false);
+        }
+    };
+
     const handleDeletePost = (postId: string) => {
         setUserPosts(currentPosts => currentPosts.filter(post => post.id !== postId));
     };
@@ -133,7 +169,31 @@ const ProfilePage: React.FC = () => {
                         backgroundImage: profileUser.banner ? `url(${getImageUrl(profileUser.banner)})` : undefined,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center'
-                    }}></div>
+                    }}>
+                        {isOwnProfile && (
+                            <>
+                                <button
+                                    className="profile-hero__banner-edit"
+                                    onClick={handleBannerClick}
+                                    aria-label="Edit Banner"
+                                >
+                                    {isBannerUploading ? (
+                                        <div className="upload-spinner-sm"></div>
+                                    ) : (
+                                        <Camera size={18} />
+                                    )}
+                                </button>
+                                <input
+                                    type="file"
+                                    ref={bannerInputRef}
+                                    className="hidden-input"
+                                    accept="image/*"
+                                    onChange={handleBannerChange}
+                                    style={{ display: 'none' }}
+                                />
+                            </>
+                        )}
+                    </div>
                     <div className="profile-hero__content">
                         <div className="profile-hero__top">
                             <div
