@@ -125,10 +125,13 @@ export const sendMessage = async (req: any, res: Response) => {
 
         // Emit to recipient's personal room
         const io = getIO();
-        io.to(recipientId).emit('new_message', fullMessage);
+        const targetRoom = String(recipientId);
+        console.log(`Emitting messaging to room: ${targetRoom} from sender: ${senderId}`);
+        io.to(targetRoom).emit('new_message', fullMessage);
 
         res.status(201).json(fullMessage);
     } catch (error: any) {
+        console.error("Send Message Error:", error);
         res.status(500).json({ message: error.message });
     }
 };

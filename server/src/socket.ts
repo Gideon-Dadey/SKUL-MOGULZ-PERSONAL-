@@ -16,20 +16,21 @@ export const initSocket = (server: HttpServer) => {
 
         // Allow users to join a room specific to their userId
         socket.on('join_room', (userId: string) => {
-            socket.join(userId);
-            console.log(`User ${userId} joined their personal room`);
+            const roomName = String(userId);
+            socket.join(roomName);
+            console.log(`Socket ${socket.id} joined room: ${roomName}`);
         });
 
         // Call Signaling
         socket.on('call_start', (data: { recipientId: string, senderId: string, callerName: string, callerAvatar: string, isVideo: boolean, roomId: string }) => {
             // Emit to the recipient's room
-            io.to(data.recipientId).emit('incoming_call', data);
+            io.to(String(data.recipientId)).emit('incoming_call', data);
         });
 
         socket.on('call_response', (data: { callerId: string, accepted: boolean, roomId?: string }) => {
             // callerId is the ID of the person who STAYED on the line (the original caller)
             // But we emit to their room
-            io.to(data.callerId).emit('call_status', data);
+            io.to(String(data.callerId)).emit('call_status', data);
         });
 
         socket.on('disconnect', () => {

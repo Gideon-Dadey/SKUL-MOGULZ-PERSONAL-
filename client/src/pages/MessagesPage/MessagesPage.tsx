@@ -21,6 +21,8 @@ const MessagesPage: React.FC = () => {
 
 
     useEffect(() => {
+        if (!currentUser) return; // Don't poll if not logged in
+
         const fetchConversations = async () => {
             try {
                 setLoadingConversations(true);
@@ -29,7 +31,7 @@ const MessagesPage: React.FC = () => {
                 if (data.length > 0 && !selectedChat) {
                     // Use the user's ID as the selected chat target
                     const firstChatUser = data[0].user;
-                    setSelectedChat(firstChatUser._id || firstChatUser.id);
+                    setSelectedChat((firstChatUser as any)._id || firstChatUser.id);
                 }
             } catch (error) {
                 console.error("Failed to fetch conversations", error);
@@ -41,18 +43,21 @@ const MessagesPage: React.FC = () => {
         fetchConversations();
         const interval = setInterval(fetchConversations, 10000);
         return () => clearInterval(interval);
-    }, []);
+    }, [currentUser]); // Re-run when user changes
 
 
     useEffect(() => {
         if (!socket) return;
 
         socket.on('new_message', (message: any) => {
+            console.log('Web Client received new_message:', message);
             const senderId = message.sender?._id || message.sender?.id || message.sender;
             const currentUserId = (currentUser as any)?._id || currentUser?.id;
 
             // Update messages if the message is from or to the person currently selected
-            if (senderId === selectedChat || (message.recipient === selectedChat && senderId === currentUserId)) {
+            // Use String() to ensure ObjectIds and Strings are comparable
+            if (String(senderId) === String(selectedChat) ||
+                (String(message.recipient) === String(selectedChat) && String(senderId) === String(currentUserId))) {
                 setMessages((prev: any[]) => {
                     // Prevent duplicates
                     if (prev.find(m => m._id === message._id)) return prev;
