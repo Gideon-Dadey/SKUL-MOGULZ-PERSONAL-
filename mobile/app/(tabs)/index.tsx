@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, Sparkles, Send, X } from 'lucide-react-native';
+import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, Target, Send, X } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useSocket } from '../../context/SocketContext';
@@ -229,7 +229,7 @@ export default function FeedScreen() {
             <Text style={[styles.createActionText, { color: activeColors.muted }]}>Media</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
-            <Sparkles size={18} color="#8b5cf6" />
+            <Target size={18} color="#10b981" />
             <Text style={[styles.createActionText, { color: activeColors.muted }]}>Goal</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
