@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs, router } from 'expo-router';
-import { Platform, TouchableOpacity } from 'react-native';
+import { View, Text, Platform, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Home, Users, Briefcase, MessageCircle, Bell, SquarePlus } from 'lucide-react-native';
 
@@ -66,28 +66,39 @@ export default function TabLayout() {
     ? Math.max(insets.bottom, 20)
     : Math.max(insets.bottom, 10);
 
+  const renderTabIcon = (Icon: any, label: string, focused: boolean) => {
+    if (focused) {
+      return (
+        <View style={styles.activePill}>
+          <Icon size={18} color="#fff" />
+          <Text style={styles.activeLabel}>{label}</Text>
+        </View>
+      );
+    }
+    return <Icon size={24} color={activeColors.tabIconDefault} />;
+  };
+
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: activeColors.tint,
+        tabBarActiveTintColor: '#fff',
         tabBarInactiveTintColor: activeColors.tabIconDefault,
+        tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: activeColors.card,
-          borderTopColor: activeColors.border,
-          borderTopWidth: 1,
+          backgroundColor: '#fff',
+          borderTopWidth: 0,
           height: tabBarHeight,
           paddingBottom: tabBarPaddingBottom,
           paddingTop: 10,
-          elevation: 8,
+          elevation: 20,
           shadowColor: '#000',
-          shadowOffset: { width: 0, height: -2 },
+          shadowOffset: { width: 0, height: -10 },
           shadowOpacity: 0.1,
-          shadowRadius: 4,
-        },
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '600',
-          marginTop: 2,
+          shadowRadius: 15,
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
         },
         headerShown: false,
       }}>
@@ -95,21 +106,21 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <Home size={24} color={color} />,
+          tabBarIcon: ({ focused }) => renderTabIcon(Home, 'Home', focused),
         }}
       />
       <Tabs.Screen
         name="network"
         options={{
           title: 'Network',
-          tabBarIcon: ({ color }) => <Users size={24} color={color} />,
+          tabBarIcon: ({ focused }) => renderTabIcon(Users, 'Network', focused),
         }}
       />
       <Tabs.Screen
         name="post"
         options={{
           title: 'Post',
-          tabBarIcon: ({ color }) => <SquarePlus size={26} color={color} />,
+          tabBarIcon: ({ focused }) => renderTabIcon(SquarePlus, 'Post', focused),
           tabBarButton: (props) => (
             <TouchableOpacity
               {...(props as any)}
@@ -124,7 +135,7 @@ export default function TabLayout() {
         name="notifications"
         options={{
           title: 'Alerts',
-          tabBarIcon: ({ color }) => <Bell size={24} color={color} />,
+          tabBarIcon: ({ focused }) => renderTabIcon(Bell, 'Alerts', focused),
           tabBarBadge: unreadAlerts > 0 ? unreadAlerts : undefined,
           tabBarBadgeStyle: { backgroundColor: '#FF4B2B', color: '#fff' }
         }}
@@ -133,7 +144,7 @@ export default function TabLayout() {
         name="projects"
         options={{
           title: 'Projects',
-          tabBarIcon: ({ color }) => <Briefcase size={24} color={color} />,
+          tabBarIcon: ({ focused }) => renderTabIcon(Briefcase, 'Projects', focused),
         }}
       />
       <Tabs.Screen
@@ -151,3 +162,26 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  activePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#074B43',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 25,
+    gap: 8,
+    // Add a slight lift to the pill
+    shadowColor: '#074B43',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  activeLabel: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+});
