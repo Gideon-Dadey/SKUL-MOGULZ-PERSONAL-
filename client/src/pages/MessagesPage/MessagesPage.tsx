@@ -28,10 +28,6 @@ const MessagesPage: React.FC = () => {
                 setLoadingConversations(true);
                 const data = await messageService.getConversations();
                 setConversations(data);
-                if (data.length > 0 && !selectedChat) {
-                    // conv._id is the partner's user ID from the server aggregation
-                    setSelectedChat(data[0]._id);
-                }
             } catch (error) {
                 console.error("Failed to fetch conversations", error);
             } finally {
