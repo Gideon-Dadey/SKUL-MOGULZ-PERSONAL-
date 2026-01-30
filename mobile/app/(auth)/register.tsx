@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
     },
     headerLink: {
-        color: '#0a66c2',
+        color: '#A5D6B7',
         fontSize: 16,
         fontWeight: '600',
     },
@@ -265,14 +265,14 @@ const styles = StyleSheet.create({
         lineHeight: 18,
     },
     submitBtn: {
-        backgroundColor: '#0a66c2', // LinkedIn Blue
+        backgroundColor: '#A5D6B7',
         height: 52,
         borderRadius: 26,
         alignItems: 'center',
         justifyContent: 'center',
     },
     submitBtnText: {
-        color: '#fff',
+        color: '#000',
         fontSize: 18,
         fontWeight: 'bold',
     },
@@ -336,9 +336,9 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     roleOptionSelected: {
-        borderColor: '#0a66c2',
+        borderColor: '#A5D6B7',
         borderWidth: 2,
-        backgroundColor: 'rgba(10, 102, 194, 0.05)',
+        backgroundColor: 'rgba(165, 214, 183, 0.1)',
     },
     roleContent: {
         flex: 1,
@@ -364,13 +364,13 @@ const styles = StyleSheet.create({
         marginLeft: 16,
     },
     radioOuterSelected: {
-        borderColor: '#0a66c2',
+        borderColor: '#A5D6B7',
     },
     radioInner: {
         width: 12,
         height: 12,
         borderRadius: 6,
-        backgroundColor: '#0a66c2',
+        backgroundColor: '#A5D6B7',
     },
     navButtons: {
         flexDirection: 'row',
