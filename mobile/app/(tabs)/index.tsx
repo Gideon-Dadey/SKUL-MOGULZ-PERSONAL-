@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, Sparkles, Send, X } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useSocket } from '../../context/SocketContext';
 import Colors from '../../constants/Colors';
 import api, { getImageUrl } from '../../services/api';
 import PostCard from '../../components/PostCard';
@@ -12,6 +14,7 @@ import PostCard from '../../components/PostCard';
 export default function FeedScreen() {
   const { user } = useAuth();
   const { theme } = useTheme();
+  const { socket } = useSocket();
   const router = useRouter();
   const activeColors = Colors[theme];
 
@@ -21,6 +24,7 @@ export default function FeedScreen() {
   const [commentModalVisible, setCommentModalVisible] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   const fetchPosts = async () => {
@@ -48,9 +52,39 @@ export default function FeedScreen() {
     }
   };
 
+  const fetchUnreadCount = async () => {
+    try {
+      const response = await api.get('/messages/conversations');
+      const totalUnread = response.data.reduce((acc: number, conv: any) => acc + (conv.unreadCount || 0), 0);
+      setUnreadMessages(totalUnread);
+    } catch (error) {
+      console.error("Failed to fetch unread count on feed", error);
+    }
+  };
+
   useEffect(() => {
     fetchPosts();
+    fetchUnreadCount();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchUnreadCount();
+    }, [])
+  );
+
+  useEffect(() => {
+    if (!socket) return;
+    const handleNewMessage = () => {
+      // Small delay to allow server aggregation to update if needed, 
+      // or just refetch to be sure we have the latest
+      fetchUnreadCount();
+    };
+    socket.on('new_message', handleNewMessage);
+    return () => {
+      socket.off('new_message', handleNewMessage);
+    };
+  }, [socket]);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -138,8 +172,12 @@ export default function FeedScreen() {
     <View style={styles.header}>
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
-          <MessageCircle size={26} color={activeColors.text} strokeWidth={1.5} />
-          <View style={[styles.badge, { backgroundColor: '#FF3B30', width: 10, height: 10, borderRadius: 5, top: 0, right: 0 }]} />
+          <MessageCircle size={28} color={activeColors.text} strokeWidth={1.5} />
+          {unreadMessages > 0 && (
+            <View style={[styles.iOSBadge, { backgroundColor: '#FF3B30' }]}>
+              <Text style={styles.iOSBadgeText}>{unreadMessages}</Text>
+            </View>
+          )}
         </TouchableOpacity>
 
         <View style={[styles.searchBar, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
@@ -329,15 +367,23 @@ const styles = StyleSheet.create({
     padding: 4,
     position: 'relative',
   },
-  badge: {
+  iOSBadge: {
     position: 'absolute',
-    top: 2,
-    right: 2,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    top: -2,
+    right: -4,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 1.5,
     borderColor: '#fff',
+    paddingHorizontal: 2,
+  },
+  iOSBadgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '800',
   },
   createCard: {
     borderRadius: 16,
