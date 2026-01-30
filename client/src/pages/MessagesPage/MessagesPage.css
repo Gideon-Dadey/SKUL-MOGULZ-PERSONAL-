@@ -186,6 +186,14 @@
     margin-top: 2px;
 }
 
+[data-theme="dark"] .msg-snippet {
+    color: #9ca3af;
+}
+
+[data-theme="dark"] .msg-date {
+    color: #9ca3af;
+}
+
 
 .messages-main {
     flex: 1;
@@ -266,6 +274,23 @@
     gap: 1rem;
 }
 
+.chat-history::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-history::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-history::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 10px;
+}
+
+.chat-history::-webkit-scrollbar-thumb:hover {
+    background: var(--text-light);
+}
+
 .chat-divider {
     display: flex;
     align-items: center;
@@ -325,10 +350,25 @@
 
 .message-bubble.sent .bubble-content {
     background: #fdf2f0;
-
-    color: var(--text-main);
+    color: #191919;
     border-radius: 8px 0 8px 8px;
     border-color: rgba(165, 214, 183, 0.2);
+}
+
+[data-theme="dark"] .message-bubble.sent .bubble-content {
+    background: #064e3b;
+    color: #ffffff;
+    border-color: rgba(165, 214, 183, 0.2);
+}
+
+[data-theme="dark"] .message-bubble.received .bubble-content {
+    background: #1f2937;
+    color: #ffffff;
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .bubble-time {
+    color: #9ca3af;
 }
 
 .bubble-content p {
