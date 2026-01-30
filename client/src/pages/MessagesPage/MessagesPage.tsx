@@ -89,6 +89,10 @@ const MessagesPage: React.FC = () => {
                 console.log('Fetching messages for chat partner:', selectedChat);
                 const data = await messageService.getMessages(selectedChat);
                 setMessages(data);
+
+                // Refresh conversations to update unread counts in the sidebar and navbar
+                const updatedConvs = await messageService.getConversations();
+                setConversations(updatedConvs);
             } catch (error) {
                 console.error("Failed to fetch messages", error);
             } finally {

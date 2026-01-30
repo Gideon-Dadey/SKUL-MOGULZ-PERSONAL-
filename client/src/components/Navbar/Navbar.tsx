@@ -21,6 +21,7 @@ const Navbar: React.FC = () => {
     const { user, isAuthenticated, logout } = useAuth();
     const { socket } = useSocket();
     const [notifications, setNotifications] = useState<any[]>([]);
+    const [unreadMessages, setUnreadMessages] = useState(0);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -38,18 +39,31 @@ const Navbar: React.FC = () => {
     };
 
     useEffect(() => {
-        const fetchNotifications = async () => {
+        const fetchUnreadCounts = async () => {
             if (isAuthenticated) {
                 try {
-                    const data = await notificationService.getNotifications();
-                    setNotifications(data);
+                    // Fetch notifications
+                    const notifData = await notificationService.getNotifications();
+                    setNotifications(notifData);
+
+                    // Fetch messages to count unread
+                    const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/messages/conversations`, {
+                        headers: {
+                            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('user') || '{}').token}`
+                        }
+                    });
+                    if (response.ok) {
+                        const conversations = await response.json();
+                        const totalUnread = conversations.reduce((acc: number, conv: any) => acc + (conv.unreadCount || 0), 0);
+                        setUnreadMessages(totalUnread);
+                    }
                 } catch (error) {
-                    console.error("Failed to fetch notifications", error);
+                    console.error("Failed to fetch unread counts", error);
                 }
             }
         };
 
-        fetchNotifications();
+        fetchUnreadCounts();
     }, [isAuthenticated]);
 
 
@@ -60,10 +74,18 @@ const Navbar: React.FC = () => {
             setNotifications(prev => [newNotification, ...prev]);
         });
 
+        socket.on('new_message', (message: any) => {
+            // Only increment if we're not on the messages page or if it's from someone else
+            if (location.pathname !== '/messages') {
+                setUnreadMessages(prev => prev + 1);
+            }
+        });
+
         return () => {
             socket.off('notification');
+            socket.off('new_message');
         };
-    }, [socket]);
+    }, [socket, location.pathname]);
 
     const handleMarkAllRead = async () => {
         try {
@@ -104,7 +126,7 @@ const Navbar: React.FC = () => {
         { path: '/feed', icon: Home, label: 'Home' },
         { path: '/network', icon: Users, label: 'My Network' },
         { path: '/projects', icon: Briefcase, label: 'Projects' },
-        { path: '/messages', icon: MessageSquare, label: 'Messaging' },
+        { path: '/messages', icon: MessageSquare, label: 'Messaging', badge: unreadMessages },
         { path: '/notifications', icon: Bell, label: 'Notifications', badge: unreadNotifications },
     ];
 
