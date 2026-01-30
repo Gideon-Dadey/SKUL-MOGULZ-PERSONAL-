@@ -36,10 +36,10 @@
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
 
-  --radius-sm: 0.5px;
-  --radius-md: 0.5px;
-  --radius-lg: 0.5px;
-  --radius-xl: 0.5px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
 }
 
 [data-theme="dark"] {
@@ -142,7 +142,7 @@ a:hover {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.625rem 1.25rem;
-  border-radius: 0.5px;
+  border-radius: var(--radius-md);
   font-weight: 600;
   font-size: 0.875rem;
   font-family: inherit;
@@ -339,7 +339,7 @@ a:hover {
   width: 44px;
   height: 44px;
   object-fit: contain;
-  border-radius: 0.5px;
+  border-radius: var(--radius-sm);
 }
 
 .auth-brand__text {
@@ -544,7 +544,7 @@ a:hover {
   color: var(--primary);
   font-size: 0.85rem;
   font-weight: 700;
-  border-radius: 0.5px;
+  border-radius: var(--radius-sm);
 }
 
 .glass-card {
@@ -569,7 +569,7 @@ a:hover {
   width: 40px;
   height: 40px;
   object-fit: contain;
-  border-radius: 0.5px;
+  border-radius: var(--radius-sm);
 }
 
 @media (max-width: 900px) {
