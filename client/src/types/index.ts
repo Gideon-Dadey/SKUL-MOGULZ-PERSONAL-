@@ -16,7 +16,32 @@ export interface User {
     connectionsCount?: number;
     impressions?: number;
     viewedProfile?: number;
+    experience?: Experience[];
+    education?: Education[];
     createdAt: string;
+}
+
+export interface Experience {
+    id: string;
+    title: string;
+    company: string;
+    location?: string;
+    startDate: string;
+    endDate?: string;
+    current: boolean;
+    description?: string;
+}
+
+export interface Education {
+    id: string;
+    school: string;
+    degree: string;
+    fieldOfStudy: string;
+    startDate: string;
+    endDate?: string;
+    grade?: string;
+    activities?: string;
+    description?: string;
 }
 
 
