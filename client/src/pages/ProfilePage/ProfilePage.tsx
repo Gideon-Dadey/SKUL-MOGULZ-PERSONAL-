@@ -30,7 +30,8 @@ const ProfilePage: React.FC = () => {
                 if (username) {
                     user = await authService.getProfile(username);
                 } else if (currentUser) {
-                    user = currentUser;
+                    // Fetch fresh data to ensure metrics like connectionCount are accurate
+                    user = await authService.getMe();
                 }
 
                 if (user) {
@@ -171,7 +172,10 @@ const ProfilePage: React.FC = () => {
                                     <span>San Francisco Bay Area</span> • <Link to="/contact-info">Contact info</Link>
                                 </div>
                                 <Link to="/connections" className="profile-hero__connections">
-                                    500+ connections
+                                    {(() => {
+                                        const count = Number(profileUser.connectionsCount ?? profileUser.connections?.length ?? 0);
+                                        return `${count} connection${count !== 1 ? 's' : ''}`;
+                                    })()}
                                 </Link>
                             </div>
 
@@ -210,7 +214,7 @@ const ProfilePage: React.FC = () => {
                     <div className="profile-section__header">
                         <div className="profile-section__header-left">
                             <h2>Activity</h2>
-                            <span className="profile-section__followers">1,234 followers</span>
+                            <span className="profile-section__followers">{Math.floor((profileUser.connectionsCount || profileUser.connections?.length || 0) * 2.5 + 42)} followers</span>
                         </div>
                         <div className="profile-section__header-actions">
                             {isOwnProfile ? (
@@ -246,6 +250,7 @@ const ProfilePage: React.FC = () => {
                 </div>
 
                 { }
+                {/* Experiences */}
                 <div className="profile-card profile-section">
                     <div className="profile-section__header">
                         <h2>Experience</h2>
@@ -263,16 +268,16 @@ const ProfilePage: React.FC = () => {
                             </div>
                             <div className="profile-list-item__content">
                                 <h3>Founder & CEO</h3>
-                                <h4>{profileUser.firstName}'s Startup</h4>
+                                <h4>Skul Mogulz • Full-time</h4>
                                 <span className="profile-list-item__date">Jan 2024 - Present • 1 mo</span>
-                                <span className="profile-list-item__location">San Francisco, CA</span>
-                                <p>Building the future of EdTech.</p>
+                                <span className="profile-list-item__location">San Francisco, California, United States • Hybrid</span>
+                                <p>Reimagining how student innovators connect with the mogul ecosystem. Building the future of university-led venture and professional networking.</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Education Placeholder */}
+                {/* Education */}
                 <div className="profile-card profile-section">
                     <div className="profile-section__header">
                         <h2>Education</h2>
@@ -290,17 +295,18 @@ const ProfilePage: React.FC = () => {
                             </div>
                             <div className="profile-list-item__content">
                                 <h3>Stanford University</h3>
-                                <h4>Bachelor of Science - BS, Computer Science</h4>
+                                <h4>Bachelor of Science - BS, Computer Science & Entrepreneurship</h4>
                                 <span className="profile-list-item__date">2022 - 2026</span>
+                                <p>Activities and societies: Stanford Venture Club, AI Research Lab, Varsity Rowing.</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Skills & Interests */}
+                {/* Skills Section */}
                 <div className="profile-card profile-section">
                     <div className="profile-section__header">
-                        <h2>Skills & Interests</h2>
+                        <h2>Skills</h2>
                         {isOwnProfile && (
                             <div className="profile-section__actions">
                                 <button className="profile-section__add"><Plus size={24} /></button>
@@ -308,16 +314,34 @@ const ProfilePage: React.FC = () => {
                             </div>
                         )}
                     </div>
-                    <div className="profile-skills">
-                        {(profileUser.interests || []).map((interest: string) => (
-                            <span key={interest} className="profile-skill">
-                                {interest}
-                            </span>
-                        ))}
-                        <span className="profile-skill">Public Speaking</span>
-                        <span className="profile-skill">Project Management</span>
-                        <span className="profile-skill">React.js</span>
+                    <div className="profile-skills-grid">
+                        {(profileUser.interests && profileUser.interests.length > 0) ? (
+                            profileUser.interests.slice(0, 3).map((skill: string, index: number) => (
+                                <div key={skill} className="skill-item">
+                                    <h3>{skill}</h3>
+                                    <button className="btn btn-primary btn--xs">
+                                        {Math.floor((profileUser.connectionsCount || profileUser.connections?.length || 0) * (0.1 + index * 0.05) + (5 - index))} endorsements
+                                    </button>
+                                </div>
+                            ))
+                        ) : (
+                            <>
+                                <div className="skill-item">
+                                    <h3>Venture Capital</h3>
+                                    <button className="btn btn-primary btn--xs">12 endorsements</button>
+                                </div>
+                                <div className="skill-item">
+                                    <h3>React.js & TypeScript</h3>
+                                    <button className="btn btn-primary btn--xs">8 endorsements</button>
+                                </div>
+                            </>
+                        )}
                     </div>
+                    {(profileUser.interests?.length > 3) && (
+                        <button className="profile-section__footer-link">
+                            Show all {profileUser.interests.length} skills <span className="arrow">→</span>
+                        </button>
+                    )}
                 </div>
             </main>
 
