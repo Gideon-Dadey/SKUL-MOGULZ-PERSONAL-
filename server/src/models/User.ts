@@ -14,7 +14,27 @@ export interface IUser extends Document {
     bio?: string;
     headline?: string;
     location?: string;
-    skills: string[];
+    experience: {
+        _id: string;
+        title: string;
+        company: string;
+        location?: string;
+        startDate: string;
+        endDate?: string;
+        current: boolean;
+        description?: string;
+    }[];
+    education: {
+        _id: string;
+        school: string;
+        degree: string;
+        fieldOfStudy: string;
+        startDate: string;
+        endDate?: string;
+        grade?: string;
+        activities?: string;
+        description?: string;
+    }[];
     connections: mongoose.Types.ObjectId[];
     viewedProfile?: number;
     impressions?: number;
@@ -22,6 +42,27 @@ export interface IUser extends Document {
     updatedAt: Date;
     comparePassword(candidatePassword: string): Promise<boolean>;
 }
+
+const experienceSchema = new Schema({
+    title: { type: String, required: true },
+    company: { type: String, required: true },
+    location: { type: String },
+    startDate: { type: String, required: true },
+    endDate: { type: String },
+    current: { type: Boolean, default: false },
+    description: { type: String }
+});
+
+const educationSchema = new Schema({
+    school: { type: String, required: true },
+    degree: { type: String, required: true },
+    fieldOfStudy: { type: String, required: true },
+    startDate: { type: String, required: true },
+    endDate: { type: String },
+    grade: { type: String },
+    activities: { type: String },
+    description: { type: String }
+});
 
 const userSchema = new Schema<IUser>({
     firstName: { type: String, required: true, trim: true },
@@ -37,6 +78,8 @@ const userSchema = new Schema<IUser>({
     headline: { type: String, maxlength: 100 },
     location: { type: String },
     skills: [{ type: String }],
+    experience: [experienceSchema],
+    education: [educationSchema],
     connections: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     viewedProfile: { type: Number, default: 0 },
     impressions: { type: Number, default: 0 }

@@ -143,21 +143,10 @@ const ProfilePage: React.FC = () => {
         if (!file) return;
 
         try {
-            setIsUploading(true);
             const formData = new FormData();
             formData.append('avatar', file);
-
-            const response = await api.put('/auth/profile', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-
-            if (response.data) {
-                const updatedUser = response.data;
-                setProfileUser((prev: any) => ({ ...prev, avatar: updatedUser.avatar }));
-                updateProfile(updatedUser);
-            }
+            const updatedUser = await updateProfile(formData as any);
+            setProfileUser((prev: any) => ({ ...prev, avatar: updatedUser.avatar }));
         } catch (error) {
             console.error("Failed to upload avatar", error);
             alert("Failed to upload image. Please try again.");
@@ -177,21 +166,10 @@ const ProfilePage: React.FC = () => {
         if (!file) return;
 
         try {
-            setIsBannerUploading(true);
             const formData = new FormData();
             formData.append('banner', file);
-
-            const response = await api.put('/auth/profile', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-
-            if (response.data) {
-                const updatedUser = response.data;
-                setProfileUser((prev: any) => ({ ...prev, banner: updatedUser.banner }));
-                updateProfile(updatedUser);
-            }
+            const updatedUser = await updateProfile(formData as any);
+            setProfileUser((prev: any) => ({ ...prev, banner: updatedUser.banner }));
         } catch (error) {
             console.error("Failed to upload banner", error);
             alert("Failed to upload banner image. Please try again.");
@@ -252,11 +230,9 @@ const ProfilePage: React.FC = () => {
                 };
             }
 
-            const response = await api.put('/auth/profile', updatedData);
-            if (response.data) {
-                const updatedUser = response.data;
+            const updatedUser = await updateProfile(updatedData);
+            if (updatedUser) {
                 setProfileUser((prev: any) => ({ ...prev, ...updatedUser }));
-                updateProfile(updatedUser);
                 closeModal();
             }
         } catch (error) {
@@ -282,11 +258,9 @@ const ProfilePage: React.FC = () => {
                 };
             }
 
-            const response = await api.put('/auth/profile', updatedData);
-            if (response.data) {
-                const updatedUser = response.data;
+            const updatedUser = await updateProfile(updatedData);
+            if (updatedUser) {
                 setProfileUser((prev: any) => ({ ...prev, ...updatedUser }));
-                updateProfile(updatedUser);
                 closeModal();
             }
         } catch (error) {
@@ -425,6 +399,46 @@ const ProfilePage: React.FC = () => {
                                 )}
                             </div>
                         </div>
+                    </div>
+
+                    {/* Activity Section */}
+                    <div className="profile-card profile-section">
+                        <div className="profile-section__header">
+                            <div className="profile-section__header-left">
+                                <h2>Activity</h2>
+                                <span className="profile-section__followers">{Math.floor((profileUser.connectionsCount || profileUser.connections?.length || 0) * 2.5 + 42)} followers</span>
+                            </div>
+                            <div className="profile-section__header-actions">
+                                {isOwnProfile ? (
+                                    <button className="btn btn-outline btn--sm">Create a post</button>
+                                ) : (
+                                    <button className="btn btn-outline btn--sm">Follow</button>
+                                )}
+                                {isOwnProfile && <button className="profile-section__edit" aria-label="Edit Activity"><Edit2 size={18} /></button>}
+                            </div>
+                        </div>
+
+                        <div className="profile-tabs">
+                            <button className="profile-tab active">Posts</button>
+                            <button className="profile-tab">Comments</button>
+                            <button className="profile-tab">Images</button>
+                        </div>
+
+                        <div className="profile-activity-list">
+                            {userPosts.length > 0 ? (
+                                userPosts.slice(0, 3).map(post => (
+                                    <PostCard key={post.id} post={post} compact={true} onDelete={handleDeletePost} />
+                                ))
+                            ) : (
+                                <div className="profile-empty">
+                                    <p>No recent activity</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <button className="profile-section__footer-link">
+                            Show all activity <span className="arrow">→</span>
+                        </button>
                     </div>
                 </div>
 

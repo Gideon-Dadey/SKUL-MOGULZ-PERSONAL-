@@ -6,7 +6,7 @@ interface AuthContextType extends AuthState {
     login: (email: string, password: string) => Promise<void>;
     register: (userData: Partial<User> & { password: string }) => Promise<void>;
     logout: () => void;
-    updateProfile: (data: Partial<User>) => void;
+    updateProfile: (data: Partial<User>) => Promise<any>;
     refreshUser: () => Promise<void>;
 }
 
@@ -89,6 +89,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             const updatedUser = await authService.updateProfile(data);
             const user = { ...updatedUser, id: updatedUser._id || updatedUser.id };
             setState(prev => ({ ...prev, user }));
+            return user;
         } catch (error) {
             console.error("Profile update failed", error);
             throw error;
