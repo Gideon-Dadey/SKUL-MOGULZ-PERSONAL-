@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Post } from '../../types';
 import { useAuth } from '../../context/AuthContext';
 import api, { getImageUrl } from '../../services/api';
+import { DEFAULT_AVATAR } from '../Logo';
 import './PostCard.css';
 import './PostCardMenu.css';
 
@@ -81,7 +82,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
             <div className="post-card__header">
                 <Link to={`/profile/${post.author.username}`} className="post-card__author">
                     <img
-                        src={getImageUrl(post.author.avatar) || `https://ui-avatars.com/api/?name=${post.author.firstName}+${post.author.lastName}&background=A5D6B7&color=fff`}
+                        src={getImageUrl(post.author.avatar) || DEFAULT_AVATAR}
                         alt={post.author.firstName}
                         className="post-card__avatar"
                     />

@@ -10,6 +10,7 @@ import authService from '../../services/authService';
 import api, { getImageUrl } from '../../services/api';
 import { Experience, Education } from '../../types';
 import Modal from '../../components/Modal/Modal';
+import { DEFAULT_AVATAR } from '../../components/Logo';
 import './ProfilePage.css';
 
 const ProfilePage: React.FC = () => {
@@ -334,7 +335,7 @@ const ProfilePage: React.FC = () => {
                                 onClick={handleAvatarClick}
                             >
                                 <img
-                                    src={getImageUrl(profileUser.avatar) || `https://ui-avatars.com/api/?name=${profileUser.firstName}+${profileUser.lastName}&background=A5D6B7&color=fff&size=200`}
+                                    src={getImageUrl(profileUser.avatar) || DEFAULT_AVATAR}
                                     alt={profileUser.firstName}
                                     className="profile-hero__avatar"
                                 />
@@ -596,7 +597,7 @@ const ProfilePage: React.FC = () => {
                         {mockUsers.filter((u: any) => u.id !== (profileUser._id || profileUser.id)).slice(0, 5).map((u: any) => (
                             <div key={u.id} className="sidebar-person">
                                 <img
-                                    src={getImageUrl(u.avatar) || `https://ui-avatars.com/api/?name=${u.firstName}&background=A5D6B7&color=fff`}
+                                    src={getImageUrl(u.avatar) || DEFAULT_AVATAR}
                                     className="sidebar-person__avatar"
                                     alt=""
                                 />

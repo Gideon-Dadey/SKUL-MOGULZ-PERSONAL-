@@ -5,6 +5,7 @@ import { useSocket } from '../../context/SocketContext';
 import { useCall } from '../../context/CallContext';
 import messageService from '../../services/messageService';
 import { getImageUrl } from '../../services/api';
+import { DEFAULT_AVATAR } from '../../components/Logo';
 import './MessagesPage.css';
 
 const MessagesPage: React.FC = () => {
@@ -176,7 +177,7 @@ const MessagesPage: React.FC = () => {
                                 >
                                     <div className="msg-avatar-wrapper">
                                         <img
-                                            src={getImageUrl(conv.user.avatar) || `https://ui-avatars.com/api/?name=${conv.user.firstName}&background=A5D6B7&color=fff`}
+                                            src={getImageUrl(conv.user.avatar) || DEFAULT_AVATAR}
                                             alt=""
                                             className="msg-avatar"
                                         />
@@ -234,7 +235,7 @@ const MessagesPage: React.FC = () => {
                                     return (
                                         <div key={msg._id} className={`message-bubble ${isSent ? 'sent' : 'received'}`}>
                                             <img
-                                                src={getImageUrl(senderInfo?.avatar) || `https://ui-avatars.com/api/?name=${senderInfo?.firstName}+${senderInfo?.lastName}&background=A5D6B7&color=fff`}
+                                                src={getImageUrl(senderInfo?.avatar) || DEFAULT_AVATAR}
                                                 className="bubble-avatar"
                                                 alt=""
                                             />
