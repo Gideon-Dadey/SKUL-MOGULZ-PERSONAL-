@@ -14,6 +14,7 @@ import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
 import MessagesPage from './pages/MessagesPage/MessagesPage';
 import NotificationsPage from './pages/NotificationsPage/NotificationsPage';
 import AnalyticsPage from './pages/AnalyticsPage/AnalyticsPage';
+import Logo from './components/Logo';
 import './styles/index.css';
 
 
@@ -132,6 +133,7 @@ const LoginPage = () => {
             <div className="auth-container">
                 <div className="auth-left">
                     <div className="auth-brand">
+                        <Logo size={48} />
                         <h1 className="auth-brand__text">SKUL MOGULZ</h1>
                     </div>
                     <h2 className="auth-heading">Welcome back</h2>
@@ -258,6 +260,7 @@ const RegisterPage = () => {
             <div className="auth-container">
                 <div className="auth-left">
                     <div className="auth-brand">
+                        <Logo size={48} />
                         <h1 className="auth-brand__text">SKUL MOGULZ</h1>
                     </div>
                     <h2 className="auth-heading">Make the most of your professional life</h2>
