@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import {
     MapPin, Edit2, Plus, MoreHorizontal, Briefcase, GraduationCap, Camera
 } from 'lucide-react';
@@ -12,6 +12,7 @@ import api, { getImageUrl } from '../../services/api';
 import './ProfilePage.css';
 
 const ProfilePage: React.FC = () => {
+    const navigate = useNavigate();
     const { username } = useParams<{ username: string }>();
     const { user: currentUser } = useAuth();
     const [profileUser, setProfileUser] = useState<any>(null);
@@ -20,6 +21,13 @@ const ProfilePage: React.FC = () => {
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { updateProfile } = useAuth();
+
+    useEffect(() => {
+        // If visiting /profile, redirect to /profile/:username
+        if (!username && currentUser?.username) {
+            navigate(`/profile/${currentUser.username}`, { replace: true });
+        }
+    }, [username, currentUser, navigate]);
 
     useEffect(() => {
         const fetchProfileData = async () => {
@@ -64,7 +72,9 @@ const ProfilePage: React.FC = () => {
             }
         };
 
-        fetchProfileData();
+        if (username || currentUser) {
+            fetchProfileData();
+        }
     }, [username, currentUser]);
 
     const handleAvatarClick = () => {

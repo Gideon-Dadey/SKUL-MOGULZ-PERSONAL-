@@ -142,7 +142,7 @@ const FeedPage: React.FC = () => {
                                 {Number(user?.connectionsCount ?? user?.connections?.length ?? 0)}
                             </span>
                         </Link>
-                        <Link to="/profile" className="profile-card__stat">
+                        <Link to={`/profile/${user?.username}`} className="profile-card__stat">
                             <span className="profile-card__stat-label">Profile views</span>
                             <span className="profile-card__stat-value">
                                 {Number(user?.viewedProfile ?? 0)}
