@@ -63,6 +63,7 @@ export const getConversations = async (req: any, res: Response) => {
                     lastMessage: 1,
                     lastMessageDate: 1,
                     unreadCount: 1,
+                    'user._id': 1,
                     'user.firstName': 1,
                     'user.lastName': 1,
                     'user.username': 1,
@@ -85,8 +86,10 @@ export const getConversations = async (req: any, res: Response) => {
 // @access  Private
 export const getMessages = async (req: any, res: Response) => {
     try {
-        const partnerId = req.params.userId;
-        const currentUserId = req.user.id;
+        const partnerId = new mongoose.Types.ObjectId(req.params.userId);
+        const currentUserId = new mongoose.Types.ObjectId(req.user.id);
+
+        console.log(`Fetching messages between ${currentUserId} and ${partnerId}`);
 
         const messages = await Message.find({
             $or: [
@@ -103,6 +106,7 @@ export const getMessages = async (req: any, res: Response) => {
 
         res.status(200).json(messages);
     } catch (error: any) {
+        console.error("Get Messages Error:", error);
         res.status(500).json({ message: error.message });
     }
 };
@@ -113,11 +117,12 @@ export const getMessages = async (req: any, res: Response) => {
 export const sendMessage = async (req: any, res: Response) => {
     try {
         const { recipientId, content } = req.body;
-        const senderId = req.user.id;
+        const senderId = new mongoose.Types.ObjectId(req.user.id);
+        const targetRecipientId = new mongoose.Types.ObjectId(recipientId);
 
         const message = await Message.create({
             sender: senderId,
-            recipient: recipientId,
+            recipient: targetRecipientId,
             content
         });
 
