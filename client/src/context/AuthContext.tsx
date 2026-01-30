@@ -7,6 +7,7 @@ interface AuthContextType extends AuthState {
     register: (userData: Partial<User> & { password: string }) => Promise<void>;
     logout: () => void;
     updateProfile: (data: Partial<User>) => void;
+    refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,7 +26,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (savedUser) {
             try {
                 const user = JSON.parse(savedUser);
-                
+
                 if (user._id && !user.id) user.id = user._id;
 
                 setState({
@@ -46,7 +47,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const login = async (email: string, password: string) => {
         try {
             const data = await authService.login({ email, password });
-            
+
             const user = { ...data, id: data._id || data.id };
             setState({
                 user,
@@ -94,8 +95,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
     };
 
+    const refreshUser = async () => {
+        try {
+            const freshUserData = await authService.getMe();
+            const user = { ...freshUserData, id: freshUserData._id || freshUserData.id };
+            setState(prev => ({ ...prev, user }));
+            localStorage.setItem('user', JSON.stringify(user));
+        } catch (error) {
+            console.error("Failed to refresh user", error);
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ ...state, login, register, logout, updateProfile }}>
+        <AuthContext.Provider value={{ ...state, login, register, logout, updateProfile, refreshUser }}>
             {children}
         </AuthContext.Provider>
     );

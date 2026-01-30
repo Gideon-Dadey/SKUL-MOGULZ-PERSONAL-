@@ -15,7 +15,7 @@ import './FeedPage.css';
 type SortOption = 'trending' | 'recent' | 'popular';
 
 const FeedPage: React.FC = () => {
-    const { user } = useAuth();
+    const { user, refreshUser } = useAuth();
     const [posts, setPosts] = useState<any[]>([]);
     const [suggestions, setSuggestions] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +24,10 @@ const FeedPage: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | 'all'>('all');
     const [selectedStage, setSelectedStage] = useState('all');
     const [sortBy, setSortBy] = useState<SortOption>('recent');
+
+    useEffect(() => {
+        refreshUser();
+    }, []);
 
     useEffect(() => {
         const fetchSuggestions = async () => {
@@ -134,11 +138,15 @@ const FeedPage: React.FC = () => {
                     <div className="profile-card__stats">
                         <Link to="/network" className="profile-card__stat">
                             <span className="profile-card__stat-label">Connections</span>
-                            <span className="profile-card__stat-value">{user?.connections?.length || 0}</span>
+                            <span className="profile-card__stat-value">
+                                {Number(user?.connectionsCount ?? user?.connections?.length ?? 0)}
+                            </span>
                         </Link>
                         <Link to="/profile" className="profile-card__stat">
                             <span className="profile-card__stat-label">Profile views</span>
-                            <span className="profile-card__stat-value">{user?.viewedProfile || 0}</span>
+                            <span className="profile-card__stat-value">
+                                {Number(user?.viewedProfile ?? 0)}
+                            </span>
                         </Link>
                     </div>
                     <div className="profile-card__actions">

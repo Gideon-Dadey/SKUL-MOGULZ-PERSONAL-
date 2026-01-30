@@ -7,12 +7,16 @@ import { getImageUrl } from '../../services/api';
 import './NetworkPage.css';
 
 const NetworkPage: React.FC = () => {
-    const { user: currentUser } = useAuth();
+    const { user: currentUser, refreshUser } = useAuth();
     const [invitations, setInvitations] = useState<any[]>([]);
     const [suggestions, setSuggestions] = useState<any[]>([]);
     const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(true);
     const [isLoadingInvitations, setIsLoadingInvitations] = useState(true);
     const [connectedMap, setConnectedMap] = useState<Record<string, boolean>>({});
+
+    useEffect(() => {
+        refreshUser();
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -42,6 +46,7 @@ const NetworkPage: React.FC = () => {
         try {
             await networkService.acceptRequest(requestId);
             setInvitations(prev => prev.filter(inv => inv._id !== requestId));
+            refreshUser();
 
         } catch (error) {
             console.error("Failed to accept request", error);
@@ -73,7 +78,9 @@ const NetworkPage: React.FC = () => {
                             <Link to="/connections" className="sidebar-menu-item">
                                 <span className="menu-icon"><Users size={20} /></span>
                                 <span className="menu-label">Connections</span>
-                                <span className="menu-count">{currentUser?.connections?.length || 0}</span>
+                                <span className="menu-count">
+                                    {Number(currentUser?.connectionsCount ?? currentUser?.connections?.length ?? 0)}
+                                </span>
                             </Link>
                         </li>
                         <li>
