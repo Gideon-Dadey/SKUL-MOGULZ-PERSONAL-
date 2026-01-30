@@ -62,6 +62,8 @@ export const register = async (req: Request, res: Response) => {
                 role: user.role,
                 avatar: user.avatar,
                 interests: user.skills || [],
+                experience: [],
+                education: [],
                 connectionsCount: user.connections?.length || 0,
                 token,
             });
@@ -101,6 +103,8 @@ export const login = async (req: Request, res: Response) => {
                 role: user.role,
                 avatar: user.avatar,
                 interests: user.skills || [],
+                experience: user.experience || [],
+                education: user.education || [],
                 connectionsCount: user.connections?.length || 0,
                 token,
             });
@@ -135,7 +139,9 @@ export const getMe = async (req: Request, res: Response) => {
                 connectionsCount: user.connections?.length || 0,
                 avatar: user.avatar,
                 banner: user.banner,
-                interests: user.skills || []
+                interests: user.skills || [],
+                experience: user.experience || [],
+                education: user.education || []
             });
         } else {
             res.status(404).json({ message: 'User not found' });
@@ -167,6 +173,8 @@ export const getUserProfile = async (req: Request, res: Response) => {
                 avatar: user.avatar,
                 banner: user.banner,
                 interests: user.skills || [],
+                experience: user.experience || [],
+                education: user.education || [],
                 connectionsCount: user.connections.length
             });
         } else {
@@ -192,6 +200,9 @@ export const updateProfile = async (req: any, res: Response) => {
             user.headline = req.body.headline || user.headline;
             user.location = req.body.location || user.location;
             user.skills = req.body.interests || req.body.skills || user.skills;
+            if (req.body.experience) user.experience = req.body.experience;
+            if (req.body.education) user.education = req.body.education;
+
             // Handle file uploads
             const files = (req as any).files;
             if (files) {
@@ -227,6 +238,8 @@ export const updateProfile = async (req: any, res: Response) => {
                 avatar: updatedUser.avatar,
                 banner: updatedUser.banner,
                 interests: updatedUser.skills || [],
+                experience: updatedUser.experience || [],
+                education: updatedUser.education || [],
                 connectionsCount: updatedUser.connections?.length || 0
             });
         } else {
