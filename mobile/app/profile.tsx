@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Platform } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
 import {
-    Settings, Bookmark, Gamepad2, Users, User, Crown, UserPlus, FileText
+    Settings, Bookmark, Gamepad2, Users, User, Crown, UserPlus, FileText, Zap
 } from 'lucide-react-native';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -81,12 +81,8 @@ export default function ProfileMenuScreen() {
 
                         <View style={styles.statsRow}>
                             <View style={styles.statItem}>
-                                <Text style={[styles.statNum, { color: textColor }]}>{user?.followers?.length || 19}</Text>
-                                <Text style={[styles.statLabel, { color: subTextColor }]}> Following</Text>
-                            </View>
-                            <View style={styles.statItem}>
-                                <Text style={[styles.statNum, { color: textColor }]}>{user?.following?.length || 147}</Text>
-                                <Text style={[styles.statLabel, { color: subTextColor }]}> Followers</Text>
+                                <Text style={[styles.statNum, { color: textColor }]}>{user?.connections?.length || 0}</Text>
+                                <Text style={[styles.statLabel, { color: subTextColor }]}> Connections</Text>
                             </View>
                         </View>
                     </View>
@@ -94,9 +90,9 @@ export default function ProfileMenuScreen() {
                     {/* Main Menu List */}
                     <View style={styles.menuList}>
                         <MenuOption icon={User} label="Profile" onPress={goToProfileDetails} />
-                        <MenuOption icon={Gamepad2} label="Puzzle games" onPress={() => { }} />
-                        <MenuOption icon={Bookmark} label="Saved posts" onPress={() => { }} />
-                        <MenuOption icon={Users} label="Groups" onPress={() => { }} />
+                        <MenuOption icon={Zap} label="Innovation Quests" onPress={() => { }} />
+                        <MenuOption icon={Bookmark} label="Saved Ventures" onPress={() => { }} />
+                        <MenuOption icon={Users} label="Founder Circles" onPress={() => { }} />
                     </View>
 
                     <View style={[styles.divider, { backgroundColor: isDark ? '#2f3336' : '#eff3f4' }]} />
