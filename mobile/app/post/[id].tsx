@@ -121,13 +121,13 @@ export default function PostDetailScreen() {
     const renderComment = ({ item }: { item: any }) => (
         <View style={[styles.commentItem, { borderBottomColor: activeColors.border }]}>
             <Image
-                source={{ uri: getImageUrl(item.user?.avatar) || `https://ui-avatars.com/api/?name=${item.user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
+                source={{ uri: getImageUrl(item.author?.avatar) || `https://ui-avatars.com/api/?name=${item.author?.firstName || 'User'}&background=A5D6B7&color=fff` }}
                 style={styles.commentAvatar}
             />
             <View style={styles.commentContent}>
                 <View style={styles.commentHeader}>
                     <Text style={[styles.commentAuthor, { color: activeColors.text }]}>
-                        {item.user?.firstName} {item.user?.lastName}
+                        {item.author?.firstName} {item.author?.lastName}
                     </Text>
                     <Text style={[styles.commentDate, { color: activeColors.muted }]}>
                         {new Date(item.createdAt).toLocaleDateString()}
