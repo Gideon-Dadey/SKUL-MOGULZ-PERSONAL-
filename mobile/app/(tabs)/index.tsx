@@ -212,7 +212,7 @@ export default function FeedScreen() {
       <View style={[styles.createCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
         <View style={styles.createTop}>
           <Image
-            source={{ uri: getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
+            source={user?.avatar ? { uri: getImageUrl(user.avatar) } : require('../../assets/images/icon.png')}
             style={styles.createAvatar}
           />
           <TouchableOpacity
@@ -294,7 +294,7 @@ export default function FeedScreen() {
 
             <View style={styles.commentInputContainer}>
               <Image
-                source={{ uri: getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
+                source={user?.avatar ? { uri: getImageUrl(user.avatar) } : require('../../assets/images/icon.png')}
                 style={styles.commentAvatar}
               />
               <TextInput

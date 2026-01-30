@@ -63,7 +63,7 @@ export default function ProfileMenuScreen() {
                         <View style={styles.topRow}>
                             <TouchableOpacity onPress={goToProfileDetails}>
                                 <Image
-                                    source={{ uri: getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}+${user?.lastName || ''}&background=A5D6B7&color=fff` }}
+                                    source={user?.avatar ? { uri: getImageUrl(user.avatar) } : require('../assets/images/icon.png')}
                                     style={styles.avatar}
                                 />
                             </TouchableOpacity>
