@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Search, Plus, Bell, MessageSquare, MessageSquareMore, Menu, CircleUser, Image as ImageIcon, Video, Calendar, Sparkles, Send, X } from 'lucide-react-native';
+import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, Sparkles, Send, X } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import Colors from '../../constants/Colors';
@@ -138,8 +138,8 @@ export default function FeedScreen() {
     <View style={styles.header}>
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
-          <MessageSquareMore size={24} color={activeColors.muted} fill={activeColors.muted} />
-          <View style={[styles.badge, { backgroundColor: '#ef4444', borderColor: activeColors.card }]} />
+          <MessageCircle size={26} color={activeColors.text} strokeWidth={1.5} />
+          <View style={[styles.badge, { backgroundColor: '#FF3B30', width: 10, height: 10, borderRadius: 5, top: 0, right: 0 }]} />
         </TouchableOpacity>
 
         <View style={[styles.searchBar, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
