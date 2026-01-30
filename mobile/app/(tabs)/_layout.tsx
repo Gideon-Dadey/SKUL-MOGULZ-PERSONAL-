@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs, router } from 'expo-router';
-import { Platform } from 'react-native';
+import { Platform, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Home, Users, Briefcase, MessageCircle, Bell, SquarePlus } from 'lucide-react-native';
 
@@ -110,10 +110,20 @@ export default function TabLayout() {
         options={{
           title: 'Post',
           tabBarIcon: ({ color }) => <SquarePlus size={26} color={color} />,
+          tabBarButton: (props) => (
+            <TouchableOpacity
+              {...(props as any)}
+              onPress={(e) => {
+                e.preventDefault();
+                router.push('/modal');
+              }}
+            />
+          ),
         }}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
             e.preventDefault();
+            // Fallback if tabBarButton isn't used for some reason
             router.push('/modal');
           },
         })}
