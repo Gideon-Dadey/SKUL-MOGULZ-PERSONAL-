@@ -226,7 +226,8 @@ export const updateProfile = async (req: any, res: Response) => {
                 location: updatedUser.location,
                 avatar: updatedUser.avatar,
                 banner: updatedUser.banner,
-                interests: updatedUser.skills || []
+                interests: updatedUser.skills || [],
+                connectionsCount: updatedUser.connections?.length || 0
             });
         } else {
             res.status(404).json({ message: 'User not found' });
