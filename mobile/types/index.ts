@@ -1,4 +1,30 @@
 
+export interface Experience {
+    id?: string;
+    _id?: string;
+    title: string;
+    company: string;
+    location?: string;
+    startDate: string;
+    endDate?: string;
+    current?: boolean;
+    description?: string;
+}
+
+export interface Education {
+    id?: string;
+    _id?: string;
+    school: string;
+    degree: string;
+    field?: string;
+    fieldOfStudy?: string;
+    startYear: string;
+    endYear?: string;
+    startDate?: string;
+    endDate?: string;
+    description?: string;
+}
+
 export interface User {
     id: string;
     _id?: string;
@@ -13,6 +39,9 @@ export interface User {
     location?: string;
     role: 'student' | 'investor';
     interests: string[];
+    skills?: string[];
+    experience?: Experience[];
+    education?: Education[];
     connections?: string[];
     impressions?: number;
     viewedProfile?: number;

@@ -61,9 +61,16 @@ export const register = async (req: Request, res: Response) => {
                 email: user.email,
                 role: user.role,
                 avatar: user.avatar,
+                banner: user.banner,
+                headline: user.headline,
+                bio: user.bio,
+                location: user.location,
+                skills: user.skills || [],
                 interests: user.skills || [],
-                experience: [],
-                education: [],
+                experience: user.experience || [],
+                education: user.education || [],
+                viewedProfile: user.viewedProfile || 0,
+                impressions: user.impressions || 0,
                 connectionsCount: user.connections?.length || 0,
                 token,
             });
@@ -102,9 +109,16 @@ export const login = async (req: Request, res: Response) => {
                 email: user.email,
                 role: user.role,
                 avatar: user.avatar,
+                banner: user.banner,
+                headline: user.headline,
+                bio: user.bio,
+                location: user.location,
+                skills: user.skills || [],
                 interests: user.skills || [],
                 experience: user.experience || [],
                 education: user.education || [],
+                viewedProfile: user.viewedProfile || 0,
+                impressions: user.impressions || 0,
                 connectionsCount: user.connections?.length || 0,
                 token,
             });
@@ -139,9 +153,12 @@ export const getMe = async (req: Request, res: Response) => {
                 connectionsCount: user.connections?.length || 0,
                 avatar: user.avatar,
                 banner: user.banner,
+                skills: user.skills || [],
                 interests: user.skills || [],
                 experience: user.experience || [],
-                education: user.education || []
+                education: user.education || [],
+                viewedProfile: user.viewedProfile || 0,
+                impressions: user.impressions || 0
             });
         } else {
             res.status(404).json({ message: 'User not found' });
@@ -196,12 +213,38 @@ export const updateProfile = async (req: any, res: Response) => {
         if (user) {
             user.firstName = req.body.firstName || user.firstName;
             user.lastName = req.body.lastName || user.lastName;
-            user.bio = req.body.bio || user.bio;
+            user.bio = req.body.bio !== undefined ? req.body.bio : user.bio;
             user.headline = req.body.headline || user.headline;
             user.location = req.body.location || user.location;
-            user.skills = req.body.interests || req.body.skills || user.skills;
-            if (req.body.experience) user.experience = req.body.experience;
-            if (req.body.education) user.education = req.body.education;
+
+            // Handle skills - can be JSON string from FormData or array
+            if (req.body.skills) {
+                try {
+                    user.skills = typeof req.body.skills === 'string' ? JSON.parse(req.body.skills) : req.body.skills;
+                } catch {
+                    user.skills = req.body.skills;
+                }
+            } else if (req.body.interests) {
+                user.skills = req.body.interests;
+            }
+
+            // Handle experience - can be JSON string from FormData or array
+            if (req.body.experience) {
+                try {
+                    user.experience = typeof req.body.experience === 'string' ? JSON.parse(req.body.experience) : req.body.experience;
+                } catch {
+                    user.experience = req.body.experience;
+                }
+            }
+
+            // Handle education - can be JSON string from FormData or array
+            if (req.body.education) {
+                try {
+                    user.education = typeof req.body.education === 'string' ? JSON.parse(req.body.education) : req.body.education;
+                } catch {
+                    user.education = req.body.education;
+                }
+            }
 
             // Handle file uploads
             const files = (req as any).files;
@@ -237,9 +280,12 @@ export const updateProfile = async (req: any, res: Response) => {
                 location: updatedUser.location,
                 avatar: updatedUser.avatar,
                 banner: updatedUser.banner,
+                skills: updatedUser.skills || [],
                 interests: updatedUser.skills || [],
                 experience: updatedUser.experience || [],
                 education: updatedUser.education || [],
+                viewedProfile: updatedUser.viewedProfile || 0,
+                impressions: updatedUser.impressions || 0,
                 connectionsCount: updatedUser.connections?.length || 0
             });
         } else {
