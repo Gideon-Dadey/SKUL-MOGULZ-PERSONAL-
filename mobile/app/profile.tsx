@@ -40,85 +40,110 @@ export default function ProfileMenuScreen() {
     );
 
     return (
-        <View style={[styles.container, { backgroundColor: bgColor, paddingTop: insets.top }]}>
-            <Stack.Screen options={{ headerShown: false }} />
+        <View style={styles.modalContainer}>
+            <Stack.Screen options={{
+                headerShown: false,
+                presentation: 'transparentModal',
+                animation: 'fade'
+            }} />
 
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                {/* Header Section */}
-                <View style={styles.header}>
-                    <View style={styles.topRow}>
-                        <TouchableOpacity onPress={goToProfileDetails}>
-                            <Image
-                                source={{ uri: getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}+${user?.lastName || ''}&background=A5D6B7&color=fff` }}
-                                style={styles.avatar}
-                            />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.addAccountBtn}>
-                            <UserPlus size={20} color={iconColor} />
-                        </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.userInfo}>
-                        <Text style={[styles.name, { color: textColor }]}>
-                            {user?.firstName} {user?.lastName}
-                        </Text>
-                        <Text style={[styles.handle, { color: subTextColor }]}>
-                            {handle}
-                        </Text>
-                    </View>
-
-                    <View style={styles.statsRow}>
-                        <View style={styles.statItem}>
-                            <Text style={[styles.statNum, { color: textColor }]}>{user?.followers?.length || 19}</Text>
-                            <Text style={[styles.statLabel, { color: subTextColor }]}> Following</Text>
+            <View style={[styles.sidebar, { backgroundColor: bgColor, paddingTop: insets.top }]}>
+                <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+                    {/* Header Section */}
+                    <View style={styles.header}>
+                        <View style={styles.topRow}>
+                            <TouchableOpacity onPress={goToProfileDetails}>
+                                <Image
+                                    source={{ uri: getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}+${user?.lastName || ''}&background=A5D6B7&color=fff` }}
+                                    style={styles.avatar}
+                                />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.addAccountBtn}>
+                                <UserPlus size={20} color={iconColor} />
+                            </TouchableOpacity>
                         </View>
-                        <View style={styles.statItem}>
-                            <Text style={[styles.statNum, { color: textColor }]}>{user?.following?.length || 147}</Text>
-                            <Text style={[styles.statLabel, { color: subTextColor }]}> Followers</Text>
+
+                        <View style={styles.userInfo}>
+                            <Text style={[styles.name, { color: textColor }]}>
+                                {user?.firstName} {user?.lastName}
+                            </Text>
+                            <Text style={[styles.handle, { color: subTextColor }]}>
+                                {handle}
+                            </Text>
+                        </View>
+
+                        <View style={styles.statsRow}>
+                            <View style={styles.statItem}>
+                                <Text style={[styles.statNum, { color: textColor }]}>{user?.followers?.length || 19}</Text>
+                                <Text style={[styles.statLabel, { color: subTextColor }]}> Following</Text>
+                            </View>
+                            <View style={styles.statItem}>
+                                <Text style={[styles.statNum, { color: textColor }]}>{user?.following?.length || 147}</Text>
+                                <Text style={[styles.statLabel, { color: subTextColor }]}> Followers</Text>
+                            </View>
                         </View>
                     </View>
-                </View>
 
-                {/* Main Menu List */}
-                <View style={styles.menuList}>
-                    <MenuOption icon={User} label="Profile" onPress={goToProfileDetails} />
+                    {/* Main Menu List */}
+                    <View style={styles.menuList}>
+                        <MenuOption icon={User} label="Profile" onPress={goToProfileDetails} />
+                        <MenuOption icon={Gamepad2} label="Puzzle games" onPress={() => { }} />
+                        <MenuOption icon={Bookmark} label="Saved posts" onPress={() => { }} />
+                        <MenuOption icon={Users} label="Groups" onPress={() => { }} />
+                    </View>
 
-                    {/* Requested Items */}
-                    <MenuOption icon={Gamepad2} label="Puzzle games" onPress={() => { }} />
-                    <MenuOption icon={Bookmark} label="Saved posts" onPress={() => { }} />
-                    <MenuOption icon={Users} label="Groups" onPress={() => { }} />
-                </View>
+                    <View style={[styles.divider, { backgroundColor: isDark ? '#2f3336' : '#eff3f4' }]} />
 
-                <View style={[styles.divider, { backgroundColor: isDark ? '#2f3336' : '#eff3f4' }]} />
+                    {/* Footer Items */}
+                    <View style={styles.footerList}>
+                        <TouchableOpacity style={styles.footerItem} onPress={() => router.push('/settings')}>
+                            <Text style={[styles.footerText, { color: textColor }]}>Settings and privacy</Text>
+                        </TouchableOpacity>
 
-                {/* Footer Items */}
-                <View style={styles.footerList}>
-                    <TouchableOpacity style={styles.footerItem} onPress={() => router.push('/settings')}>
-                        <Text style={[styles.footerText, { color: textColor }]}>Settings and privacy</Text>
+                        <TouchableOpacity style={styles.footerItem}>
+                            <Text style={[styles.footerText, { color: textColor }]}>Reactivate Premium: 50% Off</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+
+                {/* Bottom Footer Icons */}
+                <View style={[styles.bottomBar, { borderTopColor: isDark ? '#2f3336' : '#eff3f4' }]}>
+                    <TouchableOpacity style={styles.bottomIcon}>
+                        <Settings size={28} color={iconColor} strokeWidth={1.5} />
                     </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.footerItem}>
-                        <Text style={[styles.footerText, { color: textColor }]}>Reactivate Premium: 50% Off</Text>
-                    </TouchableOpacity>
                 </View>
-            </ScrollView>
-
-            {/* Bottom Footer Icons (Sun/Idea) from screenshot */}
-            <View style={[styles.bottomBar, { borderTopColor: isDark ? '#2f3336' : '#eff3f4' }]}>
-                <TouchableOpacity style={styles.bottomIcon}>
-                    <Settings size={28} color={iconColor} strokeWidth={1.5} />
-                </TouchableOpacity>
             </View>
+
+            {/* Transparent Overlay to Close */}
+            <TouchableOpacity
+                style={styles.overlay}
+                activeOpacity={1}
+                onPress={() => router.back()}
+            />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    modalContainer: {
         flex: 1,
+        flexDirection: 'row',
+    },
+    overlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.3)',
+    },
+    sidebar: {
+        width: '80%', // Occupy 80% screen width
+        height: '100%',
+        shadowColor: "#000",
+        shadowOffset: { width: 2, height: 0 },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        elevation: 10,
     },
     scrollContent: {
-        paddingBottom: 40,
+        paddingBottom: 60,
     },
     header: {
         paddingHorizontal: 20,
