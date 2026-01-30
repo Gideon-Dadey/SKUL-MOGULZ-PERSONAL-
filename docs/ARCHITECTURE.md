@@ -103,6 +103,8 @@ We use React Context for global state:
 |---------|---------|------|
 | **ThemeContext** | Theme management | `theme`, `toggleTheme()` |
 | **AuthContext** | Authentication | `user`, `isAuthenticated`, `login()`, `logout()`, `register()` |
+| **SocketContext** | Real-time connection | `socket`, `isConnected` |
+| **CallContext** | Call state machine | `call`, `initiateCall()`, `acceptCall()`, `endCall()` |
 
 ### Routing
 
@@ -114,6 +116,9 @@ We use React Context for global state:
 | `/create-post` | CreatePostPage | Create new post |
 | `/profile` | ProfilePage | Current user profile |
 | `/profile/:username` | ProfilePage | Other user profile |
+| `/messages` | MessagesPage | Real-time chat interface |
+| `/notifications`| NotificationsPage| Platform updates |
+| `/analytics` | AnalyticsPage | Performance dashboard |
 | `/login` | LoginPage | Authentication |
 | `/register` | RegisterPage | User registration |
 

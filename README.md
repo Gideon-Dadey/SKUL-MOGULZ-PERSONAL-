@@ -93,12 +93,13 @@ SKUL MOGULZ/
 | Feature | Description | Status |
 |---------|-------------|--------|
 | **User Registration** | Email-based signup with role selection (Student/Investor) | ✅ |
-| **User Authentication** | Login/logout with localStorage persistence | ✅ |
+| **User Authentication** | Login/logout with JWT persistence | ✅ |
 | **Professional Feed** | LinkedIn-style feed with sidebars, news, and suggestions | ✅ |
 | **Create Posts** | Modern editor with formatting, category, stage, and funding goals | ✅ |
 | **Network Management** | Manage connections, handle invitations, and find new people | ✅ |
 | **Project Discovery** | Dedicated grid view for discovering student startups with filters | ✅ |
-| **Direct Messaging** | Professional chat interface with conversation history | ✅ |
+| **Direct Messaging** | Real-time chat interface with Socket.io integration | ✅ |
+| **Video/Audio Calls** | Professional calling system powered by Jitsi Meet | ✅ |
 | **User Profiles** | Detailed profiles with banners, stats, activity, and about sections | ✅ |
 | **Search & Filter** | Find posts, people, and projects by keyword or category | ✅ |
 | **Like & Comment** | Rich interactions on posts and projects | ✅ |
@@ -107,13 +108,12 @@ SKUL MOGULZ/
 
 ### Future Enhancements (Planned)
 
-- [ ] Backend API integration (Node.js/Express)
-- [ ] Database persistence (MongoDB Atlas)
-- [ ] Real-time Socket.io integration for messages/notifications
+- [ ] File uploads (Images/Documents) for posts
 - [ ] Advanced Analytics Dashboard
 - [ ] Payment gateway for funding projects
+- [ ] Community groups for specific niches
 - [ ] Email notifications
-- [ ] File uploads (Images/Documents)
+- [ ] Mobile app (React Native)
 
 ---
 
@@ -130,13 +130,15 @@ SKUL MOGULZ/
 | **Axios** | 1.x | HTTP client |
 | **CSS Variables** | N/A | Theming & Design System |
 
-### Backend (Planned)
-| Technology | Purpose |
-|------------|---------|
-| **Node.js** | Runtime |
-| **Express** | Web framework |
-| **MongoDB Atlas** | Database |
-| **JWT** | Authentication |
+### Backend
+| Technology | Status | Purpose |
+|------------|---------|---------|
+| **Node.js** | ✅ Active | Runtime environment |
+| **Express** | ✅ Active | Web framework |
+| **MongoDB Atlas** | ✅ Active | Database persistence |
+| **Socket.io** | ✅ Active | Real-time communication |
+| **JWT** | ✅ Active | Secure authentication |
+| **Jitsi Meet** | ✅ Active | Video/Audio conferencing |
 
 ### Design
 | Aspect | Choice |

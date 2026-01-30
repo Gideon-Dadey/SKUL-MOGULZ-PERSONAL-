@@ -82,25 +82,45 @@ This is the first MVP release of SKUL MOGULZ, featuring core functionality for s
 
 ---
 
+## [0.2.0] - 2026-01-28
+
+### 📡 Real-time Communication & Backend Integration
+
+Major update transitioning from mock data to a fully functional backend with real-time capabilities.
+
+### Added
+
+#### Messaging & Calls
+- **Real-time Chat**: Individual messaging system powered by Socket.io.
+- **Voice & Video Calls**: Integrated calling functionality using Jitsi Meet.
+- **Call Signaling**: Backend socket events for starting, accepting, and ending calls.
+- **Call Overlay**: Modern UI for incoming and active calls.
+
+#### Backend Integration
+- **Node.js/Express Server**: Complete backend API for users, projects, and interactions.
+- **MongoDB Persistence**: Real data storage for all platform entities.
+- **JWT Auth**: Secure, token-based authentication system.
+- **Socket.io Server**: Dedicated socket handler for real-time events.
+
+#### UX Enhancements
+- **Notifications Page**: Centralized hub for platform updates.
+- **Analytics Dashboard**: Visual data representation for professional metrics.
+- **Improved Profiles**: Dynamic profile fetching with real user data.
+
+### Technical
+- **SocketContext**: Global state for socket connection management.
+- **CallContext**: Sophisticated state machine for managing call lifecycles.
+- **API Wrapper**: Centralized Axios instance for authenticated requests.
+
+---
+
 ## Upcoming
 
-### [0.2.0] - Planned
-- Real-time notifications
-- Direct messaging between users
-- Image uploads for posts
-- Enhanced search with filters
-
 ### [0.3.0] - Planned
-- Investor dashboard
-- Analytics for projects
-- Community groups
-- Email notifications
-
-### [1.0.0] - Future
-- Payment/funding integration
-- Mobile app (React Native)
-- Advanced analytics
-- API for third-party integrations
+- File uploads for projects and profile avatars.
+- Enhanced search with advanced filtering (University, Funding).
+- Community groups and niche-specific forums.
+- Email notification system (SendGrid integration).
 
 ---
 
