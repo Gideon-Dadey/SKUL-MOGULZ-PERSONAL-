@@ -18,6 +18,7 @@ export default function LoginScreen() {
     const [error, setError] = useState('');
 
     const activeColors = Colors[theme];
+    const isDark = theme === 'dark';
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -41,76 +42,100 @@ export default function LoginScreen() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={[styles.container, { backgroundColor: activeColors.background }]}
         >
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                <View style={styles.header}>
-                    <Logo size={60} />
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
+                <View style={styles.heroSection}>
+                    <View style={[styles.logoContainer, { backgroundColor: isDark ? 'rgba(165, 214, 183, 0.1)' : 'rgba(165, 214, 183, 0.05)' }]}>
+                        <Logo size={80} />
+                    </View>
                     <Text style={[styles.brandText, { color: activeColors.tint }]}>SKUL MOGULZ</Text>
-                    <Text style={[styles.title, { color: activeColors.text }]}>Welcome back</Text>
-                    <Text style={[styles.subtitle, { color: activeColors.muted }]}>
-                        Don't have an account? <Link href="/(auth)/register" style={{ color: activeColors.tint, fontWeight: '600' }}>Join now</Link>
+                    <Text style={[styles.heroTitle, { color: activeColors.text }]}>Propel Your{'\n'}Student Vision</Text>
+                    <Text style={[styles.heroSubtitle, { color: activeColors.muted }]}>
+                        Connecting university innovators with high-impact investment.
                     </Text>
                 </View>
 
-                <View style={styles.form}>
-                    {error ? <Text style={styles.errorText}>{error}</Text> : null}
+                <View style={[styles.authCard, { backgroundColor: isDark ? '#161b22' : '#ffffff', shadowColor: isDark ? '#000' : '#888' }]}>
+                    <Text style={[styles.formTitle, { color: activeColors.text }]}>Sign In</Text>
 
-                    <View style={styles.inputContainer}>
-                        <Text style={[styles.label, { color: activeColors.muted }]}>Email or username</Text>
-                        <View style={[styles.inputWrapper, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
-                            <Mail size={20} color={activeColors.light} style={styles.inputIcon} />
-                            <TextInput
-                                style={[styles.input, { color: activeColors.text }]}
-                                placeholder="Enter your email"
-                                placeholderTextColor={activeColors.light}
-                                value={email}
-                                onChangeText={setEmail}
-                                autoCapitalize="none"
-                                keyboardType="email-address"
-                            />
+                    {error ? (
+                        <View style={styles.errorContainer}>
+                            <Text style={styles.errorText}>{error}</Text>
                         </View>
-                    </View>
+                    ) : null}
 
-                    <View style={styles.inputContainer}>
-                        <View style={styles.labelRow}>
-                            <Text style={[styles.label, { color: activeColors.muted }]}>Password</Text>
-                            <TouchableOpacity>
-                                <Text style={[styles.forgotText, { color: activeColors.tint }]}>Forgot password?</Text>
+                    <View style={styles.formContainer}>
+                        <View style={styles.inputGroup}>
+                            <Text style={[styles.inputLabel, { color: activeColors.muted }]}>PROFESSIONAL EMAIL</Text>
+                            <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#0d1117' : '#f8f9fa', borderColor: activeColors.border }]}>
+                                <Mail size={18} color={activeColors.tint} style={styles.inputIcon} />
+                                <TextInput
+                                    style={[styles.input, { color: activeColors.text }]}
+                                    placeholder="Enter your campus email"
+                                    placeholderTextColor={activeColors.light}
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    autoCapitalize="none"
+                                    keyboardType="email-address"
+                                />
+                            </View>
+                        </View>
+
+                        <View style={styles.inputGroup}>
+                            <View style={styles.labelRow}>
+                                <Text style={[styles.inputLabel, { color: activeColors.muted }]}>PASSWORD</Text>
+                                <TouchableOpacity>
+                                    <Text style={[styles.forgotLink, { color: activeColors.tint }]}>Reset?</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#0d1117' : '#f8f9fa', borderColor: activeColors.border }]}>
+                                <Lock size={18} color={activeColors.tint} style={styles.inputIcon} />
+                                <TextInput
+                                    style={[styles.input, { color: activeColors.text }]}
+                                    placeholder="Enter your security phrase"
+                                    placeholderTextColor={activeColors.light}
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    secureTextEntry
+                                />
+                            </View>
+                        </View>
+
+                        <TouchableOpacity
+                            style={[styles.primaryButton, { backgroundColor: activeColors.tint }]}
+                            onPress={handleLogin}
+                            disabled={loading}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={styles.primaryButtonText}>{loading ? 'Authenticating...' : 'Enter Dashboard'}</Text>
+                            {!loading && <ArrowRight size={20} color="#000" />}
+                        </TouchableOpacity>
+
+                        <View style={styles.authDivider}>
+                            <View style={[styles.dividerLine, { backgroundColor: activeColors.border }]} />
+                            <Text style={[styles.dividerLabel, { color: activeColors.light }]}>OR CONTINUATE WITH</Text>
+                            <View style={[styles.dividerLine, { backgroundColor: activeColors.border }]} />
+                        </View>
+
+                        <View style={styles.socialRow}>
+                            <TouchableOpacity style={[styles.socialIconBtn, { backgroundColor: isDark ? '#0d1117' : '#f8f9fa', borderColor: activeColors.border }]}>
+                                <Text style={[styles.socialBtnLabel, { color: activeColors.text }]}>Google</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.socialIconBtn, { backgroundColor: isDark ? '#0d1117' : '#f8f9fa', borderColor: activeColors.border }]}>
+                                <Text style={[styles.socialBtnLabel, { color: activeColors.text }]}>GitHub</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={[styles.inputWrapper, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
-                            <Lock size={20} color={activeColors.light} style={styles.inputIcon} />
-                            <TextInput
-                                style={[styles.input, { color: activeColors.text }]}
-                                placeholder="Enter your password"
-                                placeholderTextColor={activeColors.light}
-                                value={password}
-                                onChangeText={setPassword}
-                                secureTextEntry
-                            />
-                        </View>
                     </View>
+                </View>
 
-                    <TouchableOpacity
-                        style={[styles.loginButton, { backgroundColor: activeColors.tint }]}
-                        onPress={handleLogin}
-                        disabled={loading}
-                    >
-                        <Text style={styles.loginButtonText}>{loading ? 'Signing in...' : 'Sign in'}</Text>
-                        {!loading && <ArrowRight size={20} color="#fff" />}
-                    </TouchableOpacity>
-
-                    <View style={styles.divider}>
-                        <View style={[styles.dividerLine, { backgroundColor: activeColors.border }]} />
-                        <Text style={[styles.dividerText, { color: activeColors.muted }]}>or</Text>
-                        <View style={[styles.dividerLine, { backgroundColor: activeColors.border }]} />
-                    </View>
-
-                    <TouchableOpacity style={[styles.socialButton, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
-                        <Text style={[styles.socialButtonText, { color: activeColors.text }]}>Continue with Google</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={[styles.socialButton, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
-                        <Text style={[styles.socialButtonText, { color: activeColors.text }]}>Continue with GitHub</Text>
+                <View style={styles.footer}>
+                    <Text style={[styles.footerText, { color: activeColors.muted }]}>
+                        New to the network?
+                    </Text>
+                    <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
+                        <Text style={[styles.footerLink, { color: activeColors.tint }]}> Create Professional Account</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -125,102 +150,157 @@ const styles = StyleSheet.create({
     scrollContent: {
         flexGrow: 1,
         padding: 24,
-        paddingTop: 80,
+        paddingBottom: 40,
     },
-    header: {
-        marginBottom: 40,
+    heroSection: {
+        marginTop: 40,
+        marginBottom: 32,
+        alignItems: 'center',
+    },
+    logoContainer: {
+        padding: 20,
+        borderRadius: 24,
+        marginBottom: 20,
     },
     brandText: {
-        fontSize: 18,
+        fontSize: 14,
+        fontWeight: '900',
+        letterSpacing: 3,
+        marginBottom: 12,
+        textTransform: 'uppercase',
+    },
+    heroTitle: {
+        fontSize: 36,
         fontWeight: '800',
+        textAlign: 'center',
+        lineHeight: 44,
         marginBottom: 16,
     },
-    title: {
-        fontSize: 28,
+    heroSubtitle: {
+        fontSize: 15,
+        textAlign: 'center',
+        paddingHorizontal: 20,
+        lineHeight: 22,
+    },
+    authCard: {
+        borderRadius: 32,
+        padding: 28,
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.1,
+        shadowRadius: 20,
+        elevation: 10,
+    },
+    formTitle: {
+        fontSize: 22,
         fontWeight: '700',
-        marginBottom: 8,
+        marginBottom: 24,
     },
-    subtitle: {
-        fontSize: 16,
+    errorContainer: {
+        backgroundColor: 'rgba(255, 68, 68, 0.1)',
+        padding: 12,
+        borderRadius: 12,
+        marginBottom: 20,
     },
-    form: {
+    errorText: {
+        color: '#ff4444',
+        fontSize: 13,
+        fontWeight: '600',
+        textAlign: 'center',
+    },
+    formContainer: {
         gap: 20,
     },
-    label: {
-        fontSize: 14,
-        fontWeight: '600',
-        marginBottom: 8,
+    inputGroup: {
+        gap: 8,
+    },
+    inputLabel: {
+        fontSize: 11,
+        fontWeight: '800',
+        letterSpacing: 1.2,
     },
     labelRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    forgotText: {
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    inputContainer: {
-        marginBottom: 4,
+    forgotLink: {
+        fontSize: 11,
+        fontWeight: '700',
     },
     inputWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
-        borderWidth: 1,
-        borderRadius: 12,
+        borderWidth: 1.5,
+        borderRadius: 16,
         paddingHorizontal: 16,
-        height: 56,
+        height: 60,
     },
     inputIcon: {
         marginRight: 12,
     },
     input: {
         flex: 1,
-        fontSize: 16,
+        fontSize: 15,
+        fontWeight: '500',
     },
-    loginButton: {
-        height: 56,
-        borderRadius: 100,
+    primaryButton: {
+        height: 60,
+        borderRadius: 16,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 8,
-        marginTop: 10,
+        gap: 12,
+        marginTop: 8,
     },
-    loginButtonText: {
-        color: '#fff',
+    primaryButtonText: {
+        color: '#000',
         fontSize: 16,
-        fontWeight: '700',
+        fontWeight: '800',
+        letterSpacing: 0.5,
     },
-    divider: {
+    authDivider: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 20,
+        marginVertical: 12,
     },
     dividerLine: {
         flex: 1,
         height: 1,
     },
-    dividerText: {
-        paddingHorizontal: 16,
-        fontSize: 14,
+    dividerLabel: {
+        paddingHorizontal: 12,
+        fontSize: 10,
+        fontWeight: '700',
     },
-    socialButton: {
-        height: 56,
-        borderRadius: 100,
-        borderWidth: 1,
+    socialRow: {
+        flexDirection: 'row',
+        gap: 12,
+    },
+    socialIconBtn: {
+        flex: 1,
+        height: 52,
+        borderRadius: 16,
+        borderWidth: 1.5,
         alignItems: 'center',
         justifyContent: 'center',
     },
-    socialButtonText: {
-        fontSize: 16,
-        fontWeight: '600',
-    },
-    errorText: {
-        color: '#ff4444',
+    socialBtnLabel: {
         fontSize: 14,
-        fontWeight: '600',
-        textAlign: 'center',
-        marginBottom: 10,
+        fontWeight: '700',
+    },
+    footer: {
+        marginTop: 32,
+        marginBottom: 20,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    footerText: {
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    footerLink: {
+        fontSize: 14,
+        fontWeight: '700',
     },
 });
