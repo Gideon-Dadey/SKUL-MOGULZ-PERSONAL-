@@ -79,7 +79,7 @@ const Navbar: React.FC = () => {
             setNotifications(prev => [newNotification, ...prev]);
         });
 
-        socket.on('new_message', (message: any) => {
+        socket.on('new_message', () => {
             // Only increment if we're not on the messages page or if it's from someone else
             if (location.pathname !== '/messages') {
                 setUnreadMessages(prev => prev + 1);
