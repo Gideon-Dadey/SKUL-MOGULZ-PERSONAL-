@@ -18,29 +18,31 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     useEffect(() => {
         if (isAuthenticated && user) {
+            const userId = (user as any)?._id || user?.id;
+            if (!userId) return;
 
             const newSocket = io('http://localhost:5000');
 
             newSocket.on('connect', () => {
                 setIsConnected(true);
                 console.log('Socket connected:', newSocket.id);
-
-                // Join room using _id (MongoDB) or id
-                const userId = (user as any)?._id || user?.id;
-                if (userId) {
-                    newSocket.emit('join_room', userId);
-                    console.log('Joined room:', userId);
-                }
+                newSocket.emit('join_room', userId);
+                console.log('Joined room:', userId);
             });
 
-            newSocket.on('disconnect', () => {
+            newSocket.on('disconnect', (reason) => {
                 setIsConnected(false);
-                console.log('Socket disconnected');
+                console.log('Socket disconnected:', reason);
+            });
+
+            newSocket.on('error', (error) => {
+                console.error('Socket error:', error);
             });
 
             setSocket(newSocket);
 
             return () => {
+                console.log('Cleaning up socket connection...');
                 newSocket.disconnect();
             };
         } else {
@@ -50,7 +52,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 setIsConnected(false);
             }
         }
-    }, [isAuthenticated, user]);
+    }, [isAuthenticated, (user as any)?._id || user?.id]);
 
     return (
         <SocketContext.Provider value={{ socket, isConnected }}>

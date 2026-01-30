@@ -123,7 +123,6 @@ const MessagesPage: React.FC = () => {
     return (
         <div className="messages-container">
             <div className="messages-layout">
-                { }
                 <aside className="messages-sidebar">
                     <header className="msg-sidebar-header">
                         <h2>Messaging</h2>
@@ -175,23 +174,25 @@ const MessagesPage: React.FC = () => {
                     </div>
                 </aside>
 
-                { }
                 <main className="messages-main">
                     {activeChatPartner ? (
                         <>
                             <header className="chat-header">
                                 <div className="chat-user-info">
-                                    <h3 className="chat-username">{activeChatPartner.firstName} {activeChatPartner.lastName}</h3>
+                                    <h3 className="chat-username">
+                                        {activeChatPartner.firstName} {activeChatPartner.lastName}
+                                        <span className={`connection-status-dot ${socket?.connected ? 'connected' : 'disconnected'}`} title={socket?.connected ? 'Real-time connected' : 'Connecting to real-time...'}></span>
+                                    </h3>
                                     <span className="chat-status">
                                         {activeChatPartner.role === 'student' ? 'Student Entrepreneur' : 'Investor'}
                                     </span>
                                 </div>
                                 <div className="chat-actions">
-                                    <button className="icon-btn"><MoreHorizontal size={20} /></button>
-                                    <button className="icon-btn" onClick={() => startCall(activeChatPartner._id, activeChatPartner.firstName, activeChatPartner.avatar, true)}>
+                                    <button className="icon-btn" title="More options"><MoreHorizontal size={20} /></button>
+                                    <button className="icon-btn" onClick={() => startCall(activeChatPartner._id || activeChatPartner.id, activeChatPartner.firstName, activeChatPartner.avatar, true)} title="Video call">
                                         <Video size={20} />
                                     </button>
-                                    <button className="icon-btn" onClick={() => startCall(activeChatPartner._id, activeChatPartner.firstName, activeChatPartner.avatar, false)}>
+                                    <button className="icon-btn" onClick={() => startCall(activeChatPartner._id || activeChatPartner.id, activeChatPartner.firstName, activeChatPartner.avatar, false)} title="Audio call">
                                         <Phone size={20} />
                                     </button>
                                 </div>
