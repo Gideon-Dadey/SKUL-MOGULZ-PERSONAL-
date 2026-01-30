@@ -72,12 +72,16 @@ export interface Comment {
 }
 
 export interface Notification {
-    id: string;
-    type: 'like' | 'comment' | 'follow' | 'new_post';
-    message: string;
-    read: boolean;
-    relatedPostId?: string;
-    fromUser?: User;
+    _id: string;
+    id?: string;
+    sender: User;
+    type: 'like' | 'comment' | 'follow' | 'funding' | 'new_post';
+    message?: string;
+    isRead: boolean;
+    project?: {
+        _id: string;
+        title: string;
+    };
     createdAt: string;
 }
 
