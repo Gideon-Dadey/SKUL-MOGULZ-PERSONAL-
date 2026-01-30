@@ -1,16 +1,13 @@
 
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
 import { Link, useRouter } from 'expo-router';
-import { Mail, Lock, ArrowRight, ArrowLeft } from 'lucide-react-native';
+import { ArrowLeft } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
-import Colors from '../../constants/Colors';
-import { useTheme } from '../../context/ThemeContext';
 import Logo from '../../components/Logo';
 
 export default function RegisterScreen() {
     const { register } = useAuth();
-    const { theme } = useTheme();
     const router = useRouter();
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
@@ -22,9 +19,6 @@ export default function RegisterScreen() {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-
-    const activeColors = Colors[theme];
-    const isDark = theme === 'dark';
 
     const handleContinue = () => {
         if (step === 1) {
@@ -55,25 +49,23 @@ export default function RegisterScreen() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={[styles.container, { backgroundColor: '#ffffff' }]}
         >
+            <View style={styles.header}>
+                <Logo size={30} />
+                <Link href="/(auth)/login" asChild>
+                    <TouchableOpacity>
+                        <Text style={styles.headerLink}>Sign in</Text>
+                    </TouchableOpacity>
+                </Link>
+            </View>
+
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
-                <View style={styles.heroSection}>
-                    <View style={[styles.logoContainer, { backgroundColor: isDark ? 'rgba(165, 214, 183, 0.1)' : 'rgba(165, 214, 183, 0.05)' }]}>
-                        <Logo size={60} />
-                    </View>
-                    <Text style={[styles.brandText, { color: activeColors.tint }]}>Skul Mogulz</Text>
-                    <Text style={[styles.heroTitle, { color: activeColors.text }]}>Start Your{'\n'}Mogul Journey</Text>
+                <View style={styles.contentContainer}>
+                    <Text style={styles.title}>Join Skul Mogulz</Text>
+                    <Text style={styles.subtitle}>Make the most of your professional life</Text>
 
-                    <View style={styles.stepIndicator}>
-                        <View style={[styles.stepDot, { backgroundColor: activeColors.tint }]} />
-                        <View style={[styles.stepLine, { backgroundColor: step === 2 ? activeColors.tint : activeColors.border }]} />
-                        <View style={[styles.stepDot, { backgroundColor: step === 2 ? activeColors.tint : activeColors.border }]} />
-                    </View>
-                </View>
-
-                <View style={[styles.authCard, { backgroundColor: '#ffffff', shadowColor: '#000' }]}>
                     {error ? (
                         <View style={styles.errorContainer}>
                             <Text style={styles.errorText}>{error}</Text>
@@ -81,142 +73,117 @@ export default function RegisterScreen() {
                     ) : null}
 
                     {step === 1 ? (
-                        <View style={styles.formContainer}>
-                            <Text style={[styles.formTitle, { color: activeColors.text }]}>Personal Details</Text>
-
-                            <View style={styles.inputRow}>
-                                <View style={[styles.inputGroup, { flex: 1 }]}>
-                                    <Text style={[styles.inputLabel, { color: activeColors.muted }]}>First name</Text>
-                                    <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#0d1117' : '#f8f9fa', borderColor: activeColors.border }]}>
-                                        <TextInput
-                                            style={[styles.input, { color: activeColors.text }]}
-                                            value={formData.firstName}
-                                            onChangeText={(text) => setFormData({ ...formData, firstName: text })}
-                                        />
-                                    </View>
-                                </View>
-                                <View style={[styles.inputGroup, { flex: 1 }]}>
-                                    <Text style={[styles.inputLabel, { color: activeColors.muted }]}>Last name</Text>
-                                    <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#0d1117' : '#f8f9fa', borderColor: activeColors.border }]}>
-                                        <TextInput
-                                            style={[styles.input, { color: activeColors.text }]}
-                                            value={formData.lastName}
-                                            onChangeText={(text) => setFormData({ ...formData, lastName: text })}
-                                        />
-                                    </View>
-                                </View>
+                        <View style={styles.form}>
+                            <View style={styles.inputContainer}>
+                                <Text style={styles.label}>First name</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={formData.firstName}
+                                    onChangeText={(text) => setFormData({ ...formData, firstName: text })}
+                                />
                             </View>
 
-                            <View style={styles.inputGroup}>
-                                <Text style={[styles.inputLabel, { color: activeColors.muted }]}>Institutional email</Text>
-                                <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#0d1117' : '#f8f9fa', borderColor: activeColors.border }]}>
-                                    <Mail size={18} color={activeColors.tint} style={styles.inputIcon} />
-                                    <TextInput
-                                        style={[styles.input, { color: activeColors.text }]}
-                                        value={formData.email}
-                                        onChangeText={(text) => setFormData({ ...formData, email: text })}
-                                        autoCapitalize="none"
-                                        keyboardType="email-address"
-                                    />
-                                </View>
+                            <View style={styles.inputContainer}>
+                                <Text style={styles.label}>Last name</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={formData.lastName}
+                                    onChangeText={(text) => setFormData({ ...formData, lastName: text })}
+                                />
                             </View>
 
-                            <View style={styles.inputGroup}>
-                                <Text style={[styles.inputLabel, { color: activeColors.muted }]}>Security key</Text>
-                                <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#0d1117' : '#f8f9fa', borderColor: activeColors.border }]}>
-                                    <Lock size={18} color={activeColors.tint} style={styles.inputIcon} />
-                                    <TextInput
-                                        style={[styles.input, { color: activeColors.text }]}
-                                        value={formData.password}
-                                        onChangeText={(text) => setFormData({ ...formData, password: text })}
-                                        secureTextEntry
-                                    />
-                                </View>
+                            <View style={styles.inputContainer}>
+                                <Text style={styles.label}>Email</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={formData.email}
+                                    onChangeText={(text) => setFormData({ ...formData, email: text })}
+                                    autoCapitalize="none"
+                                    keyboardType="email-address"
+                                />
                             </View>
+
+                            <View style={styles.inputContainer}>
+                                <Text style={styles.label}>Password (6+ characters)</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={formData.password}
+                                    onChangeText={(text) => setFormData({ ...formData, password: text })}
+                                    secureTextEntry
+                                />
+                            </View>
+
+                            <Text style={styles.disclaimer}>
+                                By clicking Agree & Join, you agree to the Skul Mogulz User Agreement, Privacy Policy, and Cookie Policy.
+                            </Text>
 
                             <TouchableOpacity
-                                style={[styles.primaryButton, { backgroundColor: activeColors.tint }]}
+                                style={styles.submitBtn}
                                 onPress={handleContinue}
                                 activeOpacity={0.8}
                             >
-                                <Text style={styles.primaryButtonText}>Continue Excellence</Text>
-                                <ArrowRight size={20} color="#000" />
+                                <Text style={styles.submitBtnText}>Agree & Join</Text>
+                            </TouchableOpacity>
+
+                            <View style={styles.divider}>
+                                <View style={styles.dividerLine} />
+                                <Text style={styles.dividerText}>or</Text>
+                                <View style={styles.dividerLine} />
+                            </View>
+
+                            <TouchableOpacity style={styles.socialBtn}>
+                                <Image
+                                    source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg' }}
+                                    style={styles.socialIcon}
+                                />
+                                <Text style={styles.socialBtnText}>Continue with Google</Text>
                             </TouchableOpacity>
                         </View>
                     ) : (
-                        <View style={styles.formContainer}>
-                            <Text style={[styles.formTitle, { color: activeColors.text }]}>Select Your Perspective</Text>
-                            <Text style={[styles.formSubtitle, { color: activeColors.muted }]}>How will you contribute to the mogul ecosystem?</Text>
+                        <View style={styles.form}>
+                            <Text style={styles.stepTitle}>What describes you best?</Text>
+                            <Text style={styles.stepSubtitle}>We'll help you find the right people and opportunities.</Text>
 
-                            <View style={styles.roleGrid}>
-                                <TouchableOpacity
-                                    style={[
-                                        styles.premiumRoleOption,
-                                        {
-                                            backgroundColor: isDark ? '#0d1117' : '#f8f9fa',
-                                            borderColor: formData.role === 'student' ? activeColors.tint : activeColors.border
-                                        }
-                                    ]}
-                                    onPress={() => setFormData({ ...formData, role: 'student' })}
-                                    activeOpacity={0.7}
-                                >
-                                    <View style={[styles.roleIconBadge, { backgroundColor: formData.role === 'student' ? 'rgba(165, 214, 183, 0.2)' : 'rgba(0,0,0,0.05)' }]}>
-                                        <Text style={styles.roleEmoji}>🎓</Text>
-                                    </View>
-                                    <Text style={[styles.premiumRoleTitle, { color: activeColors.text }]}>Innovation Leader</Text>
-                                    <Text style={[styles.premiumRoleDesc, { color: activeColors.muted }]}>Building and scaling the next generation of campus startups.</Text>
-                                    {formData.role === 'student' && <View style={[styles.selectionDot, { backgroundColor: activeColors.tint }]} />}
+                            <TouchableOpacity
+                                style={[styles.roleOption, formData.role === 'student' && styles.roleOptionSelected]}
+                                onPress={() => setFormData({ ...formData, role: 'student' })}
+                            >
+                                <View style={styles.roleContent}>
+                                    <Text style={styles.roleTitle}>I'm a Student</Text>
+                                    <Text style={styles.roleDesc}>Looking to build, innovate, and find funding.</Text>
+                                </View>
+                                <View style={[styles.radioOuter, formData.role === 'student' && styles.radioOuterSelected]}>
+                                    {formData.role === 'student' && <View style={styles.radioInner} />}
+                                </View>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={[styles.roleOption, formData.role === 'investor' && styles.roleOptionSelected]}
+                                onPress={() => setFormData({ ...formData, role: 'investor' })}
+                            >
+                                <View style={styles.roleContent}>
+                                    <Text style={styles.roleTitle}>I'm an Investor</Text>
+                                    <Text style={styles.roleDesc}>Looking for the next big campus startup.</Text>
+                                </View>
+                                <View style={[styles.radioOuter, formData.role === 'investor' && styles.radioOuterSelected]}>
+                                    {formData.role === 'investor' && <View style={styles.radioInner} />}
+                                </View>
+                            </TouchableOpacity>
+
+                            <View style={styles.navButtons}>
+                                <TouchableOpacity style={styles.backBtn} onPress={() => setStep(1)}>
+                                    <ArrowLeft size={24} color="#666" />
                                 </TouchableOpacity>
-
                                 <TouchableOpacity
-                                    style={[
-                                        styles.premiumRoleOption,
-                                        {
-                                            backgroundColor: isDark ? '#0d1117' : '#f8f9fa',
-                                            borderColor: formData.role === 'investor' ? activeColors.tint : activeColors.border
-                                        }
-                                    ]}
-                                    onPress={() => setFormData({ ...formData, role: 'investor' })}
-                                    activeOpacity={0.7}
-                                >
-                                    <View style={[styles.roleIconBadge, { backgroundColor: formData.role === 'investor' ? 'rgba(165, 214, 183, 0.2)' : 'rgba(0,0,0,0.05)' }]}>
-                                        <Text style={styles.roleEmoji}>💼</Text>
-                                    </View>
-                                    <Text style={[styles.premiumRoleTitle, { color: activeColors.text }]}>Venture Partner</Text>
-                                    <Text style={[styles.premiumRoleDesc, { color: activeColors.muted }]}>Identifying and mentoring elite student-led opportunities.</Text>
-                                    {formData.role === 'investor' && <View style={[styles.selectionDot, { backgroundColor: activeColors.tint }]} />}
-                                </TouchableOpacity>
-                            </View>
-
-                            <View style={styles.multiButtonRow}>
-                                <TouchableOpacity
-                                    style={[styles.secondaryButton, { borderColor: activeColors.border }]}
-                                    onPress={() => setStep(1)}
-                                >
-                                    <ArrowLeft size={20} color={activeColors.text} />
-                                </TouchableOpacity>
-
-                                <TouchableOpacity
-                                    style={[styles.primaryButton, { backgroundColor: activeColors.tint, flex: 1 }]}
+                                    style={[styles.submitBtn, { flex: 1, marginLeft: 16 }]}
                                     onPress={handleRegister}
                                     disabled={loading}
-                                    activeOpacity={0.8}
                                 >
-                                    <Text style={styles.primaryButtonText}>{loading ? 'Establishing...' : 'Confirm Identity'}</Text>
-                                    {!loading && <ArrowRight size={20} color="#000" />}
+                                    <Text style={styles.submitBtnText}>{loading ? 'Creating account...' : 'Complete profile'}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
                     )}
-                </View>
-
-                <View style={styles.footer}>
-                    <Text style={[styles.footerText, { color: activeColors.muted }]}>
-                        Part of the elite?
-                    </Text>
-                    <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
-                        <Text style={[styles.footerLink, { color: activeColors.tint }]}> Sign In Instead</Text>
-                    </TouchableOpacity>
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>
@@ -226,185 +193,199 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#fff',
+    },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingTop: Platform.OS === 'ios' ? 60 : 40,
+        paddingBottom: 10,
+    },
+    headerLink: {
+        color: '#0a66c2',
+        fontSize: 16,
+        fontWeight: '600',
     },
     scrollContent: {
         flexGrow: 1,
-        padding: 24,
+    },
+    contentContainer: {
+        paddingHorizontal: 24,
+        paddingTop: 20,
         paddingBottom: 40,
     },
-    heroSection: {
-        marginTop: 40,
+    title: {
+        fontSize: 30,
+        fontWeight: '400',
+        color: '#000000e6',
+        marginBottom: 8,
+    },
+    subtitle: {
+        fontSize: 16,
+        color: '#00000099',
         marginBottom: 32,
-        alignItems: 'center',
-    },
-    logoContainer: {
-        padding: 16,
-        borderRadius: 0.5,
-        marginBottom: 16,
-    },
-    brandText: {
-        fontSize: 12,
-        fontWeight: '900',
-        marginBottom: 8,
-    },
-    heroTitle: {
-        fontSize: 32,
-        fontWeight: '800',
-        textAlign: 'center',
-        lineHeight: 40,
-        marginBottom: 20,
-    },
-    stepIndicator: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    stepDot: {
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-    },
-    stepLine: {
-        width: 40,
-        height: 2,
-        borderRadius: 1,
-    },
-    authCard: {
-        borderRadius: 8,
-        padding: 28,
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.1,
-        shadowRadius: 20,
-        elevation: 10,
-    },
-    formTitle: {
-        fontSize: 22,
-        fontWeight: '700',
-        marginBottom: 8,
-    },
-    formSubtitle: {
-        fontSize: 14,
-        marginBottom: 24,
-        lineHeight: 20,
     },
     errorContainer: {
-        backgroundColor: 'rgba(255, 68, 68, 0.1)',
+        backgroundColor: '#ffebe6',
         padding: 12,
-        borderRadius: 6,
+        borderRadius: 4,
         marginBottom: 20,
     },
     errorText: {
-        color: '#ff4444',
-        fontSize: 13,
-        fontWeight: '600',
-        textAlign: 'center',
+        color: '#d93025',
+        fontSize: 14,
     },
-    formContainer: {
-        gap: 20,
-    },
-    inputRow: {
-        flexDirection: 'row',
-        gap: 12,
-    },
-    inputGroup: {
-        gap: 8,
-    },
-    inputLabel: {
-        fontSize: 10,
-        fontWeight: '800',
-    },
-    inputWrapper: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderWidth: 1.5,
-        borderRadius: 8,
-        paddingHorizontal: 16,
-        height: 60,
-    },
-    inputIcon: {
-        marginRight: 12,
-    },
-    input: {
-        flex: 1,
-        fontSize: 15,
-        fontWeight: '500',
-    },
-    roleGrid: {
+    form: {
         gap: 16,
     },
-    premiumRoleOption: {
-        padding: 20,
-        borderRadius: 8,
-        borderWidth: 2,
-        position: 'relative',
-    },
-    roleIconBadge: {
-        width: 48,
-        height: 48,
-        borderRadius: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 12,
-    },
-    roleEmoji: {
-        fontSize: 24,
-    },
-    premiumRoleTitle: {
-        fontSize: 16,
-        fontWeight: '700',
+    inputContainer: {
         marginBottom: 4,
     },
-    premiumRoleDesc: {
-        fontSize: 13,
+    label: {
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 4,
+    },
+    input: {
+        height: 48,
+        borderWidth: 1,
+        borderColor: '#00000099',
+        borderRadius: 4,
+        paddingHorizontal: 12,
+        fontSize: 16,
+        color: '#000',
+    },
+    disclaimer: {
+        fontSize: 12,
+        color: '#666',
+        textAlign: 'center',
+        marginVertical: 12,
         lineHeight: 18,
     },
-    selectionDot: {
-        position: 'absolute',
-        top: 20,
-        right: 20,
+    submitBtn: {
+        backgroundColor: '#0a66c2', // LinkedIn Blue
+        height: 52,
+        borderRadius: 26,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    submitBtnText: {
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    divider: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 16,
+    },
+    dividerLine: {
+        flex: 1,
+        height: 1,
+        backgroundColor: '#00000014',
+    },
+    dividerText: {
+        paddingHorizontal: 16,
+        color: '#00000099',
+        fontSize: 14,
+    },
+    socialBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 52,
+        borderWidth: 1,
+        borderColor: '#00000099',
+        borderRadius: 26,
+        backgroundColor: '#fff',
+    },
+    socialIcon: {
+        width: 20,
+        height: 20,
+        marginRight: 12,
+        resizeMode: 'contain',
+    },
+    socialBtnText: {
+        color: '#00000099',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    // Step 2 styles
+    stepTitle: {
+        fontSize: 24,
+        fontWeight: '600',
+        color: '#000000e6',
+        marginBottom: 8,
+    },
+    stepSubtitle: {
+        fontSize: 16,
+        color: '#666',
+        marginBottom: 24,
+    },
+    roleOption: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 20,
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#00000026', // Light gray border
+        marginBottom: 16,
+    },
+    roleOptionSelected: {
+        borderColor: '#0a66c2',
+        borderWidth: 2,
+        backgroundColor: 'rgba(10, 102, 194, 0.05)',
+    },
+    roleContent: {
+        flex: 1,
+    },
+    roleTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#000000e6',
+        marginBottom: 4,
+    },
+    roleDesc: {
+        fontSize: 14,
+        color: '#666',
+    },
+    radioOuter: {
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        borderWidth: 2,
+        borderColor: '#666',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: 16,
+    },
+    radioOuterSelected: {
+        borderColor: '#0a66c2',
+    },
+    radioInner: {
         width: 12,
         height: 12,
         borderRadius: 6,
+        backgroundColor: '#0a66c2',
     },
-    primaryButton: {
-        height: 60,
-        borderRadius: 8,
+    navButtons: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        gap: 12,
+        marginTop: 24,
     },
-    primaryButtonText: {
-        color: '#000',
-        fontSize: 15,
-        fontWeight: '800',
-    },
-    secondaryButton: {
-        width: 60,
-        height: 60,
-        borderRadius: 8,
-        borderWidth: 1.5,
+    backBtn: {
+        width: 52,
+        height: 52,
+        borderRadius: 26,
+        borderWidth: 1,
+        borderColor: '#666',
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    multiButtonRow: {
-        flexDirection: 'row',
-        gap: 12,
-        marginTop: 8,
-    },
-    footer: {
-        marginTop: 32,
-        marginBottom: 20,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    footerText: {
-        fontSize: 14,
-        fontWeight: '500',
-    },
-    footerLink: {
-        fontSize: 14,
-        fontWeight: '700',
     },
 });
+
+
