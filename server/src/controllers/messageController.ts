@@ -10,6 +10,7 @@ import { getIO } from '../socket';
 export const getConversations = async (req: any, res: Response) => {
     try {
         const userId = new mongoose.Types.ObjectId(req.user.id);
+        console.log("getConversations for user:", userId);
 
         // This aggregation finds unique chat partners and their latest message
         const conversations = await Message.aggregate([
@@ -22,7 +23,7 @@ export const getConversations = async (req: any, res: Response) => {
                 }
             },
             {
-                $sort: { createdAt: 1 }
+                $sort: { _id: -1 }
             },
             {
                 $group: {
@@ -33,8 +34,8 @@ export const getConversations = async (req: any, res: Response) => {
                             "$sender"
                         ]
                     },
-                    lastMessage: { $last: "$content" },
-                    lastMessageDate: { $last: "$createdAt" },
+                    lastMessage: { $first: "$content" },
+                    lastMessageDate: { $first: "$createdAt" },
                     unreadCount: {
                         $sum: {
                             $cond: [
@@ -73,6 +74,10 @@ export const getConversations = async (req: any, res: Response) => {
             },
             { $sort: { lastMessageDate: -1 } }
         ]);
+        console.log("Conversations found:", conversations.length);
+        if (conversations.length > 0) {
+            console.log("First conversation last message:", conversations[0].lastMessage, "Date:", conversations[0].lastMessageDate);
+        }
 
         res.status(200).json(conversations);
     } catch (error: any) {
