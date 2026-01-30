@@ -47,6 +47,13 @@ export default function ProfileMenuScreen() {
                 animation: 'fade'
             }} />
 
+            {/* Transparent Overlay to Close */}
+            <TouchableOpacity
+                style={styles.overlay}
+                activeOpacity={1}
+                onPress={() => router.back()}
+            />
+
             <View style={[styles.sidebar, { backgroundColor: bgColor, paddingTop: insets.top }]}>
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                     {/* Header Section */}
@@ -114,12 +121,7 @@ export default function ProfileMenuScreen() {
                 </View>
             </View>
 
-            {/* Transparent Overlay to Close */}
-            <TouchableOpacity
-                style={styles.overlay}
-                activeOpacity={1}
-                onPress={() => router.back()}
-            />
+
         </View>
     );
 }
@@ -137,7 +139,7 @@ const styles = StyleSheet.create({
         width: '80%', // Occupy 80% screen width
         height: '100%',
         shadowColor: "#000",
-        shadowOffset: { width: 2, height: 0 },
+        shadowOffset: { width: -2, height: 0 },
         shadowOpacity: 0.2,
         shadowRadius: 5,
         elevation: 10,
