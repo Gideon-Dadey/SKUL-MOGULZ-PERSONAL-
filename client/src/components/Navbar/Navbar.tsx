@@ -38,32 +38,37 @@ const Navbar: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        const fetchUnreadCounts = async () => {
-            if (isAuthenticated) {
-                try {
-                    // Fetch notifications
-                    const notifData = await notificationService.getNotifications();
-                    setNotifications(notifData);
+    const fetchUnreadCounts = async () => {
+        if (isAuthenticated) {
+            try {
+                // Fetch notifications
+                const notifData = await notificationService.getNotifications();
+                setNotifications(notifData);
 
-                    // Fetch messages to count unread
-                    const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/messages/conversations`, {
-                        headers: {
-                            'Authorization': `Bearer ${JSON.parse(localStorage.getItem('user') || '{}').token}`
-                        }
-                    });
-                    if (response.ok) {
-                        const conversations = await response.json();
-                        const totalUnread = conversations.reduce((acc: number, conv: any) => acc + (conv.unreadCount || 0), 0);
-                        setUnreadMessages(totalUnread);
+                // Fetch messages to count unread
+                const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/messages/conversations`, {
+                    headers: {
+                        'Authorization': `Bearer ${JSON.parse(localStorage.getItem('user') || '{}').token}`
                     }
-                } catch (error) {
-                    console.error("Failed to fetch unread counts", error);
+                });
+                if (response.ok) {
+                    const conversations = await response.json();
+                    const totalUnread = conversations.reduce((acc: number, conv: any) => acc + (conv.unreadCount || 0), 0);
+                    setUnreadMessages(totalUnread);
                 }
+            } catch (error) {
+                console.error("Failed to fetch unread counts", error);
             }
-        };
+        }
+    };
 
+    useEffect(() => {
         fetchUnreadCounts();
+    }, [isAuthenticated, location.pathname]);
+
+    useEffect(() => {
+        window.addEventListener('unread-messages-update', fetchUnreadCounts);
+        return () => window.removeEventListener('unread-messages-update', fetchUnreadCounts);
     }, [isAuthenticated]);
 
 
