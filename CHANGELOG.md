@@ -114,6 +114,26 @@ Major update transitioning from mock data to a fully functional backend with rea
 
 ---
 
+## [0.2.1] - 2026-01-30
+
+### 🎨 Branding & Cross-Platform Synchronization
+
+Refined the visual identity and synchronized the experience between the web and mobile applications.
+
+### Added
+- **Unified Branding**: Established `icon.png` as the official platform logo and default avatar fallback across all platforms.
+- **Shared Assets**: Integrated brand assets into both `client` (web) and `mobile` projects.
+- **Mobile Action Bar Sync**: Synchronized the "Create Post" bar on mobile to match the web's design:
+  - Reordered actions to Media, Event, and Article.
+  - Updated icons and brand-specific colors (#3b82f6 for Media, #f59e0b for Event, #10b981 for Article).
+- **Default Avatar System**: Implemented a global fallback system where the platform icon is used for any user without a profile picture, ensuring a professional and consistent look.
+
+### Changed
+- **Mobile Feed UI**: Replaced the "Goal" action with "Article" to match the web's utility-first approach.
+- **Iconography**: Updated the "Goal/Article" icon to a professional `Target`/`FileText` icon for a more realistic feel.
+
+---
+
 ## Upcoming
 
 ### [0.3.0] - Planned
