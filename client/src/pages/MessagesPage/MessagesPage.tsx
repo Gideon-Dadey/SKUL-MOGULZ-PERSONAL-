@@ -93,6 +93,9 @@ const MessagesPage: React.FC = () => {
                 // Refresh conversations to update unread counts in the sidebar and navbar
                 const updatedConvs = await messageService.getConversations();
                 setConversations(updatedConvs);
+
+                // Notify Navbar to refresh its unread badge
+                window.dispatchEvent(new Event('unread-messages-update'));
             } catch (error) {
                 console.error("Failed to fetch messages", error);
             } finally {
