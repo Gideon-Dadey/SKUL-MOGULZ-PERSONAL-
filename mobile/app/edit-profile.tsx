@@ -189,7 +189,7 @@ export default function EditProfileScreen() {
                 <View style={styles.avatarSection}>
                     <TouchableOpacity onPress={pickImage} style={[styles.avatarContainer, { borderColor: activeColors.background }]}>
                         <Image
-                            source={{ uri: avatarUri || getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=A5D6B7&color=fff` }}
+                            source={avatarUri ? { uri: avatarUri } : (user?.avatar ? { uri: getImageUrl(user.avatar) } : require('../assets/images/icon.png'))}
                             style={styles.avatarLarge}
                         />
                         <View style={[styles.cameraIcon, { backgroundColor: activeColors.tint }]}>

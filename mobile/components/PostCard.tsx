@@ -64,7 +64,7 @@ export default function PostCard({ post, onLike, onComment, onBookmark }: PostCa
             <View style={styles.header}>
                 <View style={styles.authorInfo}>
                     <Image
-                        source={{ uri: getImageUrl(post.author.avatar) || `https://ui-avatars.com/api/?name=${post.author.firstName}+${post.author.lastName}&background=A5D6B7&color=fff` }}
+                        source={post.author.avatar ? { uri: getImageUrl(post.author.avatar) } : require('../assets/images/icon.png')}
                         style={styles.avatar}
                     />
                     <View>
