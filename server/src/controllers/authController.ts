@@ -62,6 +62,7 @@ export const register = async (req: Request, res: Response) => {
                 role: user.role,
                 avatar: user.avatar,
                 interests: user.skills || [],
+                connectionsCount: user.connections?.length || 0,
                 token,
             });
         } else {
@@ -100,6 +101,7 @@ export const login = async (req: Request, res: Response) => {
                 role: user.role,
                 avatar: user.avatar,
                 interests: user.skills || [],
+                connectionsCount: user.connections?.length || 0,
                 token,
             });
         } else {
@@ -130,8 +132,7 @@ export const getMe = async (req: Request, res: Response) => {
                 headline: user.headline,
                 bio: user.bio,
                 location: user.location,
-                connections: user.connections,
-                connections: user.connections,
+                connectionsCount: user.connections?.length || 0,
                 avatar: user.avatar,
                 banner: user.banner,
                 interests: user.skills || []

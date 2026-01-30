@@ -13,6 +13,7 @@ export interface User {
     role: 'student' | 'investor';
     interests: string[];
     connections?: string[];
+    connectionsCount?: number;
     impressions?: number;
     viewedProfile?: number;
     createdAt: string;
