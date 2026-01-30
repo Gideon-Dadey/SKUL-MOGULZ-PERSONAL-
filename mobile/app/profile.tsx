@@ -14,28 +14,7 @@ import { useTheme } from '../context/ThemeContext';
 import Colors from '../constants/Colors';
 import api, { getImageUrl } from '../services/api';
 
-interface Experience {
-    id?: string;
-    _id?: string;
-    title: string;
-    company: string;
-    location?: string;
-    startDate: string;
-    endDate?: string;
-    current?: boolean;
-    description?: string;
-}
-
-interface Education {
-    id?: string;
-    _id?: string;
-    school: string;
-    degree: string;
-    field?: string;
-    startYear: string;
-    endYear?: string;
-    description?: string;
-}
+import { Experience, Education } from '../types';
 
 export default function ProfileScreen() {
     const { user, logout, updateProfile } = useAuth();
@@ -220,9 +199,9 @@ export default function ProfileScreen() {
             setEduForm({
                 school: edu.school,
                 degree: edu.degree,
-                field: edu.field || '',
-                startYear: edu.startYear,
-                endYear: edu.endYear || '',
+                field: edu.field || edu.fieldOfStudy || '',
+                startYear: edu.startYear || edu.startDate || '',
+                endYear: edu.endYear || edu.endDate || '',
                 description: edu.description || ''
             });
         } else {
@@ -246,11 +225,23 @@ export default function ProfileScreen() {
             if (editingEducation) {
                 updatedEducation = currentEducation.map((edu: Education) =>
                     (edu.id === editingEducation.id || edu._id === editingEducation._id)
-                        ? { ...eduForm, id: editingEducation.id || editingEducation._id }
+                        ? {
+                            ...eduForm,
+                            fieldOfStudy: eduForm.field,
+                            startDate: eduForm.startYear,
+                            endDate: eduForm.endYear,
+                            id: editingEducation.id || editingEducation._id
+                        }
                         : edu
                 );
             } else {
-                updatedEducation = [...currentEducation, { ...eduForm, id: Date.now().toString() }];
+                updatedEducation = [...currentEducation, {
+                    ...eduForm,
+                    fieldOfStudy: eduForm.field,
+                    startDate: eduForm.startYear,
+                    endDate: eduForm.endYear,
+                    id: Date.now().toString()
+                }];
             }
 
             const data = new FormData();
@@ -562,9 +553,11 @@ export default function ProfileScreen() {
                                 </View>
                                 <View style={styles.listContent}>
                                     <Text style={[styles.listTitle, { color: activeColors.text }]}>{edu.school}</Text>
-                                    <Text style={[styles.listSubtitle, { color: activeColors.text }]}>{edu.degree}{edu.field ? `, ${edu.field}` : ''}</Text>
+                                    <Text style={[styles.listSubtitle, { color: activeColors.text }]}>
+                                        {edu.degree}{edu.field || edu.fieldOfStudy ? `, ${edu.field || edu.fieldOfStudy}` : ''}
+                                    </Text>
                                     <Text style={[styles.listMeta, { color: activeColors.muted }]}>
-                                        {edu.startYear} - {edu.endYear || 'Present'}
+                                        {edu.startYear || edu.startDate} - {edu.endYear || edu.endDate || 'Present'}
                                     </Text>
                                 </View>
                                 <View style={styles.listActions}>

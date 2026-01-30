@@ -121,7 +121,11 @@ export default function NetworkScreen() {
     };
 
     const renderInvitation = ({ item }: { item: any }) => (
-        <View style={[styles.invitationCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
+        <TouchableOpacity
+            style={[styles.invitationCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}
+            onPress={() => router.push(('/profile/' + (item.sender?._id || item.sender?.id)) as any)}
+            activeOpacity={0.7}
+        >
             <Image
                 source={{ uri: getImageUrl(item.sender?.avatar) || `https://ui-avatars.com/api/?name=${item.sender?.firstName}+${item.sender?.lastName}&background=A5D6B7&color=fff` }}
                 style={styles.invitationAvatar}
@@ -137,13 +141,19 @@ export default function NetworkScreen() {
             <View style={styles.invitationActions}>
                 <TouchableOpacity
                     style={[styles.iconBtn, { backgroundColor: '#fee2e2' }]}
-                    onPress={() => handleIgnore(item._id)}
+                    onPress={(e) => {
+                        e.stopPropagation();
+                        handleIgnore(item._id);
+                    }}
                 >
                     <X size={20} color="#ef4444" />
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={[styles.iconBtn, { backgroundColor: '#dcfce7' }]}
-                    onPress={() => handleAccept(item._id)}
+                    onPress={(e) => {
+                        e.stopPropagation();
+                        handleAccept(item._id);
+                    }}
                     disabled={actionLoading === item._id}
                 >
                     {actionLoading === item._id ? (
@@ -153,11 +163,15 @@ export default function NetworkScreen() {
                     )}
                 </TouchableOpacity>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 
     const renderUserCard = ({ item }: { item: any }) => (
-        <View style={[styles.suggestionCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
+        <TouchableOpacity
+            style={[styles.suggestionCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}
+            onPress={() => router.push(('/profile/' + (item._id || item.id)) as any)}
+            activeOpacity={0.9}
+        >
             <View style={styles.suggestionHeader}>
                 <Image
                     source={{ uri: getImageUrl(item.avatar) || `https://ui-avatars.com/api/?name=${item.firstName}+${item.lastName}&background=BFdbfe&color=fff` }}
@@ -166,7 +180,10 @@ export default function NetworkScreen() {
                 {!searchMode && (
                     <TouchableOpacity
                         style={[styles.closeSuggestion, { backgroundColor: activeColors.background }]}
-                        onPress={() => setSuggestions(prev => prev.filter(u => u._id !== item._id))}
+                        onPress={(e) => {
+                            e.stopPropagation();
+                            setSuggestions(prev => prev.filter(u => u._id !== item._id));
+                        }}
                     >
                         <X size={14} color={activeColors.muted} />
                     </TouchableOpacity>
@@ -189,7 +206,10 @@ export default function NetworkScreen() {
 
             <TouchableOpacity
                 style={[styles.connectBtn, { borderColor: activeColors.tint }]}
-                onPress={() => handleConnect(item._id || item.id)}
+                onPress={(e) => {
+                    e.stopPropagation();
+                    handleConnect(item._id || item.id);
+                }}
                 disabled={actionLoading === (item._id || item.id)}
             >
                 {actionLoading === (item._id || item.id) ? (
@@ -201,7 +221,7 @@ export default function NetworkScreen() {
                     </>
                 )}
             </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
     );
 
     return (

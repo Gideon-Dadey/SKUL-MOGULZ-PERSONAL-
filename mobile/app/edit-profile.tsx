@@ -208,7 +208,7 @@ export default function EditProfileScreen() {
                     'First Name',
                     formData.firstName,
                     (text) => setFormData({ ...formData, firstName: text }),
-                    '',
+                    'Enter first name',
                     <UserIcon size={18} color={activeColors.muted} />
                 )}
 
@@ -216,7 +216,7 @@ export default function EditProfileScreen() {
                     'Last Name',
                     formData.lastName,
                     (text) => setFormData({ ...formData, lastName: text }),
-                    '',
+                    'Enter last name',
                     <UserIcon size={18} color={activeColors.muted} />
                 )}
 
@@ -224,7 +224,7 @@ export default function EditProfileScreen() {
                     'Headline',
                     formData.headline,
                     (text) => setFormData({ ...formData, headline: text }),
-                    '',
+                    'Ex: Student Founder | Building Fintech for GenZ',
                     <Briefcase size={18} color={activeColors.muted} />
                 )}
 
@@ -232,7 +232,7 @@ export default function EditProfileScreen() {
                     'Location',
                     formData.location,
                     (text) => setFormData({ ...formData, location: text }),
-                    '',
+                    'Ex: San Francisco, CA',
                     <MapPin size={18} color={activeColors.muted} />
                 )}
 
@@ -240,7 +240,7 @@ export default function EditProfileScreen() {
                     'About',
                     formData.bio,
                     (text) => setFormData({ ...formData, bio: text }),
-                    '',
+                    'Share your story, your project, and what you are looking for...',
                     <AlignLeft size={18} color={activeColors.muted} />,
                     true
                 )}

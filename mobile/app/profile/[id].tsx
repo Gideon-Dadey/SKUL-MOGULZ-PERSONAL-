@@ -1,13 +1,37 @@
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Platform } from 'react-native';
+import { StyleSheet, View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import { ArrowLeft, MapPin, Users, MessageCircle, MoreHorizontal, Briefcase } from 'lucide-react-native';
+import { ArrowLeft, MapPin, Users, MessageCircle, MoreHorizontal, Briefcase, GraduationCap, Award } from 'lucide-react-native';
 import { useTheme } from '../../context/ThemeContext';
 import Colors from '../../constants/Colors';
 import api, { getImageUrl } from '../../services/api';
 
-const { width } = Dimensions.get('window');
+interface Experience {
+    id?: string;
+    _id?: string;
+    title: string;
+    company: string;
+    location?: string;
+    startDate: string;
+    endDate?: string;
+    current?: boolean;
+    description?: string;
+}
+
+interface Education {
+    id?: string;
+    _id?: string;
+    school: string;
+    degree: string;
+    field?: string;
+    fieldOfStudy?: string;
+    startYear?: string;
+    endYear?: string;
+    startDate?: string;
+    endDate?: string;
+    description?: string;
+}
 
 export default function UserProfileScreen() {
     const { id } = useLocalSearchParams();
@@ -17,147 +41,247 @@ export default function UserProfileScreen() {
 
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchUser = async () => {
+            if (!id) return;
+            setLoading(true);
+            setError(null);
             try {
                 const response = await api.get(`/network/users/${id}`);
                 setUser(response.data);
-            } catch (error) {
-                console.error(error);
+            } catch (err: any) {
+                console.error('Error fetching user:', err);
+                setError('Could not load profile');
             } finally {
                 setLoading(false);
             }
         };
-        if (id) fetchUser();
+        fetchUser();
     }, [id]);
 
     if (loading) {
         return (
             <View style={[styles.container, styles.center, { backgroundColor: activeColors.background }]}>
+                <Stack.Screen options={{ headerShown: false }} />
                 <ActivityIndicator size="large" color={activeColors.tint} />
+                <Text style={[styles.loadingText, { color: activeColors.muted }]}>Loading profile...</Text>
             </View>
         );
     }
 
-    if (!user) {
+    if (error || !user) {
         return (
             <View style={[styles.container, styles.center, { backgroundColor: activeColors.background }]}>
-                <Text style={{ color: activeColors.text }}>User not found</Text>
+                <Stack.Screen options={{ headerShown: false }} />
+                <Text style={[styles.errorText, { color: activeColors.text }]}>{error || 'User not found'}</Text>
+                <TouchableOpacity onPress={() => router.back()} style={[styles.backButton, { backgroundColor: activeColors.tint }]}>
+                    <Text style={styles.backButtonText}>Go Back</Text>
+                </TouchableOpacity>
             </View>
         );
     }
 
+    const experiences: Experience[] = user.experience || [];
+    const educations: Education[] = user.education || [];
+    const skills: string[] = user.skills || user.interests || [];
+
     return (
-        <ScrollView style={[styles.container, { backgroundColor: activeColors.background }]} showsVerticalScrollIndicator={false}>
+        <View style={[styles.container, { backgroundColor: activeColors.background }]}>
             <Stack.Screen options={{ headerShown: false }} />
 
-            {/* Immersive Banner */}
-            <View style={styles.bannerContainer}>
-                <Image
-                    source={{ uri: getImageUrl(user.banner) || 'https://images.unsplash.com/photo-1557683316-973673baf926?w=800&q=80' }}
-                    style={styles.banner}
-                />
-                <View style={styles.bannerOverlay} />
-                <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-                    <ArrowLeft size={24} color="#fff" />
+            {/* Header */}
+            <View style={[styles.header, { backgroundColor: activeColors.card }]}>
+                <TouchableOpacity onPress={() => router.back()} style={styles.headerBtn}>
+                    <ArrowLeft size={24} color={activeColors.text} />
+                </TouchableOpacity>
+                <Text style={[styles.headerTitle, { color: activeColors.text }]}>Profile</Text>
+                <TouchableOpacity style={styles.headerBtn}>
+                    <MoreHorizontal size={24} color={activeColors.text} />
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.content}>
-                <View style={[styles.avatarContainer, { backgroundColor: activeColors.background }]}>
-                    <Image
-                        source={{ uri: getImageUrl(user.avatar) || `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}` }}
-                        style={styles.avatar}
-                    />
-                </View>
-
-                <View style={styles.mainInfo}>
-                    <Text style={[styles.name, { color: activeColors.text }]}>{user.firstName} {user.lastName}</Text>
-                    <Text style={[styles.headline, { color: activeColors.text }]}>{user.headline || user.role || 'Student Entrepreneur'}</Text>
-
-                    <View style={styles.statsRow}>
-                        {user.location && (
-                            <View style={styles.statItem}>
-                                <MapPin size={14} color={activeColors.muted} />
-                                <Text style={[styles.statText, { color: activeColors.muted }]}>{user.location}</Text>
-                            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+                {/* Banner & Avatar */}
+                <View style={[styles.profileHeader, { backgroundColor: activeColors.card }]}>
+                    <View style={[styles.banner, { backgroundColor: activeColors.tint + '40' }]}>
+                        {user.banner && (
+                            <Image source={{ uri: getImageUrl(user.banner) || '' }} style={styles.bannerImage} />
                         )}
-                        <View style={styles.statItem}>
-                            <Users size={14} color={activeColors.tint} />
-                            <Text style={[styles.statText, { color: activeColors.tint, fontWeight: '700' }]}>{user.connections?.length || 0} connections</Text>
+                    </View>
+
+                    <View style={styles.profileInfoContainer}>
+                        <View style={[styles.avatarWrapper, { borderColor: activeColors.card, backgroundColor: activeColors.card }]}>
+                            <Image
+                                source={{ uri: getImageUrl(user.avatar) || `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=A5D6B7&color=fff` }}
+                                style={styles.avatar}
+                            />
+                        </View>
+
+                        <View style={styles.userDetails}>
+                            <Text style={[styles.name, { color: activeColors.text }]}>{user.firstName} {user.lastName}</Text>
+                            <Text style={[styles.headline, { color: activeColors.text }]}>{user.headline || user.role || 'Student Entrepreneur'}</Text>
+
+                            <View style={styles.metaRow}>
+                                {user.location && (
+                                    <View style={styles.metaItem}>
+                                        <MapPin size={14} color={activeColors.muted} />
+                                        <Text style={[styles.metaText, { color: activeColors.muted }]}>{user.location}</Text>
+                                    </View>
+                                )}
+                                <View style={styles.metaItem}>
+                                    <Users size={14} color={activeColors.tint} />
+                                    <Text style={[styles.metaText, { color: activeColors.tint, fontWeight: '600' }]}>
+                                        {user.connections?.length || user.connectionsCount || 0} connections
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
+
+                        {/* Action Buttons */}
+                        <View style={styles.actionButtons}>
+                            <TouchableOpacity
+                                style={[styles.actionBtnPrimary, { backgroundColor: activeColors.tint }]}
+                                onPress={() => router.push(('/messages/' + (user._id || user.id)) as any)}
+                            >
+                                <MessageCircle size={18} color="#000" />
+                                <Text style={styles.actionBtnTextPrimary}>Message</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.actionBtnSecondary, { borderColor: activeColors.tint }]}>
+                                <Text style={[styles.actionBtnTextSecondary, { color: activeColors.tint }]}>Connect</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
-
-                    <View style={styles.actions}>
-                        <TouchableOpacity
-                            style={[styles.primaryBtn, { backgroundColor: activeColors.tint, shadowColor: activeColors.tint }]}
-                            onPress={() => router.push(('/messages/' + (user._id || user.id)) as any)}
-                        >
-                            <MessageCircle size={20} color="#fff" />
-                            <Text style={styles.primaryBtnText}>Message</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity style={[styles.iconBtn, { borderColor: activeColors.border, backgroundColor: activeColors.card }]}>
-                            <MoreHorizontal size={24} color={activeColors.text} />
-                        </TouchableOpacity>
-                    </View>
                 </View>
 
-                <View style={[styles.section, { borderTopColor: activeColors.border }]}>
+                {/* About Section */}
+                <View style={[styles.section, { backgroundColor: activeColors.card }]}>
                     <Text style={[styles.sectionTitle, { color: activeColors.text }]}>About</Text>
-                    <Text style={[styles.sectionText, { color: activeColors.text }]}>
+                    <Text style={[styles.bodyText, { color: user.bio ? activeColors.text : activeColors.muted }]}>
                         {user.bio || "This user hasn't added a bio yet."}
                     </Text>
                 </View>
 
-                {/* Example Content Section */}
-                <View style={[styles.section, { borderTopColor: activeColors.border }]}>
-                    <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Activity</Text>
-                    <View style={[styles.activityCard, { backgroundColor: activeColors.card }]}>
-                        <Text style={[styles.activityText, { color: activeColors.muted }]}>No recent activity to show.</Text>
-                    </View>
+                {/* Experience Section */}
+                <View style={[styles.section, { backgroundColor: activeColors.card }]}>
+                    <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Experience</Text>
+                    {experiences.length > 0 ? (
+                        experiences.map((exp, index) => (
+                            <View key={exp.id || exp._id || index} style={[styles.listItem, { borderTopColor: activeColors.border }]}>
+                                <View style={[styles.listIcon, { backgroundColor: activeColors.tint + '20' }]}>
+                                    <Briefcase size={20} color={activeColors.tint} />
+                                </View>
+                                <View style={styles.listContent}>
+                                    <Text style={[styles.listTitle, { color: activeColors.text }]}>{exp.title}</Text>
+                                    <Text style={[styles.listSubtitle, { color: activeColors.text }]}>{exp.company}</Text>
+                                    <Text style={[styles.listMeta, { color: activeColors.muted }]}>
+                                        {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
+                                    </Text>
+                                    {exp.description && (
+                                        <Text style={[styles.listDesc, { color: activeColors.muted }]}>{exp.description}</Text>
+                                    )}
+                                </View>
+                            </View>
+                        ))
+                    ) : (
+                        <Text style={[styles.emptyText, { color: activeColors.muted }]}>No experience listed.</Text>
+                    )}
                 </View>
-            </View>
-        </ScrollView>
+
+                {/* Education Section */}
+                <View style={[styles.section, { backgroundColor: activeColors.card }]}>
+                    <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Education</Text>
+                    {educations.length > 0 ? (
+                        educations.map((edu, index) => (
+                            <View key={edu.id || edu._id || index} style={[styles.listItem, { borderTopColor: activeColors.border }]}>
+                                <View style={[styles.listIcon, { backgroundColor: activeColors.tint + '20' }]}>
+                                    <GraduationCap size={20} color={activeColors.tint} />
+                                </View>
+                                <View style={styles.listContent}>
+                                    <Text style={[styles.listTitle, { color: activeColors.text }]}>{edu.school}</Text>
+                                    <Text style={[styles.listSubtitle, { color: activeColors.text }]}>
+                                        {edu.degree}{edu.field || edu.fieldOfStudy ? `, ${edu.field || edu.fieldOfStudy}` : ''}
+                                    </Text>
+                                    <Text style={[styles.listMeta, { color: activeColors.muted }]}>
+                                        {edu.startYear || edu.startDate} - {edu.endYear || edu.endDate || 'Present'}
+                                    </Text>
+                                    {edu.description && (
+                                        <Text style={[styles.listDesc, { color: activeColors.muted }]}>{edu.description}</Text>
+                                    )}
+                                </View>
+                            </View>
+                        ))
+                    ) : (
+                        <Text style={[styles.emptyText, { color: activeColors.muted }]}>No education listed.</Text>
+                    )}
+                </View>
+
+                {/* Skills Section */}
+                <View style={[styles.section, { backgroundColor: activeColors.card }]}>
+                    <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Skills</Text>
+                    {skills.length > 0 ? (
+                        <View style={styles.skillsContainer}>
+                            {skills.map((skill, index) => (
+                                <View key={index} style={[styles.skillChip, { backgroundColor: activeColors.tint + '20', borderColor: activeColors.tint }]}>
+                                    <Text style={[styles.skillText, { color: activeColors.tint }]}>{skill}</Text>
+                                </View>
+                            ))}
+                        </View>
+                    ) : (
+                        <Text style={[styles.emptyText, { color: activeColors.muted }]}>No skills listed.</Text>
+                    )}
+                </View>
+
+                <View style={{ height: 40 }} />
+            </ScrollView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
     center: { justifyContent: 'center', alignItems: 'center' },
-    bannerContainer: { height: 180, width: '100%', position: 'relative' },
-    banner: { width: '100%', height: '100%' },
-    bannerOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.2)' }, // Subtle dim
-    backBtn: { position: 'absolute', top: 50, left: 16, width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'center', alignItems: 'center' },
-    content: { paddingHorizontal: 20 },
-    avatarContainer: { marginTop: -60, width: 120, height: 120, borderRadius: 60, padding: 5, alignItems: 'center', justifyContent: 'center' },
-    avatar: { width: '100%', height: '100%', borderRadius: 60 },
-    mainInfo: { marginTop: 16, marginBottom: 24 },
-    name: { fontSize: 28, fontWeight: '800', letterSpacing: -0.5 },
-    headline: { fontSize: 17, marginTop: 6, lineHeight: 24, fontWeight: '500' },
-    statsRow: { flexDirection: 'row', gap: 16, marginTop: 16 },
-    statItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-    statText: { fontSize: 14 },
-    actions: { flexDirection: 'row', gap: 12, marginTop: 24 },
-    primaryBtn: {
-        flex: 1,
-        flexDirection: 'row',
-        height: 50,
-        borderRadius: 25,
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: 8,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 6
+    loadingText: { marginTop: 12, fontSize: 14 },
+    errorText: { fontSize: 16, marginBottom: 16 },
+    backButton: { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 8 },
+    backButtonText: { color: '#000', fontWeight: '600' },
+    header: {
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+        paddingHorizontal: 16, paddingTop: Platform.OS === 'ios' ? 50 : 36, paddingBottom: 12,
+        height: Platform.OS === 'ios' ? 100 : 86,
     },
-    primaryBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
-    iconBtn: { width: 50, height: 50, borderRadius: 25, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
-    section: { paddingTop: 24, paddingBottom: 8, borderTopWidth: 1, marginTop: 8 },
-    sectionTitle: { fontSize: 19, fontWeight: '700', marginBottom: 12 },
-    sectionText: { fontSize: 15, lineHeight: 24, opacity: 0.9 },
-    activityCard: { padding: 20, borderRadius: 12, alignItems: 'center', borderStyle: 'dashed', borderWidth: 1, borderColor: '#ccc' },
-    activityText: { fontStyle: 'italic' }
+    headerBtn: { padding: 4 },
+    headerTitle: { fontSize: 17, fontWeight: '700' },
+    profileHeader: { marginBottom: 8 },
+    banner: { height: 100, width: '100%' },
+    bannerImage: { width: '100%', height: '100%', resizeMode: 'cover' },
+    profileInfoContainer: { paddingHorizontal: 16, paddingBottom: 20 },
+    avatarWrapper: { marginTop: -60, width: 120, height: 120, borderRadius: 60, borderWidth: 4, overflow: 'hidden' },
+    avatar: { width: '100%', height: '100%' },
+    userDetails: { marginTop: 12 },
+    name: { fontSize: 24, fontWeight: '700' },
+    headline: { fontSize: 16, marginTop: 4, lineHeight: 20 },
+    metaRow: { flexDirection: 'row', marginTop: 12, gap: 16, flexWrap: 'wrap' },
+    metaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+    metaText: { fontSize: 14 },
+    actionButtons: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 20 },
+    actionBtnPrimary: { flexDirection: 'row', paddingHorizontal: 20, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center', gap: 6 },
+    actionBtnTextPrimary: { color: '#000', fontWeight: '700', fontSize: 15 },
+    actionBtnSecondary: { paddingHorizontal: 20, height: 40, borderRadius: 20, borderWidth: 1.5, justifyContent: 'center', alignItems: 'center' },
+    actionBtnTextSecondary: { fontWeight: '700', fontSize: 15 },
+    section: { padding: 16, marginBottom: 8 },
+    sectionTitle: { fontSize: 20, fontWeight: '700', marginBottom: 16 },
+    bodyText: { fontSize: 14, lineHeight: 22 },
+    emptyText: { fontSize: 14, fontStyle: 'italic' },
+    listItem: { flexDirection: 'row', paddingVertical: 16, borderTopWidth: 1, gap: 12 },
+    listIcon: { width: 48, height: 48, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
+    listContent: { flex: 1 },
+    listTitle: { fontSize: 16, fontWeight: '700' },
+    listSubtitle: { fontSize: 14, marginTop: 2 },
+    listMeta: { fontSize: 12, marginTop: 4 },
+    listDesc: { fontSize: 13, marginTop: 6, lineHeight: 18 },
+    skillsContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    skillChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1 },
+    skillText: { fontSize: 14, fontWeight: '600' },
 });
