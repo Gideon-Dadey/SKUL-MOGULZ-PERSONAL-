@@ -10,6 +10,7 @@ import CreatePostPage from './pages/CreatePostPage/CreatePostPage';
 import PostDetailPage from './pages/PostDetailPage/PostDetailPage';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import NetworkPage from './pages/NetworkPage/NetworkPage';
+import ConnectionsPage from './pages/NetworkPage/ConnectionsPage';
 import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
 import MessagesPage from './pages/MessagesPage/MessagesPage';
 import NotificationsPage from './pages/NotificationsPage/NotificationsPage';
@@ -74,6 +75,9 @@ function AppContent() {
                     } />
                     <Route path="/network" element={
                         <ProtectedRoute><NetworkPage /></ProtectedRoute>
+                    } />
+                    <Route path="/connections" element={
+                        <ProtectedRoute><ConnectionsPage /></ProtectedRoute>
                     } />
                     <Route path="/projects" element={
                         <ProtectedRoute><ProjectsPage /></ProtectedRoute>

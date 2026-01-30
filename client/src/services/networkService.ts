@@ -20,11 +20,17 @@ const acceptRequest = async (requestId: string) => {
     return response.data;
 };
 
+const getConnections = async () => {
+    const response = await api.get('/network/connections');
+    return response.data;
+};
+
 const networkService = {
     getSuggestions,
     getInvitations,
     sendRequest,
     acceptRequest,
+    getConnections,
 };
 
 export default networkService;
