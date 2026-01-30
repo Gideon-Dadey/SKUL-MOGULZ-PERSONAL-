@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Platform } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
 import {
@@ -8,13 +7,16 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Colors from '../constants/Colors';
-import { getImageUrl } from '../services/api';
+import api, { getImageUrl } from '../services/api';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ProfileMenuScreen() {
     const { user } = useAuth();
     const router = useRouter();
     const insets = useSafeAreaInsets();
+
+    // Use cached connections for stability
+    const connectionCount = user?.connections?.length || 0;
 
     // Theme defaults to light to match screenshot style (Clean White)
     // But we respect dark mode if active, just styling securely.
@@ -81,7 +83,7 @@ export default function ProfileMenuScreen() {
 
                         <View style={styles.statsRow}>
                             <View style={styles.statItem}>
-                                <Text style={[styles.statNum, { color: textColor }]}>{user?.connections?.length || 0}</Text>
+                                <Text style={[styles.statNum, { color: textColor }]}>{connectionCount}</Text>
                                 <Text style={[styles.statLabel, { color: subTextColor }]}> Connections</Text>
                             </View>
                         </View>
@@ -99,7 +101,7 @@ export default function ProfileMenuScreen() {
 
                     {/* Footer Items */}
                     <View style={styles.footerList}>
-                        <TouchableOpacity style={styles.footerItem} onPress={() => router.push('/settings')}>
+                        <TouchableOpacity style={styles.footerItem} onPress={() => router.push('/edit-profile')}>
                             <Text style={[styles.footerText, { color: textColor }]}>Settings and privacy</Text>
                         </TouchableOpacity>
 
