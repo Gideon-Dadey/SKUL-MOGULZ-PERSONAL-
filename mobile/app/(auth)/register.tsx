@@ -2,6 +2,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Link, useRouter } from 'expo-router';
+import { Mail, Lock, ArrowRight, ArrowLeft } from 'lucide-react-native';
+import { useAuth } from '../../context/AuthContext';
+import Colors from '../../constants/Colors';
+import { useTheme } from '../../context/ThemeContext';
 import Logo from '../../components/Logo';
 
 export default function RegisterScreen() {
