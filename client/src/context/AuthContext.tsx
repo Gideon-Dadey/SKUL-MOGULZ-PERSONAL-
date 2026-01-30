@@ -98,11 +98,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const refreshUser = async () => {
         try {
             const freshUserData = await authService.getMe();
-            const user = { ...freshUserData, id: freshUserData._id || freshUserData.id };
-            setState(prev => ({ ...prev, user }));
+            const savedUserStr = localStorage.getItem('user');
+            const savedUser = savedUserStr ? JSON.parse(savedUserStr) : {};
+
+            // Keep the token from the current session
+            const user = {
+                ...freshUserData,
+                id: freshUserData._id || freshUserData.id,
+                token: savedUser.token
+            };
+
+            setState(prev => ({ ...prev, user, isAuthenticated: true }));
             localStorage.setItem('user', JSON.stringify(user));
         } catch (error) {
             console.error("Failed to refresh user", error);
+            // If we get a 401 here, the token might be truly invalid
+            if ((error as any)?.response?.status === 401) {
+                logout();
+            }
         }
     };
 

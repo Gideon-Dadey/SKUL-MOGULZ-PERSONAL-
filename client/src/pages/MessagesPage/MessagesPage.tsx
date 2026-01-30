@@ -67,8 +67,12 @@ const MessagesPage: React.FC = () => {
 
 
             const refreshConversations = async () => {
-                const data = await messageService.getConversations();
-                setConversations(data);
+                try {
+                    const data = await messageService.getConversations();
+                    setConversations(data);
+                } catch (error) {
+                    console.error("Failed to refresh conversations on new message", error);
+                }
             };
             refreshConversations();
         });
@@ -76,7 +80,7 @@ const MessagesPage: React.FC = () => {
         return () => {
             socket.off('new_message');
         };
-    }, [socket, selectedChat]);
+    }, [socket, selectedChat, currentUser]);
 
 
     useEffect(() => {
