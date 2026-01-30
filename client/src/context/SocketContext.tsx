@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from './AuthContext';
+import { BASE_URL } from '../services/api';
 
 interface SocketContextType {
     socket: Socket | null;
@@ -21,13 +22,14 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             const userId = (user as any)?._id || user?.id;
             if (!userId) return;
 
-            const newSocket = io('http://localhost:5000');
+            const newSocket = io(BASE_URL);
 
             newSocket.on('connect', () => {
                 setIsConnected(true);
+                const finalUserId = String(userId);
                 console.log('Socket connected:', newSocket.id);
-                newSocket.emit('join_room', userId);
-                console.log('Joined room:', userId);
+                newSocket.emit('join_room', finalUserId);
+                console.log('Web joined room:', finalUserId);
             });
 
             newSocket.on('disconnect', (reason) => {

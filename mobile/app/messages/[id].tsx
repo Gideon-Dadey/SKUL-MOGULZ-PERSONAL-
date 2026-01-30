@@ -52,10 +52,11 @@ export default function ChatScreen() {
 
         // Listener for new messages
         const handleNewMessage = (msg: any) => {
-            const msgPartnerId = msg.sender._id || msg.sender.id;
-            const currentPartnerId = typeof id === 'string' ? id : id[0];
+            console.log('Mobile Client received new_message:', msg);
+            const msgPartnerId = msg.sender?._id || msg.sender?.id || msg.sender;
+            const currentPartnerId = typeof id === 'string' ? id : id?.[0];
 
-            if (msgPartnerId === currentPartnerId || (msg.recipient === currentPartnerId)) {
+            if (String(msgPartnerId) === String(currentPartnerId) || (String(msg.recipient) === String(currentPartnerId))) {
                 setMessages(prev => {
                     const exists = prev.some(m => m._id === msg._id);
                     if (exists) return prev;

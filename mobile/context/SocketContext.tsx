@@ -47,7 +47,9 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         newSocket.on('connect', () => {
             console.log('Global Socket Connected');
             setIsConnected(true);
-            newSocket.emit('join_room', user.id || user._id);
+            const roomId = String(user.id || user._id);
+            newSocket.emit('join_room', roomId);
+            console.log('Mobile joined room:', roomId);
         });
 
         newSocket.on('disconnect', () => {
@@ -57,9 +59,10 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
         // Global Message Listener (for Toasts)
         newSocket.on('new_message', (msg: any) => {
-            const senderId = msg.sender._id || msg.sender.id;
+            const senderId = String(msg.sender?._id || msg.sender?.id);
             // Don't show toast if currently viewing that chat
-            const isOnChat = pathname && pathname.includes(`messages/${senderId}`);
+            // Ensure comparison is against a string version of the partner ID
+            const isOnChat = pathname && pathname.includes(`/messages/${senderId}`);
             if (isOnChat) return;
 
             const senderName = `${msg.sender.firstName} ${msg.sender.lastName}`;
@@ -71,7 +74,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         return () => {
             newSocket.disconnect();
         };
-    }, [isAuthenticated, user]);
+    }, [isAuthenticated, user?.id || user?._id]);
 
     // Toast Logic
     const showToast = (title: string, message: string, path?: string) => {
