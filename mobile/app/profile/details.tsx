@@ -4,7 +4,7 @@ import {
     StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, RefreshControl, Platform, Switch,
     Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import {
     ArrowLeft, Settings, LogOut, MapPin, Users, Edit2, Plus, BarChart2, Eye, PenTool, Moon, Sun,
     X, Briefcase, GraduationCap, Award, Trash2, Check
@@ -370,6 +370,7 @@ export default function ProfileScreen() {
 
     return (
         <View style={[styles.container, { backgroundColor: activeColors.background }]}>
+            <Stack.Screen options={{ headerShown: false }} />
             {/* Nav Header */}
             <View style={[styles.navHeader, { backgroundColor: activeColors.card }]}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.iconBtn}>
