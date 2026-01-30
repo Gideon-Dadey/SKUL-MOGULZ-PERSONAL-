@@ -35,6 +35,7 @@ export interface IUser extends Document {
         activities?: string;
         description?: string;
     }[];
+    skills: string[];
     connections: mongoose.Types.ObjectId[];
     viewedProfile?: number;
     impressions?: number;
