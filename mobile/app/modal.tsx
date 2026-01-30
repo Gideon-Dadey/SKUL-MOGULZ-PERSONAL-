@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Platform, KeyboardAvoidingView, Switch, Image, Alert, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { X, Image as ImageIcon, Sparkles, Hash, DollarSign, Briefcase, ChevronRight, Target } from 'lucide-react-native';
@@ -122,6 +122,7 @@ export default function ModalScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: activeColors.background }]}>
+      <Stack.Screen options={{ headerShown: false }} />
       <View style={[styles.header, { backgroundColor: activeColors.card }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
           <X size={24} color={activeColors.text} />

@@ -113,20 +113,12 @@ export default function TabLayout() {
           tabBarButton: (props) => (
             <TouchableOpacity
               {...(props as any)}
-              onPress={(e) => {
-                e.preventDefault();
+              onPress={() => {
                 router.push('/modal');
               }}
             />
           ),
         }}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            e.preventDefault();
-            // Fallback if tabBarButton isn't used for some reason
-            router.push('/modal');
-          },
-        })}
       />
       <Tabs.Screen
         name="notifications"
