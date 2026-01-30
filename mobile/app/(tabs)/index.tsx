@@ -28,13 +28,46 @@ export default function FeedScreen() {
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
+  // Filter states
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedStage, setSelectedStage] = useState('all');
+
+  const categories = [
+    { id: 'all', label: 'All', icon: '✨' },
+    { id: 'technology', label: 'Technology', icon: '💻' },
+    { id: 'healthcare', label: 'Healthcare', icon: '🏥' },
+    { id: 'fintech', label: 'FinTech', icon: '💰' },
+    { id: 'education', label: 'Education', icon: '📚' },
+    { id: 'sustainability', label: 'Sustainability', icon: '🌱' },
+    { id: 'entertainment', label: 'Entertainment', icon: '🎬' },
+    { id: 'ecommerce', label: 'E-Commerce', icon: '🛒' },
+    { id: 'social', label: 'Social Impact', icon: '🤝' },
+    { id: 'ai', label: 'AI & Machine Learning', icon: '🤖' },
+    { id: 'other', label: 'Other', icon: '✨' },
+  ];
+
+  const stages = [
+    { id: 'all', label: 'All Stages' },
+    { id: 'idea', label: 'Idea' },
+    { id: 'prototype', label: 'Prototype' },
+    { id: 'mvp', label: 'MVP' },
+    { id: 'growth', label: 'Growth' },
+    { id: 'scaling', label: 'Scaling' },
+  ];
+
   const fetchPosts = async () => {
     if (!user) {
       setIsLoading(false);
       return;
     }
     try {
-      const response = await api.get('/projects');
+      const response = await api.get('/projects', {
+        params: {
+          category: selectedCategory === 'all' ? undefined : selectedCategory,
+          stage: selectedStage === 'all' ? undefined : selectedStage
+        }
+      });
       // Adapt posts like in web app
       const adaptedPosts = response.data.map((p: any) => ({
         ...p,
@@ -73,7 +106,7 @@ export default function FeedScreen() {
       fetchPosts();
       fetchUnreadCount();
     }
-  }, [user]);
+  }, [user, selectedCategory, selectedStage]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -243,7 +276,7 @@ export default function FeedScreen() {
 
       <View style={styles.sectionHeader}>
         <Text style={[styles.sectionTitle, { color: '#FFFFFF' }]}>Explore Innovation</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => setFilterModalVisible(true)}>
           <Menu size={20} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
@@ -326,6 +359,98 @@ export default function FeedScreen() {
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
+      </Modal>
+
+      {/* Filter Modal */}
+      <Modal
+        visible={filterModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setFilterModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <TouchableOpacity
+            style={styles.modalBackdrop}
+            activeOpacity={1}
+            onPress={() => setFilterModalVisible(false)}
+          />
+          <View style={[styles.filterModal, { backgroundColor: activeColors.card }]}>
+            <View style={[styles.modalHeader, { borderBottomColor: activeColors.border }]}>
+              <Text style={[styles.modalTitle, { color: activeColors.text }]}>Filter Innovation</Text>
+              <TouchableOpacity onPress={() => setFilterModalVisible(false)}>
+                <X size={24} color={activeColors.muted} />
+              </TouchableOpacity>
+            </View>
+
+            <FlatList
+              data={[{ key: 'filters' }]}
+              renderItem={() => (
+                <View>
+                  <Text style={[styles.filterLabel, { color: activeColors.text }]}>Category</Text>
+                  <View style={styles.filterGrid}>
+                    {categories.map((cat) => (
+                      <TouchableOpacity
+                        key={cat.id}
+                        style={[
+                          styles.filterChip,
+                          {
+                            backgroundColor: selectedCategory === cat.id ? activeColors.tint : activeColors.background,
+                            borderColor: selectedCategory === cat.id ? activeColors.tint : activeColors.border,
+                          }
+                        ]}
+                        onPress={() => {
+                          setSelectedCategory(cat.id);
+                        }}
+                      >
+                        <Text style={[
+                          styles.filterChipText,
+                          { color: selectedCategory === cat.id ? '#fff' : activeColors.text }
+                        ]}>
+                          {cat.icon} {cat.label}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+
+                  <Text style={[styles.filterLabel, { color: activeColors.text, marginTop: 24 }]}>Project Stage</Text>
+                  <View style={styles.filterGrid}>
+                    {stages.map((stage) => (
+                      <TouchableOpacity
+                        key={stage.id}
+                        style={[
+                          styles.filterChip,
+                          {
+                            backgroundColor: selectedStage === stage.id ? activeColors.tint : activeColors.background,
+                            borderColor: selectedStage === stage.id ? activeColors.tint : activeColors.border,
+                          }
+                        ]}
+                        onPress={() => {
+                          setSelectedStage(stage.id);
+                        }}
+                      >
+                        <Text style={[
+                          styles.filterChipText,
+                          { color: selectedStage === stage.id ? '#fff' : activeColors.text }
+                        ]}>
+                          {stage.label}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              )}
+              keyExtractor={(item) => item.key}
+              contentContainerStyle={{ paddingBottom: 40 }}
+            />
+
+            <TouchableOpacity
+              style={[styles.applyBtn, { backgroundColor: activeColors.tint }]}
+              onPress={() => setFilterModalVisible(false)}
+            >
+              <Text style={styles.applyBtnText}>Apply Filters</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </Modal>
     </View>
   );
@@ -530,5 +655,47 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '700',
+  },
+  filterModal: {
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    padding: 24,
+    height: '85%',
+  },
+  filterLabel: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 16,
+  },
+  filterGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  filterChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+    borderWidth: 1.5,
+  },
+  filterChipText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  applyBtn: {
+    paddingVertical: 16,
+    borderRadius: 16,
+    alignItems: 'center',
+    marginTop: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  applyBtnText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '800',
   },
 });
