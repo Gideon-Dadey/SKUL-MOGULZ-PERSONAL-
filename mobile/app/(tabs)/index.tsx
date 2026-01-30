@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, Briefcase } from 'lucide-react-native';
+import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, Briefcase, MessagesSquare } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -183,7 +183,7 @@ export default function FeedScreen() {
       <StatusBar style="light" />
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
-          <MessageCircle size={28} color="#fff" strokeWidth={1.5} />
+          <MessagesSquare size={28} color="#fff" strokeWidth={1.5} />
           {unreadMessages > 0 && (
             <View style={[styles.iOSBadge, { backgroundColor: '#FF3B30' }]}>
               <Text style={styles.iOSBadgeText}>{unreadMessages}</Text>
