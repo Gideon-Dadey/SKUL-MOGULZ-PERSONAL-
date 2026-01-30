@@ -1,5 +1,3 @@
-
-
 .feed-layout {
     display: grid;
     grid-template-columns: 280px minmax(0, 1fr) 340px;
@@ -41,7 +39,7 @@
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 8px;
-    
+
     overflow: hidden;
     transition: all 0.2s ease;
 }
@@ -75,7 +73,7 @@
     width: 80px;
     height: 80px;
     border-radius: 20px;
-    
+
     object-fit: cover;
     border: 4px solid var(--bg-card);
     margin-top: -40px;
@@ -148,6 +146,21 @@
     justify-content: space-between;
 }
 
+[data-theme="dark"] .sidebar-card__header h4,
+[data-theme="dark"] .sidebar-card__header {
+    color: #9ca3af;
+}
+
+[data-theme="dark"] .profile-card__stat-label {
+    color: #9ca3af;
+}
+
+[data-theme="dark"] .suggestion-empty {
+    color: #9ca3af;
+    padding: 2rem;
+    text-align: center;
+}
+
 .sidebar-card__item {
     display: block;
     padding: 0.6rem 1.25rem;
@@ -177,7 +190,7 @@
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 8px;
-    
+
     padding: 1.25rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
 }
@@ -254,7 +267,7 @@
 
 .feed-sort-bar__line {
     display: none;
-    
+
 }
 
 .feed-sort-bar__dropdown {
@@ -304,7 +317,7 @@
     height: 100%;
     background: var(--border);
     display: none;
-    
+
 }
 
 .news-card__number {
@@ -324,6 +337,14 @@
 .news-card__meta {
     font-size: 0.75rem;
     color: var(--text-muted);
+}
+
+[data-theme="dark"] .news-card__meta {
+    color: #9ca3af;
+}
+
+[data-theme="dark"] .feed-sort-bar__text {
+    color: #9ca3af;
 }
 
 
@@ -398,10 +419,10 @@
 
 @media (max-width: 768px) {
 
-    
+
     .feed-layout {
         padding-bottom: 80px;
-        
+
     }
 
     .create-box {
