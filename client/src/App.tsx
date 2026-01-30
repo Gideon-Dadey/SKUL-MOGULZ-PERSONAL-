@@ -134,7 +134,7 @@ const LoginPage = () => {
                 <div className="auth-left">
                     <div className="auth-brand">
                         <Logo size={48} />
-                        <h1 className="auth-brand__text">SKUL MOGULZ</h1>
+                        <h1 className="auth-brand__text">Skul Mogulz</h1>
                     </div>
                     <h2 className="auth-heading">Welcome back</h2>
                     <p className="auth-subheading">
@@ -261,11 +261,11 @@ const RegisterPage = () => {
                 <div className="auth-left">
                     <div className="auth-brand">
                         <Logo size={48} />
-                        <h1 className="auth-brand__text">SKUL MOGULZ</h1>
+                        <h1 className="auth-brand__text">Skul Mogulz</h1>
                     </div>
                     <h2 className="auth-heading">Make the most of your professional life</h2>
                     <p className="auth-subheading">
-                        Already on SKUL MOGULZ? <Link to="/login" className="auth-link">Sign in</Link>
+                        Already on Skul Mogulz? <Link to="/login" className="auth-link">Sign in</Link>
                     </p>
 
                     <form onSubmit={handleSubmit} className="auth-form">
@@ -318,7 +318,7 @@ const RegisterPage = () => {
                                 </div>
 
                                 <p className="form-terms">
-                                    By clicking Continue, you agree to SKUL MOGULZ's{' '}
+                                    By clicking Continue, you agree to Skul Mogulz's{' '}
                                     <a href="#">User Agreement</a>, <a href="#">Privacy Policy</a>, and{' '}
                                     <a href="#">Cookie Policy</a>.
                                 </p>
@@ -373,7 +373,7 @@ const RegisterPage = () => {
                     <div className="auth-visual">
                         <div className="auth-visual__content">
                             <h3>Your journey starts here</h3>
-                            <p>Whether you're a student with a groundbreaking idea or an investor looking for the next big thing, SKUL MOGULZ is where innovation meets opportunity.</p>
+                            <p>Whether you're a student with a groundbreaking idea or an investor looking for the next big thing, Skul Mogulz is where innovation meets opportunity.</p>
                         </div>
                     </div>
                 </div>

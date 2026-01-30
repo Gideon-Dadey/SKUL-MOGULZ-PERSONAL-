@@ -50,7 +50,7 @@ export default function LoginScreen() {
                     <View style={[styles.logoContainer, { backgroundColor: isDark ? 'rgba(165, 214, 183, 0.1)' : 'rgba(165, 214, 183, 0.05)' }]}>
                         <Logo size={80} />
                     </View>
-                    <Text style={[styles.brandText, { color: activeColors.tint }]}>SKUL MOGULZ</Text>
+                    <Text style={[styles.brandText, { color: activeColors.tint }]}>Skul Mogulz</Text>
                     <Text style={[styles.heroTitle, { color: activeColors.text }]}>Propel Your{'\n'}Student Vision</Text>
                     <Text style={[styles.heroSubtitle, { color: activeColors.muted }]}>
                         Connecting university innovators with high-impact investment.
@@ -68,13 +68,11 @@ export default function LoginScreen() {
 
                     <View style={styles.formContainer}>
                         <View style={styles.inputGroup}>
-                            <Text style={[styles.inputLabel, { color: activeColors.muted }]}>PROFESSIONAL EMAIL</Text>
+                            <Text style={[styles.inputLabel, { color: activeColors.muted }]}>Professional email</Text>
                             <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#0d1117' : '#f8f9fa', borderColor: activeColors.border }]}>
                                 <Mail size={18} color={activeColors.tint} style={styles.inputIcon} />
                                 <TextInput
                                     style={[styles.input, { color: activeColors.text }]}
-                                    placeholder="Enter your campus email"
-                                    placeholderTextColor={activeColors.light}
                                     value={email}
                                     onChangeText={setEmail}
                                     autoCapitalize="none"
@@ -85,7 +83,7 @@ export default function LoginScreen() {
 
                         <View style={styles.inputGroup}>
                             <View style={styles.labelRow}>
-                                <Text style={[styles.inputLabel, { color: activeColors.muted }]}>PASSWORD</Text>
+                                <Text style={[styles.inputLabel, { color: activeColors.muted }]}>Password</Text>
                                 <TouchableOpacity>
                                     <Text style={[styles.forgotLink, { color: activeColors.tint }]}>Reset?</Text>
                                 </TouchableOpacity>
@@ -94,8 +92,6 @@ export default function LoginScreen() {
                                 <Lock size={18} color={activeColors.tint} style={styles.inputIcon} />
                                 <TextInput
                                     style={[styles.input, { color: activeColors.text }]}
-                                    placeholder="Enter your security phrase"
-                                    placeholderTextColor={activeColors.light}
                                     value={password}
                                     onChangeText={setPassword}
                                     secureTextEntry
@@ -115,7 +111,7 @@ export default function LoginScreen() {
 
                         <View style={styles.authDivider}>
                             <View style={[styles.dividerLine, { backgroundColor: activeColors.border }]} />
-                            <Text style={[styles.dividerLabel, { color: activeColors.light }]}>OR CONTINUATE WITH</Text>
+                            <Text style={[styles.dividerLabel, { color: activeColors.light }]}>Or continue with</Text>
                             <View style={[styles.dividerLine, { backgroundColor: activeColors.border }]} />
                         </View>
 
@@ -159,15 +155,13 @@ const styles = StyleSheet.create({
     },
     logoContainer: {
         padding: 20,
-        borderRadius: 24,
+        borderRadius: 0.5,
         marginBottom: 20,
     },
     brandText: {
         fontSize: 14,
         fontWeight: '900',
-        letterSpacing: 3,
         marginBottom: 12,
-        textTransform: 'uppercase',
     },
     heroTitle: {
         fontSize: 36,
@@ -183,7 +177,7 @@ const styles = StyleSheet.create({
         lineHeight: 22,
     },
     authCard: {
-        borderRadius: 32,
+        borderRadius: 0.5,
         padding: 28,
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.1,
@@ -198,7 +192,7 @@ const styles = StyleSheet.create({
     errorContainer: {
         backgroundColor: 'rgba(255, 68, 68, 0.1)',
         padding: 12,
-        borderRadius: 12,
+        borderRadius: 0.5,
         marginBottom: 20,
     },
     errorText: {
@@ -216,7 +210,6 @@ const styles = StyleSheet.create({
     inputLabel: {
         fontSize: 11,
         fontWeight: '800',
-        letterSpacing: 1.2,
     },
     labelRow: {
         flexDirection: 'row',
@@ -231,7 +224,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1.5,
-        borderRadius: 16,
+        borderRadius: 0.5,
         paddingHorizontal: 16,
         height: 60,
     },
@@ -245,7 +238,7 @@ const styles = StyleSheet.create({
     },
     primaryButton: {
         height: 60,
-        borderRadius: 16,
+        borderRadius: 0.5,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -256,7 +249,6 @@ const styles = StyleSheet.create({
         color: '#000',
         fontSize: 16,
         fontWeight: '800',
-        letterSpacing: 0.5,
     },
     authDivider: {
         flexDirection: 'row',
@@ -279,7 +271,7 @@ const styles = StyleSheet.create({
     socialIconBtn: {
         flex: 1,
         height: 52,
-        borderRadius: 16,
+        borderRadius: 0.5,
         borderWidth: 1.5,
         alignItems: 'center',
         justifyContent: 'center',

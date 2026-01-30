@@ -63,7 +63,7 @@ export default function RegisterScreen() {
                     <View style={[styles.logoContainer, { backgroundColor: isDark ? 'rgba(165, 214, 183, 0.1)' : 'rgba(165, 214, 183, 0.05)' }]}>
                         <Logo size={60} />
                     </View>
-                    <Text style={[styles.brandText, { color: activeColors.tint }]}>SKUL MOGULZ</Text>
+                    <Text style={[styles.brandText, { color: activeColors.tint }]}>Skul Mogulz</Text>
                     <Text style={[styles.heroTitle, { color: activeColors.text }]}>Start Your{'\n'}Mogul Journey</Text>
 
                     <View style={styles.stepIndicator}>
@@ -86,24 +86,20 @@ export default function RegisterScreen() {
 
                             <View style={styles.inputRow}>
                                 <View style={[styles.inputGroup, { flex: 1 }]}>
-                                    <Text style={[styles.inputLabel, { color: activeColors.muted }]}>FIRST NAME</Text>
+                                    <Text style={[styles.inputLabel, { color: activeColors.muted }]}>First name</Text>
                                     <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#0d1117' : '#f8f9fa', borderColor: activeColors.border }]}>
                                         <TextInput
                                             style={[styles.input, { color: activeColors.text }]}
-                                            placeholder="John"
-                                            placeholderTextColor={activeColors.light}
                                             value={formData.firstName}
                                             onChangeText={(text) => setFormData({ ...formData, firstName: text })}
                                         />
                                     </View>
                                 </View>
                                 <View style={[styles.inputGroup, { flex: 1 }]}>
-                                    <Text style={[styles.inputLabel, { color: activeColors.muted }]}>LAST NAME</Text>
+                                    <Text style={[styles.inputLabel, { color: activeColors.muted }]}>Last name</Text>
                                     <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#0d1117' : '#f8f9fa', borderColor: activeColors.border }]}>
                                         <TextInput
                                             style={[styles.input, { color: activeColors.text }]}
-                                            placeholder="Doe"
-                                            placeholderTextColor={activeColors.light}
                                             value={formData.lastName}
                                             onChangeText={(text) => setFormData({ ...formData, lastName: text })}
                                         />
@@ -112,13 +108,11 @@ export default function RegisterScreen() {
                             </View>
 
                             <View style={styles.inputGroup}>
-                                <Text style={[styles.inputLabel, { color: activeColors.muted }]}>INSTITUTIONAL EMAIL</Text>
+                                <Text style={[styles.inputLabel, { color: activeColors.muted }]}>Institutional email</Text>
                                 <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#0d1117' : '#f8f9fa', borderColor: activeColors.border }]}>
                                     <Mail size={18} color={activeColors.tint} style={styles.inputIcon} />
                                     <TextInput
                                         style={[styles.input, { color: activeColors.text }]}
-                                        placeholder="your@university.edu"
-                                        placeholderTextColor={activeColors.light}
                                         value={formData.email}
                                         onChangeText={(text) => setFormData({ ...formData, email: text })}
                                         autoCapitalize="none"
@@ -128,13 +122,11 @@ export default function RegisterScreen() {
                             </View>
 
                             <View style={styles.inputGroup}>
-                                <Text style={[styles.inputLabel, { color: activeColors.muted }]}>SECURITY KEY</Text>
+                                <Text style={[styles.inputLabel, { color: activeColors.muted }]}>Security key</Text>
                                 <View style={[styles.inputWrapper, { backgroundColor: isDark ? '#0d1117' : '#f8f9fa', borderColor: activeColors.border }]}>
                                     <Lock size={18} color={activeColors.tint} style={styles.inputIcon} />
                                     <TextInput
                                         style={[styles.input, { color: activeColors.text }]}
-                                        placeholder="6+ complex characters"
-                                        placeholderTextColor={activeColors.light}
                                         value={formData.password}
                                         onChangeText={(text) => setFormData({ ...formData, password: text })}
                                         secureTextEntry
@@ -247,15 +239,13 @@ const styles = StyleSheet.create({
     },
     logoContainer: {
         padding: 16,
-        borderRadius: 20,
+        borderRadius: 0.5,
         marginBottom: 16,
     },
     brandText: {
         fontSize: 12,
         fontWeight: '900',
-        letterSpacing: 3,
         marginBottom: 8,
-        textTransform: 'uppercase',
     },
     heroTitle: {
         fontSize: 32,
@@ -280,7 +270,7 @@ const styles = StyleSheet.create({
         borderRadius: 1,
     },
     authCard: {
-        borderRadius: 32,
+        borderRadius: 0.5,
         padding: 28,
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.1,
@@ -300,7 +290,7 @@ const styles = StyleSheet.create({
     errorContainer: {
         backgroundColor: 'rgba(255, 68, 68, 0.1)',
         padding: 12,
-        borderRadius: 12,
+        borderRadius: 0.5,
         marginBottom: 20,
     },
     errorText: {
@@ -322,13 +312,12 @@ const styles = StyleSheet.create({
     inputLabel: {
         fontSize: 10,
         fontWeight: '800',
-        letterSpacing: 1.2,
     },
     inputWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1.5,
-        borderRadius: 16,
+        borderRadius: 0.5,
         paddingHorizontal: 16,
         height: 60,
     },
@@ -345,14 +334,14 @@ const styles = StyleSheet.create({
     },
     premiumRoleOption: {
         padding: 20,
-        borderRadius: 20,
+        borderRadius: 0.5,
         borderWidth: 2,
         position: 'relative',
     },
     roleIconBadge: {
         width: 48,
         height: 48,
-        borderRadius: 12,
+        borderRadius: 0.5,
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 12,
@@ -379,7 +368,7 @@ const styles = StyleSheet.create({
     },
     primaryButton: {
         height: 60,
-        borderRadius: 16,
+        borderRadius: 0.5,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -393,7 +382,7 @@ const styles = StyleSheet.create({
     secondaryButton: {
         width: 60,
         height: 60,
-        borderRadius: 16,
+        borderRadius: 0.5,
         borderWidth: 1.5,
         alignItems: 'center',
         justifyContent: 'center',
