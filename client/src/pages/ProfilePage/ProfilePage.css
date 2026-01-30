@@ -15,7 +15,7 @@
 }
 
 .profile-card {
-    background: #ffffff;
+    background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     overflow: hidden;
@@ -57,9 +57,9 @@
     height: 100%;
     border-radius: 8px;
     /* Organic square-ish rounded look */
-    border: 4px solid #ffffff;
+    border: 4px solid var(--bg-card);
     object-fit: cover;
-    background: #ffffff;
+    background: var(--bg-card);
 }
 
 .profile-hero__avatar-overlay {
