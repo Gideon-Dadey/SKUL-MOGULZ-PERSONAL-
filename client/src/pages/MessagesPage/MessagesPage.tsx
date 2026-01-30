@@ -27,7 +27,9 @@ const MessagesPage: React.FC = () => {
                 const data = await messageService.getConversations();
                 setConversations(data);
                 if (data.length > 0 && !selectedChat) {
-                    setSelectedChat(data[0]._id);
+                    // Use the user's ID as the selected chat target
+                    const firstChatUser = data[0].user;
+                    setSelectedChat(firstChatUser._id || firstChatUser.id);
                 }
             } catch (error) {
                 console.error("Failed to fetch conversations", error);
@@ -46,9 +48,16 @@ const MessagesPage: React.FC = () => {
         if (!socket) return;
 
         socket.on('new_message', (message: any) => {
+            const senderId = message.sender?._id || message.sender?.id || message.sender;
+            const currentUserId = (currentUser as any)?._id || currentUser?.id;
 
-            if (message.sender._id === selectedChat || message.recipient === selectedChat) {
-                setMessages((prev: any[]) => [...prev, message]);
+            // Update messages if the message is from or to the person currently selected
+            if (senderId === selectedChat || (message.recipient === selectedChat && senderId === currentUserId)) {
+                setMessages((prev: any[]) => {
+                    // Prevent duplicates
+                    if (prev.find(m => m._id === message._id)) return prev;
+                    return [...prev, message];
+                });
             }
 
 
@@ -105,7 +114,7 @@ const MessagesPage: React.FC = () => {
         }
     };
 
-    const activeChatPartner = conversations.find(c => c._id === selectedChat)?.user;
+    const activeChatPartner = conversations.find(c => ((c.user as any)._id || c.user.id) === selectedChat)?.user;
 
     const formatTime = (dateString: string) => {
         return new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -138,8 +147,8 @@ const MessagesPage: React.FC = () => {
                             conversations.map(conv => (
                                 <div
                                     key={conv._id}
-                                    className={`msg-item ${selectedChat === conv._id ? 'active' : ''}`}
-                                    onClick={() => setSelectedChat(conv._id)}
+                                    className={`msg-item ${selectedChat === ((conv.user as any)._id || conv.user.id) ? 'active' : ''}`}
+                                    onClick={() => setSelectedChat((conv.user as any)._id || conv.user.id)}
                                 >
                                     <div className="msg-avatar-wrapper">
                                         <img
@@ -192,7 +201,9 @@ const MessagesPage: React.FC = () => {
                                 <div className="chat-divider"><span>Conversation started</span></div>
 
                                 {messages.map((msg) => {
-                                    const isSent = msg.sender === currentUser?.id;
+                                    const msgSenderId = msg.sender?._id || msg.sender?.id || msg.sender;
+                                    const currentUserId = (currentUser as any)?._id || currentUser?.id;
+                                    const isSent = msgSenderId === currentUserId;
                                     const senderInfo = isSent ? currentUser : activeChatPartner;
                                     return (
                                         <div key={msg._id} className={`message-bubble ${isSent ? 'sent' : 'received'}`}>
