@@ -10,7 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import notificationService from '../../services/notificationService';
 import { getImageUrl } from '../../services/api';
-import Logo from '../Logo';
+import Logo, { DEFAULT_AVATAR } from '../Logo';
 
 import './Navbar.css';
 
@@ -226,7 +226,7 @@ const Navbar: React.FC = () => {
                                             >
                                                 <Link to={`/profile/${n.sender.username}`} onClick={(e) => e.stopPropagation()}>
                                                     <img
-                                                        src={getImageUrl(n.sender?.avatar) || `https://ui-avatars.com/api/?name=${n.sender.firstName}&background=A5D6B7&color=fff`}
+                                                        src={getImageUrl(n.sender?.avatar) || DEFAULT_AVATAR}
                                                         alt=""
                                                         className="notification-item__avatar"
                                                     />
@@ -271,7 +271,7 @@ const Navbar: React.FC = () => {
                             onClick={() => setShowProfileMenu(!showProfileMenu)}
                         >
                             <img
-                                src={getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=A5D6B7&color=fff`}
+                                src={getImageUrl(user?.avatar) || DEFAULT_AVATAR}
                                 alt={user?.firstName}
                                 className="navbar__profile-avatar"
                             />
@@ -284,7 +284,7 @@ const Navbar: React.FC = () => {
                             <div className="navbar__dropdown navbar__dropdown--profile">
                                 <div className="navbar__dropdown-user">
                                     <img
-                                        src={getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName}&background=A5D6B7&color=fff`}
+                                        src={getImageUrl(user?.avatar) || DEFAULT_AVATAR}
                                         alt={user?.firstName}
                                         className="navbar__dropdown-user-avatar"
                                     />

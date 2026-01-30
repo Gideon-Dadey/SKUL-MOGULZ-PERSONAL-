@@ -8,6 +8,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import PostCard from '../../components/PostCard/PostCard';
 import SearchFilter from '../../components/SearchFilter/SearchFilter';
+import { DEFAULT_AVATAR } from '../../components/Logo';
 import networkService from '../../services/networkService';
 import { ProjectCategory } from '../../types';
 import './FeedPage.css';
@@ -127,7 +128,7 @@ const FeedPage: React.FC = () => {
                 <div className="profile-card">
                     <div className="profile-card__banner"></div>
                     <img
-                        src={getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff`}
+                        src={getImageUrl(user?.avatar) || DEFAULT_AVATAR}
                         alt={user?.firstName}
                         className="profile-card__avatar"
                     />
@@ -190,7 +191,7 @@ const FeedPage: React.FC = () => {
                 <div className="create-box">
                     <div className="create-box__top">
                         <img
-                            src={getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff`}
+                            src={getImageUrl(user?.avatar) || DEFAULT_AVATAR}
                             alt=""
                             className="create-box__avatar"
                         />
@@ -300,7 +301,7 @@ const FeedPage: React.FC = () => {
                         suggestions.map(person => (
                             <div key={person._id} className="suggestion-item">
                                 <img
-                                    src={getImageUrl(person.avatar) || `https://ui-avatars.com/api/?name=${person.firstName}&background=A5D6B7&color=fff`}
+                                    src={getImageUrl(person.avatar) || DEFAULT_AVATAR}
                                     alt=""
                                     className="suggestion-item__avatar"
                                 />

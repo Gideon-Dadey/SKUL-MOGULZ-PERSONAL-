@@ -4,6 +4,7 @@ import { Users, Briefcase, ChevronRight, UserCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import networkService from '../../services/networkService';
 import { getImageUrl } from '../../services/api';
+import { DEFAULT_AVATAR } from '../../components/Logo';
 import './NetworkPage.css';
 
 const NetworkPage: React.FC = () => {
@@ -123,7 +124,7 @@ const NetworkPage: React.FC = () => {
                                     <div key={invitation._id} className="invitation-item">
                                         <Link to={`/profile/${invitation.sender.username}`} className="invitation-link">
                                             <img
-                                                src={getImageUrl(invitation.sender.avatar) || `https://ui-avatars.com/api/?name=${invitation.sender.firstName}&background=A5D6B7&color=fff`}
+                                                src={getImageUrl(invitation.sender.avatar) || DEFAULT_AVATAR}
                                                 alt=""
                                                 className="invitation-avatar"
                                             />
@@ -161,7 +162,7 @@ const NetworkPage: React.FC = () => {
                                 <div key={user._id} className="suggestion-card">
                                     <div className="suggestion-banner"></div>
                                     <img
-                                        src={getImageUrl(user.avatar) || `https://ui-avatars.com/api/?name=${user.firstName}&background=A5D6B7&color=fff`}
+                                        src={getImageUrl(user.avatar) || DEFAULT_AVATAR}
                                         alt=""
                                         className="suggestion-avatar"
                                     />
