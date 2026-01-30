@@ -101,6 +101,7 @@ export default function PostDetailScreen() {
     if (loading) {
         return (
             <View style={[styles.container, styles.center, { backgroundColor: activeColors.background }]}>
+                <Stack.Screen options={{ headerShown: false }} />
                 <ActivityIndicator size="large" color={activeColors.tint} />
             </View>
         );
@@ -109,6 +110,7 @@ export default function PostDetailScreen() {
     if (!post) {
         return (
             <View style={[styles.container, styles.center, { backgroundColor: activeColors.background }]}>
+                <Stack.Screen options={{ headerShown: false }} />
                 <Text style={{ color: activeColors.text }}>Post not found</Text>
             </View>
         );
