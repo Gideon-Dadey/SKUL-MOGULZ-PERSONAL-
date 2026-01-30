@@ -40,7 +40,7 @@ export default function LoginScreen() {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={[styles.container, { backgroundColor: activeColors.background }]}
+            style={[styles.container, { backgroundColor: '#ffffff' }]}
         >
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
@@ -57,7 +57,7 @@ export default function LoginScreen() {
                     </Text>
                 </View>
 
-                <View style={[styles.authCard, { backgroundColor: isDark ? '#161b22' : '#ffffff', shadowColor: isDark ? '#000' : '#888' }]}>
+                <View style={[styles.authCard, { backgroundColor: '#ffffff', shadowColor: '#000' }]}>
                     <Text style={[styles.formTitle, { color: activeColors.text }]}>Sign In</Text>
 
                     {error ? (
