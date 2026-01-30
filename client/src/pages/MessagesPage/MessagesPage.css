@@ -1,6 +1,6 @@
 .messages-container {
     height: calc(100vh - 64px);
-    
+
     max-width: 1128px;
     margin: 0 auto;
     padding: 1.5rem 0;
@@ -12,7 +12,7 @@
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 8px;
-    
+
     overflow: hidden;
 }
 
@@ -211,6 +211,40 @@
     font-size: 1rem;
     font-weight: 700;
     color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.connection-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.connection-status-dot.connected {
+    background-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.connection-status-dot.disconnected {
+    background-color: #ef4444;
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 
 .chat-status {
@@ -257,7 +291,7 @@
     top: 50%;
     height: 1px;
     background: var(--border);
-    
+
 }
 
 .message-bubble {
@@ -291,7 +325,7 @@
 
 .message-bubble.sent .bubble-content {
     background: #fdf2f0;
-    
+
     color: var(--text-main);
     border-radius: 8px 0 8px 8px;
     border-color: rgba(165, 214, 183, 0.2);
