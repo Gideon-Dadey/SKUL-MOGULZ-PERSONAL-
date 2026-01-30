@@ -1,4 +1,3 @@
-
 .network-layout {
     display: grid;
     grid-template-columns: 280px minmax(0, 1fr);
@@ -237,7 +236,7 @@
     border: 3px solid var(--bg-card);
     margin-top: -36px;
     object-fit: cover;
-    background: white;
+    background: var(--bg-card);
 }
 
 .suggestion-info {
@@ -303,7 +302,7 @@
     background: var(--primary-light);
     border-width: 2px;
     padding: calc(0.3rem - 1px) 0;
-    
+
 }
 
 
