@@ -45,6 +45,7 @@ export interface User {
     connections?: string[];
     impressions?: number;
     viewedProfile?: number;
+    twoFactorEnabled?: boolean;
     createdAt: string;
 }
 

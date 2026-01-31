@@ -40,6 +40,14 @@ export interface IUser extends Document {
     viewedProfile?: number;
     impressions?: number;
     bookmarks: mongoose.Types.ObjectId[];
+    twoFactorEnabled: boolean;
+    sessions: {
+        id: string;
+        device: string;
+        location: string;
+        ip: string;
+        lastActive: Date;
+    }[];
     createdAt: Date;
     updatedAt: Date;
     comparePassword(candidatePassword: string): Promise<boolean>;
@@ -66,6 +74,14 @@ const educationSchema = new Schema({
     description: { type: String }
 });
 
+const sessionSchema = new Schema({
+    id: { type: String, required: true },
+    device: { type: String, required: true },
+    location: { type: String, default: 'Unknown' },
+    ip: { type: String, required: true },
+    lastActive: { type: Date, default: Date.now }
+});
+
 const userSchema = new Schema<IUser>({
     firstName: { type: String, required: true, trim: true },
     lastName: { type: String, required: true, trim: true },
@@ -85,7 +101,9 @@ const userSchema = new Schema<IUser>({
     connections: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     viewedProfile: { type: Number, default: 0 },
     impressions: { type: Number, default: 0 },
-    bookmarks: [{ type: Schema.Types.ObjectId, ref: 'Project' }]
+    bookmarks: [{ type: Schema.Types.ObjectId, ref: 'Project' }],
+    twoFactorEnabled: { type: Boolean, default: false },
+    sessions: [sessionSchema]
 }, {
     timestamps: true
 });

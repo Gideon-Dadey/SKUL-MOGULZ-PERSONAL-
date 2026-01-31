@@ -102,6 +102,19 @@ export const login = async (req: Request, res: Response) => {
         if (user && (await user.comparePassword(password))) {
             const token = generateToken((user._id as mongoose.Types.ObjectId).toString());
 
+            // Track session
+            const session = {
+                id: new mongoose.Types.ObjectId().toString(),
+                device: req.headers['user-agent'] || 'Unknown Device',
+                location: 'Unknown Location', // In a real app, use IP geolocation
+                ip: req.ip || 'Unknown IP',
+                lastActive: new Date()
+            };
+
+            user.sessions = user.sessions || [];
+            user.sessions.push(session);
+            await user.save();
+
             res.json({
                 _id: user._id,
                 firstName: user.firstName,
@@ -121,6 +134,7 @@ export const login = async (req: Request, res: Response) => {
                 viewedProfile: user.viewedProfile || 0,
                 impressions: user.impressions || 0,
                 connectionsCount: user.connections?.length || 0,
+                twoFactorEnabled: user.twoFactorEnabled,
                 token,
             });
         } else {
@@ -347,6 +361,100 @@ export const deleteAccount = async (req: Request, res: Response) => {
         // Optionally delete related data like Projects, etc here if needed, but for MVP simple user deletion
         await User.findByIdAndDelete(userId);
         res.json({ message: 'User deleted' });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+// @desc    Change password
+// @route   PUT /api/auth/password
+// @access  Private
+export const changePassword = async (req: Request, res: Response) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const user = await User.findById((req as any).user._id).select('+password');
+
+        if (!user || !(await user.comparePassword(currentPassword))) {
+            return res.status(401).json({ message: 'Invalid current password' });
+        }
+
+        user.password = newPassword;
+        await user.save();
+
+        res.json({ message: 'Password updated successfully' });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Change email
+// @route   PUT /api/auth/email
+// @access  Private
+export const changeEmail = async (req: Request, res: Response) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findById((req as any).user._id);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const emailExists = await User.findOne({ email: email.toLowerCase() });
+        if (emailExists && emailExists._id.toString() !== user._id.toString()) {
+            return res.status(400).json({ message: 'Email already in use' });
+        }
+
+        user.email = email.toLowerCase();
+        await user.save();
+
+        res.json({ message: 'Email updated successfully', email: user.email });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Toggle 2FA
+// @route   PUT /api/auth/2fa
+// @access  Private
+export const toggle2FA = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findById((req as any).user._id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        user.twoFactorEnabled = !user.twoFactorEnabled;
+        await user.save();
+
+        res.json({ message: `2FA ${user.twoFactorEnabled ? 'enabled' : 'disabled'}`, enabled: user.twoFactorEnabled });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Get active sessions
+// @route   GET /api/auth/sessions
+// @access  Private
+export const getSessions = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findById((req as any).user._id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        res.json(user.sessions || []);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Revoke session
+// @route   DELETE /api/auth/sessions/:id
+// @access  Private
+export const revokeSession = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findById((req as any).user._id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        user.sessions = user.sessions.filter(s => s.id !== req.params.id);
+        await user.save();
+
+        res.json({ message: 'Session revoked' });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
