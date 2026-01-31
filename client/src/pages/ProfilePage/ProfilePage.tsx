@@ -202,6 +202,52 @@ const ProfilePage: React.FC = () => {
         }
     };
 
+    const handleLike = async (postId: string) => {
+        try {
+            const response = await api.put(`/projects/${postId}/like`);
+            const updatedLikes = response.data;
+
+            setUserPosts(currentPosts => currentPosts.map(post => {
+                if (post.id === postId) {
+                    return {
+                        ...post,
+                        likes: updatedLikes.length,
+                        likedBy: updatedLikes
+                    };
+                }
+                return post;
+            }));
+        } catch (error) {
+            console.error("Failed to like post", error);
+        }
+    };
+
+    const handleRepost = async (postId: string) => {
+        try {
+            const response = await api.put(`/projects/${postId}/repost`);
+            const { reposted } = response.data;
+
+            setUserPosts(currentPosts => currentPosts.map(post => {
+                if (post.id === postId) {
+                    const newReposts = reposted
+                        ? [...(post.reposts || []), currentUser?.id]
+                        : (post.reposts || []).filter((id: string) => id !== currentUser?.id);
+                    return {
+                        ...post,
+                        reposts: newReposts
+                    };
+                }
+                return post;
+            }));
+
+            if (!reposted) {
+                setUserPosts(currentPosts => currentPosts.filter(p => !(p.repostOf && (p.repostOf._id === postId || p.repostOf.id === postId) && p.author.id === currentUser?.id)));
+            }
+        } catch (error) {
+            console.error("Failed to repost", error);
+        }
+    };
+
     const handleDeletePost = (postId: string) => {
         setUserPosts(currentPosts => currentPosts.filter(post => post.id !== postId));
     };
@@ -459,7 +505,7 @@ const ProfilePage: React.FC = () => {
                         <div className="profile-activity-list">
                             {userPosts.length > 0 ? (
                                 userPosts.slice(0, 3).map(post => (
-                                    <PostCard key={post.id} post={post} compact={true} onDelete={handleDeletePost} />
+                                    <PostCard key={post.id} post={post} compact={true} onLike={handleLike} onRepost={handleRepost} onDelete={handleDeletePost} />
                                 ))
                             ) : (
                                 <div className="profile-empty">

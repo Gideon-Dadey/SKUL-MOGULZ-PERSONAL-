@@ -3,9 +3,11 @@ import api from '../../services/api';
 import { Bookmark, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import PostCard from '../../components/PostCard/PostCard';
+import { useAuth } from '../../context/AuthContext';
 import './SavedPage.css';
 
 const SavedPage: React.FC = () => {
+    const { user } = useAuth();
     const [posts, setPosts] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
@@ -63,6 +65,27 @@ const SavedPage: React.FC = () => {
         }
     };
 
+    const handleRepost = async (postId: string) => {
+        try {
+            const response = await api.put(`/projects/${postId}/repost`);
+            const { reposted } = response.data;
+
+            setPosts(currentPosts => currentPosts.map(post => {
+                if (post.id === postId) {
+                    return {
+                        ...post,
+                        reposts: reposted
+                            ? [...(post.reposts || []), user?.id]
+                            : (post.reposts || []).filter((id: string) => id !== user?.id)
+                    };
+                }
+                return post;
+            }));
+        } catch (error) {
+            console.error("Failed to repost", error);
+        }
+    };
+
     const handleDeletePost = (postId: string) => {
         setPosts(currentPosts => currentPosts.filter(post => post.id !== postId));
     };
@@ -102,6 +125,7 @@ const SavedPage: React.FC = () => {
                                 key={post.id}
                                 post={post}
                                 onLike={handleLike}
+                                onRepost={handleRepost}
                                 onDelete={handleDeletePost}
                             />
                         ))}

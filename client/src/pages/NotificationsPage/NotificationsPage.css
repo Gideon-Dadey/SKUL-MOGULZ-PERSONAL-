@@ -143,6 +143,10 @@
     color: #10b981;
 }
 
+.notif-icon--repost {
+    color: #00BA7C;
+}
+
 .notif-item__content {
     flex: 1;
 }

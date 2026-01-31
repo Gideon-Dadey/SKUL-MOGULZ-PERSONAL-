@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, MessageCircle, Share2, Send, MoreHorizontal, ThumbsUp, Trash2, Edit, Bookmark } from 'lucide-react';
+import { ArrowLeft, Heart, MessageCircle, Share2, Send, MoreHorizontal, ThumbsUp, Trash2, Edit, Bookmark, Repeat } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import './PostDetailPage.css';
@@ -134,6 +134,23 @@ const PostDetailPage: React.FC = () => {
             }));
         } catch (error) {
             console.error("Failed to like comment", error);
+        }
+    };
+
+    const handleRepost = async () => {
+        if (!post) return;
+        try {
+            const response = await api.put(`/projects/${post.id}/repost`);
+            const { reposted } = response.data;
+
+            setPost((prev: any) => ({
+                ...prev,
+                reposts: reposted
+                    ? [...(prev.reposts || []), user?.id]
+                    : (prev.reposts || []).filter((id: string) => id !== user?.id)
+            }));
+        } catch (error) {
+            console.error("Failed to repost", error);
         }
     };
 
@@ -349,7 +366,7 @@ const PostDetailPage: React.FC = () => {
                             <span className="stats-text">{post.likes} likes</span>
                         </div>
                         <div className="stats-right">
-                            <span className="stats-text">{post.comments.length} comments • 42 shares</span>
+                            <span className="stats-text">{post.comments.length} comments • {post.reposts?.length || 0} reposts</span>
                         </div>
                     </div>
 
@@ -361,6 +378,14 @@ const PostDetailPage: React.FC = () => {
                         >
                             <ThumbsUp size={20} />
                             <span>Like</span>
+                        </button>
+                        <button
+                            className={`action-btn ${user && post.reposts?.includes(user?.id) ? 'active' : ''}`}
+                            style={{ color: user && post.reposts?.includes(user?.id) ? '#00BA7C' : 'inherit' }}
+                            onClick={handleRepost}
+                        >
+                            <Repeat size={20} />
+                            <span>Repost</span>
                         </button>
                         <button className="action-btn">
                             <MessageCircle size={20} />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Bell, Heart, MessageCircle, UserPlus, Zap } from 'lucide-react';
+import { Settings, Bell, Heart, MessageCircle, UserPlus, Zap, Repeat } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import notificationService from '../../services/notificationService';
 import './NotificationsPage.css';
@@ -41,6 +41,7 @@ const NotificationsPage: React.FC = () => {
             case 'comment': return <MessageCircle size={20} className="notif-icon notif-icon--comment" />;
             case 'funding': return <Zap size={20} className="notif-icon notif-icon--funding" />;
             case 'follow': return <UserPlus size={20} className="notif-icon notif-icon--follow" />;
+            case 'repost': return <Repeat size={20} className="notif-icon notif-icon--repost" />;
             default: return <Bell size={20} className="notif-icon" />;
         }
     };
@@ -96,7 +97,8 @@ const NotificationsPage: React.FC = () => {
                                                 (n.type === 'like' ? 'liked your project' :
                                                     n.type === 'comment' ? 'commented on your project' :
                                                         n.type === 'funding' ? 'supported your project' :
-                                                            'followed you')
+                                                            n.type === 'repost' ? 'reposted your project' :
+                                                                'followed you')
                                             }
                                             {n.project && !n.content && <span className="notif-item__project-title">: "{n.project.title}"</span>}
                                         </p>
