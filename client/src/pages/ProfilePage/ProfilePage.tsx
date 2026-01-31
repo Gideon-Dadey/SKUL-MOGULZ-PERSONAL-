@@ -571,28 +571,50 @@ const ProfilePage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Skills Section */}
                 <div className="profile-card profile-section">
                     <div className="profile-section__header">
                         <h2>Skills</h2>
-                        {isOwnProfile && (
-                            <div className="profile-section__actions">
+                        <div className="profile-section__actions">
+                            {isOwnProfile && (
                                 <button className="profile-section__edit" onClick={() => openModal('skills')}>
                                     <Edit2 size={18} />
                                 </button>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
-                    <div className="profile-skills-grid">
+                    <div className="profile-skills-list">
                         {(profileUser.interests && profileUser.interests.length > 0) ? (
-                            profileUser.interests.map((skill: string, index: number) => (
-                                <div key={skill} className="skill-item">
-                                    <h3>{skill}</h3>
-                                    <button className="btn btn-primary btn--xs">
-                                        {Math.floor((profileUser.connectionsCount || profileUser.connections?.length || 0) * (0.1 + index * 0.05) + (5 - index))} endorsements
-                                    </button>
-                                </div>
-                            ))
+                            profileUser.interests.map((skill: string, index: number) => {
+                                const endorsementCount = Math.floor((profileUser.connectionsCount || 0) * (0.1 + index * 0.05) + (5 - index));
+                                return (
+                                    <div key={skill} className="skill-item">
+                                        <div className="skill-item__main">
+                                            <h3 className="skill-item__name">{skill}</h3>
+                                            <div className="skill-item__endorsements">
+                                                <div className="endorsement-avatars">
+                                                    {mockUsers.slice(index, index + 3).map((u, i) => (
+                                                        <img
+                                                            key={i}
+                                                            src={getImageUrl(u.avatar) || DEFAULT_AVATAR}
+                                                            alt=""
+                                                            className="endorsement-avatar"
+                                                        />
+                                                    ))}
+                                                </div>
+                                                <span className="endorsement-text">
+                                                    Endorsed by <strong>{mockUsers[index].firstName} {mockUsers[index].lastName}</strong> and {endorsementCount - 1} others
+                                                </span>
+                                            </div>
+                                        </div>
+                                        {!isOwnProfile && (
+                                            <button className="skill-item__endorse-btn">
+                                                <Plus size={18} />
+                                                <span>Endorse</span>
+                                            </button>
+                                        )}
+                                    </div>
+                                );
+                            })
                         ) : (
                             <p className="text-muted">No skills added yet.</p>
                         )}
