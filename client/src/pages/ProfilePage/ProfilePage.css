@@ -415,6 +415,15 @@
     animation: spin 0.8s linear infinite;
 }
 
+.upload-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
 .hidden-input {
     display: none !important;
 }
