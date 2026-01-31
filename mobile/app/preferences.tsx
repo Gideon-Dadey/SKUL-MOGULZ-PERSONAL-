@@ -76,7 +76,7 @@ export default function PreferencesScreen() {
 
                 {/* Push Notifications */}
                 <View style={styles.section}>
-                    {renderNavRow('Push notifications', 'Off', () => { })}
+                    {renderNavRow('Push notifications', 'Off', () => router.push('/push-notifications'))}
                 </View>
 
                 {/* Home */}
