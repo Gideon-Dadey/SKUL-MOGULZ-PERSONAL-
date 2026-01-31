@@ -1,0 +1,109 @@
+.saved-page-layout {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.saved-page-header {
+    margin-bottom: 30px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.saved-page-header__content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.saved-page-header__title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.saved-page-header__title h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.saved-icon {
+    color: var(--primary);
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background: var(--bg-secondary);
+    color: var(--primary);
+}
+
+.saved-page-main {
+    min-height: 400px;
+}
+
+.loading-state,
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.empty-state__icon {
+    width: 80px;
+    height: 80px;
+    background: var(--bg-secondary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+}
+
+.empty-state h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.empty-state p {
+    color: var(--text-secondary);
+    margin-bottom: 25px;
+    max-width: 300px;
+}
+
+.saved-posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Dark mode adjustment if needed */
+[data-theme='dark'] .saved-page-header,
+[data-theme='dark'] .empty-state {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(10px);
+}

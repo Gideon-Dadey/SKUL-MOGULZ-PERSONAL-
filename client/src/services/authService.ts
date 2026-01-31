@@ -64,6 +64,17 @@ const updateProfile = async (userData: any) => {
     return response.data;
 };
 
+const toggleBookmark = async (projectId: string) => {
+    const response = await api.put(`/projects/${projectId}/bookmark`);
+    if (response.data) {
+        const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
+        const updatedUser = { ...savedUser, bookmarks: response.data };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        return response.data;
+    }
+    return response.data;
+};
+
 const authService = {
     login,
     register,
@@ -71,6 +82,7 @@ const authService = {
     getMe,
     getProfile,
     updateProfile,
+    toggleBookmark,
 };
 
 export default authService;

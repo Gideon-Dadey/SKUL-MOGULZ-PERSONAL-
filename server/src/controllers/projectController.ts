@@ -49,6 +49,27 @@ export const getProjects = async (req: Request, res: Response) => {
     }
 };
 
+// @desc    Get bookmarked projects
+// @route   GET /api/projects/bookmarked
+// @access  Private
+export const getBookmarkedProjects = async (req: any, res: Response) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        const projects = await Project.find({ _id: { $in: user.bookmarks } })
+            .populate('author', 'firstName lastName username avatar headline role')
+            .sort({ createdAt: -1 });
+
+        res.status(200).json(projects);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // @desc    Get single project
 // @route   GET /api/projects/:id
 // @access  Public
@@ -155,6 +176,40 @@ export const likeProject = async (req: any, res: Response) => {
 
         await project.save();
         res.status(200).json(project.likes);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Bookmark a project
+// @route   PUT /api/projects/:id/bookmark
+// @access  Private
+export const toggleBookmark = async (req: any, res: Response) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        const project = await Project.findById(req.params.id);
+        if (!project) {
+            res.status(404).json({ message: 'Project not found' });
+            return;
+        }
+
+        const bookmarkIndex = user.bookmarks.indexOf(project._id as any);
+
+        if (bookmarkIndex !== -1) {
+            // Remove bookmark
+            user.bookmarks.splice(bookmarkIndex, 1);
+        } else {
+            // Add bookmark
+            user.bookmarks.push(project._id as any);
+        }
+
+        await user.save();
+        res.status(200).json(user.bookmarks);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }

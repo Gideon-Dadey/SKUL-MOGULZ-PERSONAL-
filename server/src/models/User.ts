@@ -39,6 +39,7 @@ export interface IUser extends Document {
     connections: mongoose.Types.ObjectId[];
     viewedProfile?: number;
     impressions?: number;
+    bookmarks: mongoose.Types.ObjectId[];
     createdAt: Date;
     updatedAt: Date;
     comparePassword(candidatePassword: string): Promise<boolean>;
@@ -83,7 +84,8 @@ const userSchema = new Schema<IUser>({
     education: [educationSchema],
     connections: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     viewedProfile: { type: Number, default: 0 },
-    impressions: { type: Number, default: 0 }
+    impressions: { type: Number, default: 0 },
+    bookmarks: [{ type: Schema.Types.ObjectId, ref: 'Project' }]
 }, {
     timestamps: true
 });
