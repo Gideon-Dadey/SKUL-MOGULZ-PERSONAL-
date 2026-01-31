@@ -15,6 +15,8 @@ const PostDetailPage: React.FC = () => {
     const [isLiked, setIsLiked] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [replyingTo, setReplyingTo] = useState<string | null>(null);
+    const [replyText, setReplyText] = useState('');
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -25,11 +27,16 @@ const PostDetailPage: React.FC = () => {
                     ...p,
                     id: p._id || p.id,
                     likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
-                    likedBy: Array.isArray(p.likes) ? p.likes : [], 
+                    likedBy: Array.isArray(p.likes) ? p.likes : [],
                     comments: (p.comments || []).map((c: any) => ({
                         ...c,
                         id: c._id || c.id,
-                        author: { ...c.author, id: c.author?._id || c.author?.id }
+                        author: { ...c.author, id: c.author?._id || c.author?.id },
+                        replies: (c.replies || []).map((r: any) => ({
+                            ...r,
+                            id: r._id || r.id,
+                            author: { ...r.author, id: r.author?._id || r.author?.id }
+                        }))
                     })),
                     author: {
                         ...p.author,
@@ -38,7 +45,7 @@ const PostDetailPage: React.FC = () => {
                 };
                 setPost(adaptedPost);
 
-                
+
                 if (user && adaptedPost.likedBy.includes(user.id)) {
                     setIsLiked(true);
                 }
@@ -56,7 +63,7 @@ const PostDetailPage: React.FC = () => {
         if (!post) return;
         try {
             const response = await api.put(`/projects/${post.id}/like`);
-            const updatedLikes = response.data; 
+            const updatedLikes = response.data;
 
             setPost((prev: any) => ({
                 ...prev,
@@ -113,6 +120,48 @@ const PostDetailPage: React.FC = () => {
         return colors[stage] || colors.idea;
     };
 
+    const handleLikeComment = async (commentId: string) => {
+        if (!post || !user) return;
+        try {
+            const response = await api.put(`/projects/${post.id}/comment/${commentId}/like`);
+            const updatedLikes = response.data;
+
+            setPost((prev: any) => ({
+                ...prev,
+                comments: prev.comments.map((c: any) =>
+                    c.id === commentId ? { ...c, likes: updatedLikes } : c
+                )
+            }));
+        } catch (error) {
+            console.error("Failed to like comment", error);
+        }
+    };
+
+    const handleReplyComment = async (commentId: string) => {
+        if (!replyText.trim() || !post) return;
+        try {
+            const response = await api.post(`/projects/${post.id}/comment/${commentId}/reply`, { content: replyText });
+            const updatedComments = response.data.map((c: any) => ({
+                ...c,
+                id: c._id || c.id,
+                author: { ...c.author, id: c.author?._id || c.author?.id },
+                replies: (c.replies || []).map((r: any) => ({
+                    ...r,
+                    id: r._id || r.id,
+                    author: { ...r.author, id: r.author?._id || r.author?.id }
+                }))
+            }));
+
+            setPost((prev: any) => ({
+                ...prev,
+                comments: updatedComments
+            }));
+            setReplyText('');
+            setReplyingTo(null);
+        } catch (error) {
+            console.error("Failed to post reply", error);
+        }
+    };
     const handleSubmitComment = async (e: React.FormEvent) => {
         e.preventDefault();
         if (commentText.trim() && post) {
@@ -122,7 +171,12 @@ const PostDetailPage: React.FC = () => {
                 const updatedComments = response.data.map((c: any) => ({
                     ...c,
                     id: c._id || c.id,
-                    author: { ...c.author, id: c.author?._id || c.author?.id }
+                    author: { ...c.author, id: c.author?._id || c.author?.id },
+                    replies: (c.replies || []).map((r: any) => ({
+                        ...r,
+                        id: r._id || r.id,
+                        author: { ...r.author, id: r.author?._id || r.author?.id }
+                    }))
                 }));
 
                 setPost((prev: any) => ({
@@ -178,7 +232,7 @@ const PostDetailPage: React.FC = () => {
                 </button>
 
                 <article className="post-article card">
-                    {}
+                    { }
                     <div className="post-article__header">
                         <div className="post-article__author-row">
                             <Link to={`/profile/${post.author.username}`} className="post-article__avatar-link">
@@ -215,7 +269,7 @@ const PostDetailPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {}
+                    { }
                     <div className="post-article__content">
                         <div className="post-article__badges">
                             <span
@@ -238,7 +292,7 @@ const PostDetailPage: React.FC = () => {
                             ))}
                         </div>
 
-                        {}
+                        { }
                         {post.media && post.media.length > 0 && (
                             <div className="post-article__media">
                                 {post.media.map((url: string, idx: number) => (
@@ -249,7 +303,7 @@ const PostDetailPage: React.FC = () => {
                             </div>
                         )}
 
-                        {}
+                        { }
                         {fundingProgress !== null && (
                             <div className="funding-widget">
                                 <div className="funding-widget__header">
@@ -273,7 +327,7 @@ const PostDetailPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {}
+                    { }
                     <div className="post-article__stats">
                         <div className="stats-left">
                             <span className="stats-icon-group">
@@ -287,7 +341,7 @@ const PostDetailPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {}
+                    { }
                     <div className="post-article__actions">
                         <button
                             className={`action-btn ${isLiked ? 'active' : ''}`}
@@ -310,7 +364,7 @@ const PostDetailPage: React.FC = () => {
                         </button>
                     </div>
 
-                    {}
+                    { }
                     <div className="post-article__comments">
                         <div className="comment-input-area">
                             <img
@@ -350,9 +404,58 @@ const PostDetailPage: React.FC = () => {
                                         <p className="comment-item__text">{comment.content}</p>
                                     </div>
                                     <div className="comment-item__actions">
-                                        <button>Like</button>
-                                        <button>Reply</button>
+                                        <button
+                                            className={`comment-action-btn ${(comment.likes || []).includes(user?.id) ? 'active' : ''}`}
+                                            onClick={() => handleLikeComment(comment.id)}
+                                        >
+                                            Like {(comment.likes || []).length > 0 && `(${comment.likes.length})`}
+                                        </button>
+                                        <button
+                                            className="comment-action-btn"
+                                            onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
+                                        >
+                                            Reply
+                                        </button>
                                     </div>
+
+                                    {replyingTo === comment.id && (
+                                        <div className="reply-input-area">
+                                            <input
+                                                type="text"
+                                                placeholder="Write a reply..."
+                                                value={replyText}
+                                                onChange={(e) => setReplyText(e.target.value)}
+                                                autoFocus
+                                            />
+                                            <button
+                                                disabled={!replyText.trim()}
+                                                onClick={() => handleReplyComment(comment.id)}
+                                            >
+                                                Reply
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {comment.replies && comment.replies.length > 0 && (
+                                        <div className="replies-list">
+                                            {comment.replies.map((reply: any) => (
+                                                <div key={reply.id} className="comment-item reply-item">
+                                                    <img
+                                                        src={reply.author.avatar || `https://ui-avatars.com/api/?name=${reply.author.firstName}&background=A5D6B7&color=fff`}
+                                                        alt={reply.author.firstName}
+                                                        className="comment-item__avatar--sm"
+                                                    />
+                                                    <div className="comment-item__box">
+                                                        <div className="comment-item__header">
+                                                            <span className="comment-item__name">{reply.author.firstName} {reply.author.lastName}</span>
+                                                            <span className="comment-item__headline">• {formatDate(reply.createdAt)}</span>
+                                                        </div>
+                                                        <p className="comment-item__text">{reply.content}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>

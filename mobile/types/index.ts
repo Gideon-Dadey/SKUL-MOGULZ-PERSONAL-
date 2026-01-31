@@ -94,9 +94,11 @@ export interface Post {
 
 export interface Comment {
     id: string;
+    _id?: string;
     author: User;
     content: string;
-    likes: number;
+    likes: string[];
+    replies: Comment[];
     createdAt: string;
 }
 

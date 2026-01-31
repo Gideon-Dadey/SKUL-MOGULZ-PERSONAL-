@@ -5,6 +5,8 @@ export interface IComment {
     _id?: mongoose.Types.ObjectId;
     author: mongoose.Types.ObjectId | IUser;
     content: string;
+    likes: mongoose.Types.ObjectId[];
+    replies: IComment[];
     createdAt: Date;
 }
 
@@ -33,7 +35,12 @@ export interface IProject extends Document {
 const commentSchema = new Schema({
     author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     content: { type: String, required: true },
+    likes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     createdAt: { type: Date, default: Date.now }
+});
+
+commentSchema.add({
+    replies: [commentSchema]
 });
 
 const projectSchema = new Schema<IProject>({
