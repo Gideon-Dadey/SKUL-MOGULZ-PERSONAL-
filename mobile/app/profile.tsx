@@ -76,9 +76,6 @@ export default function ProfileMenuScreen() {
                             <Text style={[styles.name, { color: textColor }]}>
                                 {user?.firstName} {user?.lastName}
                             </Text>
-                            <Text style={[styles.handle, { color: subTextColor }]}>
-                                {handle}
-                            </Text>
                         </View>
 
                         <View style={styles.statsRow}>

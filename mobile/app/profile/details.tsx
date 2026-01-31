@@ -418,7 +418,6 @@ export default function ProfileScreen() {
                         />
                         <View style={styles.sideMenuUserInfo}>
                             <Text style={[styles.sideMenuName, { color: activeColors.text }]}>{user?.firstName} {user?.lastName}</Text>
-                            <Text style={[styles.sideMenuHandle, { color: activeColors.muted }]}>@{user?.username || 'username'}</Text>
                         </View>
                         <View style={styles.sideMenuStats}>
                             <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>{connectionCount}</Text>
