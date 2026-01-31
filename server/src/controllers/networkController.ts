@@ -228,43 +228,51 @@ export const getConnections = async (req: any, res: Response) => {
 // @route   GET /api/network/users/:id
 export const getPublicProfile = async (req: any, res: Response) => {
     try {
-        const user = await User.findById(req.params.id).select('-password');
-        if (user) {
-            let connectionStatus: any = { status: 'none' };
-            if (req.user) {
-                const currentUserId = req.user.id;
-                const targetUserId = user._id;
+        const { id } = req.params;
+        const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
 
-                if (currentUserId.toString() === targetUserId.toString()) {
-                    connectionStatus = { status: 'self' };
-                } else if (user.connections.some(id => id.toString() === currentUserId.toString())) {
-                    connectionStatus = { status: 'connected' };
-                } else {
-                    const pendingRequest = await ConnectionRequest.findOne({
-                        $or: [
-                            { sender: currentUserId, recipient: targetUserId, status: 'pending' },
-                            { sender: targetUserId, recipient: currentUserId, status: 'pending' }
-                        ]
-                    });
+        const query = isObjectId ? { _id: id } : { username: id };
+        const user = await User.findOne(query).select('-password');
 
-                    if (pendingRequest) {
-                        connectionStatus = {
-                            status: pendingRequest.sender.toString() === currentUserId.toString()
-                                ? 'pending_sent'
-                                : 'pending_received',
-                            requestId: pendingRequest._id
-                        };
-                    }
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        let connectionStatus: any = { status: 'none' };
+        if (req.user) {
+            const currentUserId = req.user.id;
+            const targetUserId = user._id;
+
+            if (currentUserId.toString() === targetUserId.toString()) {
+                connectionStatus = { status: 'self' };
+            } else if (user.connections.some(id => id.toString() === currentUserId.toString())) {
+                connectionStatus = { status: 'connected' };
+            } else {
+                const pendingRequest = await ConnectionRequest.findOne({
+                    $or: [
+                        { sender: currentUserId, recipient: targetUserId, status: 'pending' },
+                        { sender: targetUserId, recipient: currentUserId, status: 'pending' }
+                    ]
+                });
+
+                if (pendingRequest) {
+                    connectionStatus = {
+                        status: pendingRequest.sender.toString() === currentUserId.toString()
+                            ? 'pending_sent'
+                            : 'pending_received',
+                        requestId: pendingRequest._id
+                    };
                 }
             }
-
-            const userObj = user.toObject();
-            res.status(200).json({
-                ...userObj,
-                connectionStatus: connectionStatus.status,
-                requestId: connectionStatus.requestId
-            });
         }
+
+        const userObj = user.toObject();
+        res.status(200).json({
+            ...userObj,
+            connectionStatus: connectionStatus.status,
+            requestId: connectionStatus.requestId
+        });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }

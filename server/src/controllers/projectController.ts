@@ -34,7 +34,7 @@ export const getProjects = async (req: Request, res: Response) => {
         }
 
         const projects = await Project.find(query)
-            .populate('author', 'firstName lastName avatar headline role')
+            .populate('author', 'firstName lastName username avatar headline role')
             .sort({ createdAt: -1 });
 
         // Increment author impressions (Organic growth)
@@ -55,9 +55,9 @@ export const getProjects = async (req: Request, res: Response) => {
 export const getProjectById = async (req: Request, res: Response) => {
     try {
         const project = await Project.findById(req.params.id)
-            .populate('author', 'firstName lastName avatar headline role location impressions')
-            .populate('comments.author', 'firstName lastName avatar')
-            .populate('comments.replies.author', 'firstName lastName avatar');
+            .populate('author', 'firstName lastName username avatar headline role location impressions')
+            .populate('comments.author', 'firstName lastName username avatar')
+            .populate('comments.replies.author', 'firstName lastName username avatar');
 
         if (!project) {
             res.status(404).json({ message: 'Project not found' });
@@ -105,7 +105,7 @@ export const createProject = async (req: any, res: Response) => {
         });
 
         // Populate author before returning
-        await project.populate('author', 'firstName lastName avatar headline role');
+        await project.populate('author', 'firstName lastName username avatar headline role');
 
         res.status(201).json(project);
     } catch (error: any) {
@@ -201,7 +201,7 @@ export const commentProject = async (req: any, res: Response) => {
         }
 
         // we generally need to return the new comments list populated
-        await project.populate('comments.author', 'firstName lastName avatar');
+        await project.populate('comments.author', 'firstName lastName username avatar');
 
         res.status(200).json(project.comments);
     } catch (error: any) {
@@ -296,7 +296,7 @@ export const updateProject = async (req: any, res: Response) => {
         project.media = media;
 
         const updatedProject = await project.save();
-        await updatedProject.populate('author', 'firstName lastName avatar headline role');
+        await updatedProject.populate('author', 'firstName lastName username avatar headline role');
 
         res.status(200).json(updatedProject);
 
@@ -428,8 +428,8 @@ export const replyComment = async (req: any, res: Response) => {
         }
 
         await project.populate([
-            { path: 'comments.author', select: 'firstName lastName avatar' },
-            { path: 'comments.replies.author', select: 'firstName lastName avatar' }
+            { path: 'comments.author', select: 'firstName lastName username avatar' },
+            { path: 'comments.replies.author', select: 'firstName lastName username avatar' }
         ]);
 
         res.status(200).json(project.comments);
