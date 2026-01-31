@@ -10,7 +10,7 @@ import {
     ActivityIndicator,
     Platform,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import { Search, ArrowLeft, X, Users, Briefcase } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -130,59 +130,66 @@ export default function SearchScreen() {
 
     return (
         <View style={[styles.container, { backgroundColor: activeColors.background }]}>
-            <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
+            <Stack.Screen options={{ headerShown: false }} />
+            <StatusBar style="light" />
 
             {/* Header */}
             <View style={[styles.header, { backgroundColor: '#074B43', paddingTop: insets.top + 10 }]}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-                    <ArrowLeft size={24} color="#fff" />
-                </TouchableOpacity>
+                <View style={styles.searchContainer}>
+                    <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+                        <ArrowLeft size={24} color="#fff" />
+                    </TouchableOpacity>
 
-                <View style={styles.searchInputContainer}>
-                    <Search size={18} color="#074B43" />
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="Search ecosystem..."
-                        placeholderTextColor="#6B7280"
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                        autoFocus
-                        returnKeyType="search"
-                    />
-                    {searchQuery.length > 0 && (
-                        <TouchableOpacity onPress={() => setSearchQuery('')}>
-                            <X size={18} color="#6B7280" />
-                        </TouchableOpacity>
-                    )}
+                    <View style={styles.searchInputContainer}>
+                        <Search size={18} color="#074B43" />
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder="Search ecosystem..."
+                            placeholderTextColor="#6B7280"
+                            value={searchQuery}
+                            onChangeText={setSearchQuery}
+                            autoFocus
+                            returnKeyType="search"
+                            selectionColor="#074B43"
+                        />
+                        {searchQuery.length > 0 && (
+                            <TouchableOpacity onPress={() => setSearchQuery('')}>
+                                <X size={18} color="#6B7280" />
+                            </TouchableOpacity>
+                        )}
+                    </View>
                 </View>
-            </View>
 
-            {/* Tabs */}
-            <View style={[styles.tabs, { backgroundColor: activeColors.card, borderBottomColor: activeColors.border }]}>
-                <TouchableOpacity
-                    style={[styles.tab, activeTab === 'all' && styles.activeTab]}
-                    onPress={() => setActiveTab('all')}
-                >
-                    <Text style={[styles.tabText, { color: activeTab === 'all' ? '#074B43' : activeColors.muted }]}>
-                        All ({totalResults})
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.tab, activeTab === 'users' && styles.activeTab]}
-                    onPress={() => setActiveTab('users')}
-                >
-                    <Text style={[styles.tabText, { color: activeTab === 'users' ? '#074B43' : activeColors.muted }]}>
-                        People ({searchResults.users.length})
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.tab, activeTab === 'projects' && styles.activeTab]}
-                    onPress={() => setActiveTab('projects')}
-                >
-                    <Text style={[styles.tabText, { color: activeTab === 'projects' ? '#074B43' : activeColors.muted }]}>
-                        Projects ({searchResults.projects.length})
-                    </Text>
-                </TouchableOpacity>
+                {/* Integrated Tabs in Header */}
+                <View style={styles.tabsContainer}>
+                    <TouchableOpacity
+                        style={[styles.tab, activeTab === 'all' && styles.activeTab]}
+                        onPress={() => setActiveTab('all')}
+                    >
+                        <Text style={[styles.tabText, { color: activeTab === 'all' ? '#fff' : 'rgba(255,255,255,0.7)' }]}>
+                            All
+                        </Text>
+                        {activeTab === 'all' && <View style={styles.activeTabIndicator} />}
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.tab, activeTab === 'users' && styles.activeTab]}
+                        onPress={() => setActiveTab('users')}
+                    >
+                        <Text style={[styles.tabText, { color: activeTab === 'users' ? '#fff' : 'rgba(255,255,255,0.7)' }]}>
+                            People
+                        </Text>
+                        {activeTab === 'users' && <View style={styles.activeTabIndicator} />}
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.tab, activeTab === 'projects' && styles.activeTab]}
+                        onPress={() => setActiveTab('projects')}
+                    >
+                        <Text style={[styles.tabText, { color: activeTab === 'projects' ? '#fff' : 'rgba(255,255,255,0.7)' }]}>
+                            Projects
+                        </Text>
+                        {activeTab === 'projects' && <View style={styles.activeTabIndicator} />}
+                    </TouchableOpacity>
+                </View>
             </View>
 
             {/* Results */}
@@ -227,46 +234,72 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
+        paddingBottom: 0,
+        gap: 16,
+        borderBottomLeftRadius: 24,
+        borderBottomRightRadius: 24,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 10,
+        elevation: 5,
+        zIndex: 10,
+    },
+    searchContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 16,
-        paddingBottom: 16,
         gap: 12,
     },
     backBtn: {
-        padding: 4,
+        padding: 8,
+        backgroundColor: 'rgba(255,255,255,0.1)',
+        borderRadius: 20,
     },
     searchInputContainer: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        height: 44,
-        borderRadius: 22,
+        height: 48,
+        borderRadius: 24,
         paddingHorizontal: 16,
         gap: 10,
         backgroundColor: '#fff',
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
     },
     searchInput: {
         flex: 1,
-        fontSize: 15,
-        color: '#1F2937',
+        fontSize: 16,
+        color: '#074B43',
+        fontWeight: '500',
     },
-    tabs: {
+    tabsContainer: {
         flexDirection: 'row',
-        borderBottomWidth: 1,
-        paddingHorizontal: 16,
+        paddingHorizontal: 8,
     },
     tab: {
+        flex: 1,
         paddingVertical: 14,
-        paddingHorizontal: 16,
-        marginRight: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
     },
     activeTab: {
-        borderBottomWidth: 2,
-        borderBottomColor: '#074B43',
+    },
+    activeTabIndicator: {
+        position: 'absolute',
+        bottom: 0,
+        width: '40%',
+        height: 3,
+        backgroundColor: '#fff',
+        borderRadius: 1.5,
     },
     tabText: {
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: '600',
     },
     loadingContainer: {
