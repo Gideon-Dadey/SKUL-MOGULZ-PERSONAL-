@@ -179,6 +179,29 @@ const ProfilePage: React.FC = () => {
         }
     };
 
+    const handleConnect = async () => {
+        try {
+            await api.post('/network/request', { recipientId: profileUser._id || profileUser.id });
+            setProfileUser((prev: any) => ({ ...prev, connectionStatus: 'pending_sent' }));
+        } catch (error) {
+            console.error("Failed to send connection request", error);
+        }
+    };
+
+    const handleAcceptRequest = async () => {
+        try {
+            if (!profileUser.requestId) return;
+            await api.put(`/network/request/${profileUser.requestId}/accept`);
+            setProfileUser((prev: any) => ({
+                ...prev,
+                connectionStatus: 'connected',
+                connectionsCount: (prev.connectionsCount || 0) + 1
+            }));
+        } catch (error) {
+            console.error("Failed to accept connection request", error);
+        }
+    };
+
     const handleDeletePost = (postId: string) => {
         setUserPosts(currentPosts => currentPosts.filter(post => post.id !== postId));
     };
@@ -393,8 +416,16 @@ const ProfilePage: React.FC = () => {
                                     </>
                                 ) : (
                                     <>
-                                        <button className="btn btn-primary btn--md">Connect</button>
-                                        <button className="btn btn-outline btn--md">Message</button>
+                                        {profileUser.connectionStatus === 'connected' ? (
+                                            <button className="btn btn-outline btn--md" disabled>Connected</button>
+                                        ) : profileUser.connectionStatus === 'pending_sent' ? (
+                                            <button className="btn btn-outline btn--md" disabled>Pending</button>
+                                        ) : profileUser.connectionStatus === 'pending_received' ? (
+                                            <button className="btn btn-primary btn--md" onClick={handleAcceptRequest}>Accept Request</button>
+                                        ) : (
+                                            <button className="btn btn-primary btn--md" onClick={handleConnect}>Connect</button>
+                                        )}
+                                        <button className="btn btn-outline btn--md" onClick={() => navigate(`/messages/${profileUser._id || profileUser.id}`)}>Message</button>
                                         <button className="btn btn-outline btn--md">More</button>
                                     </>
                                 )}

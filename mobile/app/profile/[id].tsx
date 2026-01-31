@@ -61,6 +61,29 @@ export default function UserProfileScreen() {
         fetchUser();
     }, [id]);
 
+    const handleConnect = async () => {
+        try {
+            await api.post('/network/request', { recipientId: user._id || user.id });
+            setUser((prev: any) => ({ ...prev, connectionStatus: 'pending_sent' }));
+        } catch (error) {
+            console.error("Failed to send connection request", error);
+        }
+    };
+
+    const handleAcceptRequest = async () => {
+        try {
+            if (!user.requestId) return;
+            await api.put(`/network/request/${user.requestId}/accept`);
+            setUser((prev: any) => ({
+                ...prev,
+                connectionStatus: 'connected',
+                connectionsCount: (prev.connectionsCount || 0) + 1
+            }));
+        } catch (error) {
+            console.error("Failed to accept connection request", error);
+        }
+    };
+
     if (loading) {
         return (
             <View style={[styles.container, styles.center, { backgroundColor: activeColors.background }]}>
@@ -154,9 +177,23 @@ export default function UserProfileScreen() {
                                 <MessageCircle size={18} color="#000" />
                                 <Text style={styles.actionBtnTextPrimary}>Message</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.actionBtnSecondary, { borderColor: activeColors.tint }]}>
-                                <Text style={[styles.actionBtnTextSecondary, { color: activeColors.tint }]}>Connect</Text>
-                            </TouchableOpacity>
+
+                            {user.connectionStatus === 'self' ? null : (
+                                <TouchableOpacity
+                                    style={[
+                                        styles.actionBtnSecondary,
+                                        { borderColor: activeColors.tint, opacity: (user.connectionStatus === 'connected' || user.connectionStatus === 'pending_sent') ? 0.6 : 1 }
+                                    ]}
+                                    disabled={user.connectionStatus === 'connected' || user.connectionStatus === 'pending_sent'}
+                                    onPress={user.connectionStatus === 'pending_received' ? handleAcceptRequest : handleConnect}
+                                >
+                                    <Text style={[styles.actionBtnTextSecondary, { color: activeColors.tint }]}>
+                                        {user.connectionStatus === 'connected' ? 'Connected' :
+                                            user.connectionStatus === 'pending_sent' ? 'Pending' :
+                                                user.connectionStatus === 'pending_received' ? 'Accept' : 'Connect'}
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
                     </View>
                 </View>

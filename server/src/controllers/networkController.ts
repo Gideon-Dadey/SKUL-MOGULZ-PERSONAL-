@@ -229,13 +229,42 @@ export const getConnections = async (req: any, res: Response) => {
 export const getPublicProfile = async (req: any, res: Response) => {
     try {
         const user = await User.findById(req.params.id).select('-password');
-        if (!user) {
-            res.status(404).json({ message: 'User not found' });
-            return;
+        if (user) {
+            let connectionStatus: any = { status: 'none' };
+            if (req.user) {
+                const currentUserId = req.user.id;
+                const targetUserId = user._id;
+
+                if (currentUserId.toString() === targetUserId.toString()) {
+                    connectionStatus = { status: 'self' };
+                } else if (user.connections.some(id => id.toString() === currentUserId.toString())) {
+                    connectionStatus = { status: 'connected' };
+                } else {
+                    const pendingRequest = await ConnectionRequest.findOne({
+                        $or: [
+                            { sender: currentUserId, recipient: targetUserId, status: 'pending' },
+                            { sender: targetUserId, recipient: currentUserId, status: 'pending' }
+                        ]
+                    });
+
+                    if (pendingRequest) {
+                        connectionStatus = {
+                            status: pendingRequest.sender.toString() === currentUserId.toString()
+                                ? 'pending_sent'
+                                : 'pending_received',
+                            requestId: pendingRequest._id
+                        };
+                    }
+                }
+            }
+
+            const userObj = user.toObject();
+            res.status(200).json({
+                ...userObj,
+                connectionStatus: connectionStatus.status,
+                requestId: connectionStatus.requestId
+            });
         }
-        // Basic privacy: don't show connections list details, just count? 
-        // For now return full user object (connections is array of IDs by default if not populated)
-        res.status(200).json(user);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
