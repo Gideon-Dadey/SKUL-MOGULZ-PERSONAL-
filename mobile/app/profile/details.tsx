@@ -469,7 +469,7 @@ export default function ProfileScreen() {
                             <VolumeX size={22} color={activeColors.text} />
                             <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Mutes</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.sideMenuItem} onPress={() => { setMenuVisible(false); router.push('/edit-profile'); }}>
+                        <TouchableOpacity style={styles.sideMenuItem} onPress={() => { setMenuVisible(false); router.push('/preferences'); }}>
                             <Settings size={22} color={activeColors.text} />
                             <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Preferences</Text>
                         </TouchableOpacity>
