@@ -21,6 +21,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
     const [showMenu, setShowMenu] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const videoRef = React.useRef<HTMLVideoElement>(null);
 
 
     const isLiked = user && (post.likedBy || []).includes(user.id);
@@ -45,6 +47,17 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
     const handleEdit = () => {
         navigate('/create-post', { state: { post } });
         setShowMenu(false);
+    };
+
+    const togglePlay = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (videoRef.current) {
+            if (videoRef.current.paused) {
+                videoRef.current.play();
+            } else {
+                videoRef.current.pause();
+            }
+        }
     };
 
     const formatDate = (dateString: string) => {
@@ -176,13 +189,24 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
                         <X size={24} />
                     </button>
                     {selectedImage.match(/\.(mp4|mov|webm|quicktime)$/i) || selectedImage.includes('video') ? (
-                        <video
-                            src={selectedImage}
-                            controls
-                            autoPlay
-                            className="image-lightbox__content"
-                            onClick={(e) => e.stopPropagation()}
-                        />
+                        <div className="video-lightbox-container" onClick={togglePlay}>
+                            <video
+                                ref={videoRef}
+                                src={selectedImage}
+                                autoPlay
+                                className="image-lightbox__content"
+                                onPlay={() => setIsPlaying(true)}
+                                onPause={() => setIsPlaying(false)}
+                                onClick={(e) => e.stopPropagation()}
+                            />
+                            {!isPlaying && (
+                                <div className="video-lightbox-overlay">
+                                    <div className="video-lightbox-play-btn">
+                                        <Play fill="white" size={48} />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     ) : (
                         <img src={selectedImage} alt="" className="image-lightbox__content" />
                     )}
