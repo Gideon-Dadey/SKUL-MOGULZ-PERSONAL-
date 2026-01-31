@@ -35,6 +35,13 @@ export const getProjects = async (req: Request, res: Response) => {
 
         const projects = await Project.find(query)
             .populate('author', 'firstName lastName username avatar headline role')
+            .populate({
+                path: 'repostOf',
+                populate: {
+                    path: 'author',
+                    select: 'firstName lastName username avatar headline role'
+                }
+            })
             .sort({ createdAt: -1 });
 
         // Increment author impressions (Organic growth)
@@ -77,6 +84,13 @@ export const getProjectById = async (req: Request, res: Response) => {
     try {
         const project = await Project.findById(req.params.id)
             .populate('author', 'firstName lastName username avatar headline role location impressions')
+            .populate({
+                path: 'repostOf',
+                populate: {
+                    path: 'author',
+                    select: 'firstName lastName username avatar headline role'
+                }
+            })
             .populate('comments.author', 'firstName lastName username avatar')
             .populate('comments.replies.author', 'firstName lastName username avatar');
 
@@ -488,6 +502,69 @@ export const replyComment = async (req: any, res: Response) => {
         ]);
 
         res.status(200).json(project.comments);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Repost/Share a project
+// @route   PUT /api/projects/:id/repost
+// @access  Private
+export const repostProject = async (req: any, res: Response) => {
+    try {
+        const originalProject = await Project.findById(req.params.id);
+
+        if (!originalProject) {
+            res.status(404).json({ message: 'Project not found' });
+            return;
+        }
+
+        // Check if already reposted
+        const repostIndex = originalProject.reposts.indexOf(req.user.id);
+
+        if (repostIndex !== -1) {
+            // Un-repost: Remove from original and delete the repost project document
+            originalProject.reposts.splice(repostIndex, 1);
+            await originalProject.save();
+
+            // Find and delete the created repost document
+            await Project.deleteOne({ author: req.user.id, repostOf: originalProject._id });
+
+            res.status(200).json({ reposted: false, count: originalProject.reposts.length });
+        } else {
+            // Repost
+            originalProject.reposts.push(req.user.id);
+            await originalProject.save();
+
+            // Create a new "Project" document as a repost
+            const repost = await Project.create({
+                title: originalProject.title,
+                content: originalProject.content,
+                author: req.user.id,
+                category: originalProject.category,
+                projectStage: originalProject.projectStage,
+                repostOf: originalProject._id,
+                media: originalProject.media
+            });
+
+            // Create Notification
+            if (originalProject.author.toString() !== req.user.id) {
+                const notification = await Notification.create({
+                    recipient: originalProject.author,
+                    sender: req.user.id,
+                    type: 'repost',
+                    project: originalProject._id,
+                });
+
+                const fullNotification = await notification.populate([
+                    { path: 'sender', select: 'firstName lastName avatar' },
+                    { path: 'project', select: 'title' }
+                ]);
+                getIO().to(originalProject.author.toString()).emit('notification', fullNotification);
+            }
+
+            res.status(200).json({ reposted: true, count: originalProject.reposts.length, repostId: repost._id });
+        }
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }

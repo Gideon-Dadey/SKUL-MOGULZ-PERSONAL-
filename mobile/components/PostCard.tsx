@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, Share, Alert, Modal, Dimensions } from 'react-native';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Play } from 'lucide-react-native';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Play, Repeat } from 'lucide-react-native';
 import { Video, ResizeMode } from 'expo-av';
 import { useRouter } from 'expo-router';
 import { Post } from '../types';
@@ -14,12 +14,13 @@ interface PostCardProps {
     post: any;
     onLike?: (postId: string) => void;
     onComment?: (postId: string) => void;
+    onRepost?: (postId: string) => void;
     onBookmark?: (postId: string) => void;
     onEdit?: (post: any) => void;
     onDelete?: (postId: string) => void;
 }
 
-export default function PostCard({ post, onLike, onComment, onBookmark, onEdit, onDelete }: PostCardProps) {
+export default function PostCard({ post, onLike, onComment, onRepost, onBookmark, onEdit, onDelete }: PostCardProps) {
     const router = useRouter();
     const { theme } = useTheme();
     const { user } = useAuth();
@@ -29,11 +30,15 @@ export default function PostCard({ post, onLike, onComment, onBookmark, onEdit, 
     const [isVideo, setIsVideo] = useState(false);
     const [status, setStatus] = useState<any>({});
 
-    const imageUrl = post.media && post.media.length > 0 ? getImageUrl(post.media[0]) : null;
+    const isRepost = !!post.repostOf;
+    const originalPost = isRepost ? post.repostOf : post;
+    const displayAuthor = isRepost ? (post.author || originalPost.author) : originalPost.author;
+
+    const imageUrl = originalPost.media && originalPost.media.length > 0 ? getImageUrl(originalPost.media[0]) : null;
 
     useEffect(() => {
         if (imageUrl) {
-            const isVid = imageUrl.match(/\.(mp4|mov|webm|quicktime)$/i) || post.media[0].includes('video');
+            const isVid = imageUrl.match(/\.(mp4|mov|webm|quicktime)$/i) || originalPost.media[0].includes('video');
             setIsVideo(!!isVid);
 
             if (!isVid) {
@@ -50,8 +55,24 @@ export default function PostCard({ post, onLike, onComment, onBookmark, onEdit, 
         }
     }, [imageUrl]);
 
-    const isLiked = user && (post.likedBy || []).includes(user.id);
-    const isBookmarked = user && (post.bookmarkedBy || []).includes(user.id);
+    const isLiked = user && (
+        Array.isArray(originalPost.likedBy) ? originalPost.likedBy.includes(user.id) :
+            Array.isArray(originalPost.likes) ? originalPost.likes.includes(user.id) :
+                false
+    );
+    const isBookmarked = user && (
+        Array.isArray(user.bookmarks) ? user.bookmarks.includes(originalPost._id || originalPost.id) :
+            Array.isArray(originalPost.bookmarkedBy) ? originalPost.bookmarkedBy.includes(user.id) :
+                false
+    );
+    const isReposted = user && (
+        Array.isArray(originalPost.reposts) ? originalPost.reposts.includes(user.id) :
+            false
+    );
+
+    const likesCount = Array.isArray(originalPost.likes) ? originalPost.likes.length : (originalPost.likes || 0);
+    const repostsCount = Array.isArray(originalPost.reposts) ? originalPost.reposts.length : (originalPost.reposts || 0);
+    const commentsCount = Array.isArray(originalPost.comments) ? originalPost.comments.length : (originalPost.comments || 0);
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -124,12 +145,20 @@ export default function PostCard({ post, onLike, onComment, onBookmark, onEdit, 
 
     return (
         <View style={[styles.container, { backgroundColor: activeColors.card, borderBottomColor: activeColors.border }]}>
+            {isRepost && (
+                <View style={styles.repostHeader}>
+                    <Repeat size={14} color={activeColors.muted} style={{ marginRight: 12 }} />
+                    <Text style={[styles.repostHeaderText, { color: activeColors.muted }]}>
+                        {post.author.firstName} {post.author.lastName} reposted
+                    </Text>
+                </View>
+            )}
             <View style={styles.postLayout}>
                 {/* Left Column: Avatar */}
                 <View style={styles.leftColumn}>
-                    <TouchableOpacity onPress={() => router.push(`/profile/${post.author.username}` as any)}>
+                    <TouchableOpacity onPress={() => router.push(`/profile/${displayAuthor.username}` as any)}>
                         <Image
-                            source={post.author.avatar ? { uri: getImageUrl(post.author.avatar) } : require('../assets/images/icon.png')}
+                            source={displayAuthor.avatar ? { uri: getImageUrl(displayAuthor.avatar) } : require('../assets/images/icon.png')}
                             style={styles.avatar}
                         />
                     </TouchableOpacity>
@@ -141,20 +170,20 @@ export default function PostCard({ post, onLike, onComment, onBookmark, onEdit, 
                     <View style={styles.headerRow}>
                         <TouchableOpacity
                             style={styles.authorTextInfo}
-                            onPress={() => router.push(`/profile/${post.author.username}` as any)}
+                            onPress={() => router.push(`/profile/${displayAuthor.username}` as any)}
                         >
                             <Text style={[styles.authorName, { color: activeColors.text }]} numberOfLines={1}>
-                                {post.author.firstName} {post.author.lastName}
+                                {displayAuthor.firstName} {displayAuthor.lastName}
                             </Text>
                             <Text style={[styles.metaText, { color: activeColors.muted }]} numberOfLines={1}>
-                                @{post.author.username} · {formatDate(post.createdAt)}
+                                @{displayAuthor.username} · {formatDate(originalPost.createdAt)}
                             </Text>
                         </TouchableOpacity>
 
                         <View style={styles.headerRight}>
-                            <View style={[styles.stageBadge, { backgroundColor: `${getStageColor(post.projectStage)}15` }]}>
-                                <Text style={[styles.stageText, { color: getStageColor(post.projectStage) }]}>
-                                    {post.projectStage}
+                            <View style={[styles.stageBadge, { backgroundColor: `${getStageColor(originalPost.projectStage)}15` }]}>
+                                <Text style={[styles.stageText, { color: getStageColor(originalPost.projectStage) }]}>
+                                    {originalPost.projectStage}
                                 </Text>
                             </View>
                             <TouchableOpacity onPress={handleMorePress} style={styles.moreBtn}>
@@ -167,11 +196,11 @@ export default function PostCard({ post, onLike, onComment, onBookmark, onEdit, 
                     <TouchableOpacity
                         style={styles.contentArea}
                         activeOpacity={0.7}
-                        onPress={() => router.push(('/post/' + post.id) as any)}
+                        onPress={() => router.push(('/post/' + (originalPost._id || originalPost.id)) as any)}
                     >
-                        <Text style={[styles.title, { color: activeColors.text }]}>{post.title}</Text>
+                        <Text style={[styles.title, { color: activeColors.text }]}>{originalPost.title}</Text>
                         <Text style={[styles.body, { color: activeColors.text }]} numberOfLines={4}>
-                            {post.content}
+                            {originalPost.content}
                         </Text>
                     </TouchableOpacity>
 
@@ -244,33 +273,45 @@ export default function PostCard({ post, onLike, onComment, onBookmark, onEdit, 
 
                     {/* Tags */}
                     <View style={styles.tagsRow}>
-                        <Text style={[styles.category, { color: activeColors.tint }]}>{post.category}</Text>
-                        {post.tags?.slice(0, 2).map((tag: string) => (
+                        <Text style={[styles.category, { color: activeColors.tint }]}>{originalPost.category}</Text>
+                        {originalPost.tags?.slice(0, 2).map((tag: string) => (
                             <Text key={tag} style={[styles.tag, { color: activeColors.muted }]}>#{tag}</Text>
                         ))}
                     </View>
 
                     {/* Footer Actions */}
                     <View style={styles.footer}>
-                        <TouchableOpacity style={styles.actionBtn} onPress={() => onComment?.(post.id)}>
+                        <TouchableOpacity style={styles.actionBtn} onPress={() => onComment?.(originalPost._id || originalPost.id)}>
                             <MessageCircle size={18} color={activeColors.muted} />
-                            <Text style={[styles.actionText, { color: activeColors.muted }]}>{post.comments?.length || 0}</Text>
+                            <Text style={[styles.actionText, { color: activeColors.muted }]}>{commentsCount}</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.actionBtn} onPress={() => onLike?.(post.id)}>
+                        <TouchableOpacity style={styles.actionBtn} onPress={() => onRepost?.(originalPost._id || originalPost.id)}>
+                            <Repeat
+                                size={18}
+                                color={isReposted ? '#00BA7C' : activeColors.muted}
+                            />
+                            <Text style={[styles.actionText, { color: isReposted ? '#00BA7C' : activeColors.muted }]}>
+                                {repostsCount}
+                            </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.actionBtn} onPress={() => onLike?.(originalPost._id || originalPost.id)}>
                             <Heart
                                 size={18}
                                 color={isLiked ? '#F91880' : activeColors.muted}
                                 fill={isLiked ? '#F91880' : 'transparent'}
                             />
-                            <Text style={[styles.actionText, { color: isLiked ? '#F91880' : activeColors.muted }]}>{post.likes}</Text>
+                            <Text style={[styles.actionText, { color: isLiked ? '#F91880' : activeColors.muted }]}>
+                                {likesCount}
+                            </Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
                             <Share2 size={18} color={activeColors.muted} />
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.actionBtn} onPress={() => onBookmark?.(post.id)}>
+                        <TouchableOpacity style={styles.actionBtn} onPress={() => onBookmark?.(originalPost._id || originalPost.id)}>
                             <Bookmark
                                 size={18}
                                 color={isBookmarked ? activeColors.tint : activeColors.muted}
@@ -289,6 +330,16 @@ const styles = StyleSheet.create({
         borderBottomWidth: StyleSheet.hairlineWidth,
         paddingHorizontal: 16,
         paddingVertical: 12,
+    },
+    repostHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingLeft: 36, // Align text with name
+        marginBottom: 8,
+    },
+    repostHeaderText: {
+        fontSize: 13,
+        fontWeight: '600',
     },
     postLayout: {
         flexDirection: 'row',

@@ -310,19 +310,51 @@ export default function FeedScreen() {
     }
   };
 
-  const handleBookmark = async (postId: string) => {
+  const handleRepost = async (postId: string) => {
     try {
-      // For now, just toggle locally - you'll need to add a bookmark API endpoint
+      const response = await api.put(`/projects/${postId}/repost`);
+      const { reposted } = response.data;
+
       setPosts(currentPosts => currentPosts.map(post => {
         if (post.id === postId) {
-          const isCurrentlyBookmarked = (post.bookmarkedBy || []).includes(user?.id);
-          const newBookmarkedBy = isCurrentlyBookmarked
-            ? (post.bookmarkedBy || []).filter((id: string) => id !== user?.id)
-            : [...(post.bookmarkedBy || []), user?.id];
-
+          const newReposts = reposted
+            ? [...(post.reposts || []), user?.id]
+            : (post.reposts || []).filter((id: string) => id !== user?.id);
           return {
             ...post,
-            bookmarkedBy: newBookmarkedBy
+            reposts: newReposts
+          };
+        }
+        return post;
+      }));
+
+      // If it's a new repost, fetch posts to see it at the top
+      if (reposted) {
+        fetchPosts();
+      } else {
+        // Remove from feed if it was our repost document
+        setPosts(currentPosts => currentPosts.filter(p => !(p.repostOf && (p.repostOf._id === postId || p.repostOf.id === postId) && p.author.id === user?.id)));
+      }
+    } catch (error) {
+      console.error("Failed to repost", error);
+    }
+  };
+
+  const handleBookmark = async (postId: string) => {
+    try {
+      const response = await api.put(`/projects/${postId}/bookmark`);
+      const bookmarks = response.data;
+
+      // Update auth user bookmarks if needed
+      if (user) {
+        user.bookmarks = bookmarks;
+      }
+
+      setPosts(currentPosts => currentPosts.map(post => {
+        if (post.id === postId) {
+          return {
+            ...post,
+            bookmarkedBy: bookmarks
           };
         }
         return post;
@@ -610,6 +642,7 @@ export default function FeedScreen() {
               post={item}
               onLike={handleLike}
               onComment={handleComment}
+              onRepost={handleRepost}
               onBookmark={handleBookmark}
               onEdit={handleEditPost}
               onDelete={handleDeletePost}
