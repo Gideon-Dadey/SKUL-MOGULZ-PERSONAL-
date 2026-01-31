@@ -251,17 +251,25 @@ export default function FeedScreen() {
       style={[
         styles.stickyHeader,
         {
-          backgroundColor: '#074B43',
+          backgroundColor: theme === 'dark' ? activeColors.background : '#FFFFFF',
           opacity: showStickyHeader ? 1 : 0,
           transform: [{ translateY: showStickyHeader ? 0 : -STICKY_HEADER_HEIGHT }],
+          borderBottomWidth: 1,
+          borderBottomColor: theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: theme === 'dark' ? 0.3 : 0.05,
+          shadowRadius: 3,
+          elevation: 3,
         }
       ]}
       pointerEvents={showStickyHeader ? 'auto' : 'none'}
     >
+      <StatusBar style={showStickyHeader && theme !== 'dark' ? 'dark' : 'light'} />
       <View style={styles.stickyTopBar}>
         <TouchableOpacity
           onPress={() => router.push('/profile/details')}
-          style={styles.profileButton}
+          style={[styles.profileButton, { borderColor: activeColors.border, backgroundColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}
         >
           {user?.avatar ? (
             <Image
@@ -269,17 +277,20 @@ export default function FeedScreen() {
               style={styles.profilePic}
             />
           ) : (
-            <CircleUser size={30} color="#fff" />
+            <CircleUser size={30} color={activeColors.text} />
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.searchBar} onPress={() => router.push('/search')}>
-          <Search size={18} color="#074B43" />
-          <Text style={styles.searchText}>Search ecosystem...</Text>
+        <TouchableOpacity
+          style={[styles.searchBar, { backgroundColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : '#F3F4F6' }]}
+          onPress={() => router.push('/search')}
+        >
+          <Search size={18} color={activeColors.text} />
+          <Text style={[styles.searchText, { color: activeColors.muted }]}>Search ecosystem...</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
-          <MessagesSquare size={28} color="#fff" strokeWidth={1.5} />
+          <MessagesSquare size={28} color={activeColors.text} strokeWidth={1.5} />
           {unreadMessages > 0 && (
             <View style={[styles.iOSBadge, { backgroundColor: '#FF3B30' }]}>
               <Text style={styles.iOSBadgeText}>{unreadMessages}</Text>
