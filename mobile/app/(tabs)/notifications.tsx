@@ -19,6 +19,7 @@ import { getImageUrl } from '../../services/api';
 import { Bell, Heart, MessageCircle, UserPlus, Zap, CheckCheck, MoreVertical } from 'lucide-react-native';
 import { formatRelativeTime } from '../../utils/date';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSocket } from '../../context/SocketContext';
 
 export default function NotificationsScreen() {
     const { theme } = useTheme();
@@ -29,6 +30,7 @@ export default function NotificationsScreen() {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const { socket } = useSocket();
 
     const fetchNotifications = useCallback(async (showLoading = true) => {
         try {
@@ -64,6 +66,19 @@ export default function NotificationsScreen() {
         fetchNotifications();
     }, [fetchNotifications]);
 
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleNewNotification = (notification: any) => {
+            setNotifications(prev => [notification, ...prev]);
+        };
+
+        socket.on('notification', handleNewNotification);
+        return () => {
+            socket.off('notification', handleNewNotification);
+        };
+    }, [socket]);
+
     const onRefresh = () => {
         setIsRefreshing(true);
         fetchNotifications(false);
@@ -83,10 +98,10 @@ export default function NotificationsScreen() {
         }
 
         // Navigate based on type
-        if (type && targetId) {
-            if (['like', 'comment', 'funding'].includes(type)) {
+        if (type) {
+            if (['like', 'comment', 'funding'].includes(type) && targetId) {
                 router.push(`/post/${targetId}`);
-            } else if (type === 'follow') {
+            } else if (type === 'follow' && targetId) {
                 router.push(`/profile/${targetId}`);
             }
         }
@@ -121,12 +136,13 @@ export default function NotificationsScreen() {
                     styles.notifItem,
                     { backgroundColor: item.isRead ? 'transparent' : activeColors.background + '40' }
                 ]}
-                onPress={() => handleMarkAsRead(
-                    item._id,
-                    item.isRead,
-                    item.type,
-                    item.project?._id || item.sender?._id || item.sender?.id
-                )}
+                onPress={() => {
+                    const targetId = item.project?._id ||
+                        (typeof item.project === 'string' ? item.project : null) ||
+                        item.sender?._id ||
+                        item.sender?.id;
+                    handleMarkAsRead(item._id, item.isRead, item.type, targetId);
+                }}
             >
                 <View style={styles.avatarContainer}>
                     <Image
