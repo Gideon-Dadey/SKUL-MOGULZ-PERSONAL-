@@ -73,7 +73,7 @@ export default function PostDetailScreen() {
             setPost((prev: any) => ({
                 ...prev,
                 comments: prev.comments.map((c: any) =>
-                    c._id === commentId ? { ...c, likes: updatedLikes } : c
+                    (c._id === commentId || c.id === commentId) ? { ...c, likes: updatedLikes } : c
                 )
             }));
         } catch (error) {
@@ -177,7 +177,7 @@ export default function PostDetailScreen() {
                     <View style={styles.commentActions}>
                         <TouchableOpacity
                             style={styles.commentActionBtn}
-                            onPress={() => handleLikeComment(item._id)}
+                            onPress={() => handleLikeComment(item._id || item.id)}
                         >
                             <Heart
                                 size={14}
@@ -192,7 +192,7 @@ export default function PostDetailScreen() {
                         <TouchableOpacity
                             style={styles.commentActionBtn}
                             onPress={() => {
-                                setReplyingTo({ id: item._id, authorName: item.author?.firstName });
+                                setReplyingTo({ id: item._id || item.id, authorName: item.author?.firstName });
                                 inputRef.current?.focus();
                             }}
                         >

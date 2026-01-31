@@ -10,7 +10,7 @@ const NotificationsPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (!user) return; 
+        if (!user) return;
         const fetchNotifications = async () => {
             try {
                 setIsLoading(true);
@@ -48,7 +48,7 @@ const NotificationsPage: React.FC = () => {
     return (
         <div className="notif-page-layout">
             <div className="notif-container">
-                {}
+                { }
                 <aside className="notif-sidebar">
                     <div className="notif-card">
                         <div className="notif-card__header">
@@ -60,7 +60,7 @@ const NotificationsPage: React.FC = () => {
                     </div>
                 </aside>
 
-                {}
+                { }
                 <main className="notif-main">
                     <div className="notif-list-card">
                         {isLoading ? (
@@ -92,11 +92,13 @@ const NotificationsPage: React.FC = () => {
                                         <p>
                                             <span className="notif-item__name">{n.sender.firstName} {n.sender.lastName}</span>
                                             {' '}
-                                            {n.type === 'like' ? 'liked your project' :
-                                                n.type === 'comment' ? 'commented on your project' :
-                                                    n.type === 'funding' ? 'supported your project' :
-                                                        'followed you'}
-                                            {n.project && <span className="notif-item__project-title">: "{n.project.title}"</span>}
+                                            {n.content ? n.content :
+                                                (n.type === 'like' ? 'liked your project' :
+                                                    n.type === 'comment' ? 'commented on your project' :
+                                                        n.type === 'funding' ? 'supported your project' :
+                                                            'followed you')
+                                            }
+                                            {n.project && !n.content && <span className="notif-item__project-title">: "{n.project.title}"</span>}
                                         </p>
                                         <span className="notif-item__time">
                                             {new Date(n.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
@@ -114,7 +116,7 @@ const NotificationsPage: React.FC = () => {
                     </div>
                 </main>
 
-                {}
+                { }
                 <aside className="notif-sidebar-right">
                     <div className="notif-ad-card">
                         <span className="notif-ad-label">Ad</span>
