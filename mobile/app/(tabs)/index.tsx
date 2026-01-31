@@ -54,8 +54,6 @@ export default function FeedScreen() {
       damping: 25,
       stiffness: 150,
       mass: 0.8,
-      restDisplacementThreshold: 0.01,
-      restSpeedThreshold: 0.01
     });
     setMenuVisible(show);
   };
