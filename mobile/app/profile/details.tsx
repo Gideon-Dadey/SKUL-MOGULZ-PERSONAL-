@@ -805,7 +805,7 @@ const styles = StyleSheet.create({
     skillChipRemovable: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, borderWidth: 1, gap: 8 },
     skillText: { fontSize: 14, fontWeight: '600' },
     removeSkillBtn: { padding: 2 },
-    projectsList: { gap: 16 },
+    projectsContainer: { gap: 16 },
     projectItem: { flexDirection: 'row', paddingVertical: 12, borderBottomWidth: 1, gap: 12 },
     projectInfo: { flex: 1 },
     projectTitle: { fontSize: 16, fontWeight: '700' },
