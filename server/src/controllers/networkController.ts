@@ -211,12 +211,14 @@ export const rejectRequest = async (req: any, res: Response) => {
 // @route   GET /api/network/connections
 export const getConnections = async (req: any, res: Response) => {
     try {
-        const user = await User.findById(req.user.id).populate('connections', 'firstName lastName username avatar headline role bio');
+        const userId = req.query.userId || req.user.id;
+        const user = await User.findById(userId).populate('connections', 'firstName lastName username avatar headline role bio');
+
         if (!user) {
             res.status(404).json({ message: 'User not found' });
             return;
         }
-        res.status(200).json(user.connections);
+        res.status(200).json(user.connections || []);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
