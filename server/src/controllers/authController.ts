@@ -177,6 +177,10 @@ export const getUserProfile = async (req: Request, res: Response) => {
         const user = await User.findOne({ username: req.params.username });
 
         if (user) {
+            // Increment profile views
+            user.viewedProfile = (user.viewedProfile || 0) + 1;
+            await user.save();
+
             res.json({
                 _id: user._id,
                 firstName: user.firstName,
@@ -192,7 +196,9 @@ export const getUserProfile = async (req: Request, res: Response) => {
                 interests: user.skills || [],
                 experience: user.experience || [],
                 education: user.education || [],
-                connectionsCount: user.connections.length
+                connectionsCount: user.connections.length,
+                viewedProfile: user.viewedProfile,
+                impressions: user.impressions || 0
             });
         } else {
             res.status(404).json({ message: 'User not found' });

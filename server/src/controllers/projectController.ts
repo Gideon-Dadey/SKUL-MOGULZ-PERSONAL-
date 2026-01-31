@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Project from '../models/Project';
 import Notification from '../models/Notification';
+import User from '../models/User';
 import { getIO } from '../socket';
 import { IUser } from '../models/User';
 
@@ -36,6 +37,12 @@ export const getProjects = async (req: Request, res: Response) => {
             .populate('author', 'firstName lastName avatar headline role')
             .sort({ createdAt: -1 });
 
+        // Increment author impressions (Organic growth)
+        if (projects.length > 0) {
+            const authorIds = [...new Set(projects.map(p => p.author?._id || (p.author as any).id).filter(id => !!id))];
+            await User.updateMany({ _id: { $in: authorIds } }, { $inc: { impressions: 1 } });
+        }
+
         res.status(200).json(projects);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
@@ -48,12 +55,22 @@ export const getProjects = async (req: Request, res: Response) => {
 export const getProjectById = async (req: Request, res: Response) => {
     try {
         const project = await Project.findById(req.params.id)
-            .populate('author', 'firstName lastName avatar headline role location')
+            .populate('author', 'firstName lastName avatar headline role location impressions')
             .populate('comments.author', 'firstName lastName avatar');
 
         if (!project) {
             res.status(404).json({ message: 'Project not found' });
             return;
+        }
+
+        // Increment project views
+        project.views = (project.views || 0) + 1;
+        await project.save();
+
+        // Increment author impressions
+        if (project.author) {
+            const authorId = (project.author as any)._id || project.author;
+            await User.findByIdAndUpdate(authorId, { $inc: { impressions: 1 } });
         }
 
         res.status(200).json(project);

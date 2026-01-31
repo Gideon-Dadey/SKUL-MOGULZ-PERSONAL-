@@ -13,7 +13,7 @@ import api, { getImageUrl } from '../../services/api';
 import PostCard from '../../components/PostCard';
 
 export default function FeedScreen() {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { theme } = useTheme();
   const { socket } = useSocket();
   const router = useRouter();
@@ -57,7 +57,7 @@ export default function FeedScreen() {
   ];
 
   const fetchPosts = async () => {
-    if (!user) {
+    if (!isAuthenticated || !user) {
       setIsLoading(false);
       return;
     }
@@ -91,29 +91,29 @@ export default function FeedScreen() {
   };
 
   const fetchUnreadCount = async () => {
-    if (!user) return;
+    if (!isAuthenticated || !user) return;
     try {
       const response = await api.get('/messages/conversations');
       const totalUnread = response.data.reduce((acc: number, conv: any) => acc + (conv.unreadCount || 0), 0);
       setUnreadMessages(totalUnread);
     } catch (error) {
-      console.error("Failed to fetch unread count on feed", error);
+      console.warn("Failed to fetch unread count on feed", error);
     }
   };
 
   useEffect(() => {
-    if (user) {
+    if (isAuthenticated && user) {
       fetchPosts();
       fetchUnreadCount();
     }
-  }, [user, selectedCategory, selectedStage]);
+  }, [user, isAuthenticated, selectedCategory, selectedStage]);
 
   useFocusEffect(
     React.useCallback(() => {
-      if (user) {
+      if (isAuthenticated && user) {
         fetchUnreadCount();
       }
-    }, [user])
+    }, [user, isAuthenticated])
   );
 
   useEffect(() => {

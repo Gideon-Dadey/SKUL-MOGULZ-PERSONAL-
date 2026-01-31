@@ -9,6 +9,7 @@ interface AuthContextType extends AuthState {
     register: (userData: any) => Promise<void>;
     logout: () => Promise<void>;
     updateProfile: (data: any) => Promise<void>;
+    refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,11 +28,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 if (savedUser) {
                     const user = JSON.parse(savedUser);
                     if (user._id && !user.id) user.id = user._id;
+
+                    const hasToken = !!user.token;
                     setState({
                         user,
-                        isAuthenticated: true,
+                        isAuthenticated: hasToken,
                         loading: false,
                     });
+
+                    if (hasToken) {
+                        // Silently refresh user data on load
+                        refreshUser();
+                    }
                 } else {
                     setState(prev => ({ ...prev, loading: false }));
                 }
@@ -43,6 +51,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
         loadStoredUser();
     }, []);
+
+    const refreshUser = async () => {
+        try {
+            const data = await authService.getMe();
+            const userStr = await AsyncStorage.getItem('user');
+            const savedUser = JSON.parse(userStr || '{}');
+            const updatedUser = { ...savedUser, ...data, id: data._id || data.id };
+
+            setState(prev => ({ ...prev, user: updatedUser, isAuthenticated: true, loading: false }));
+            await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+        } catch (error: any) {
+            // If refresh fails due to auth (401), logout to clear invalid state
+            if (error.response?.status === 401) {
+                console.warn("Session expired, logging out...");
+                logout();
+            } else {
+                console.warn("Refresh user failed", error.message);
+            }
+        }
+    };
 
     const login = async (email: string, password: string) => {
         try {
@@ -95,7 +123,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     return (
-        <AuthContext.Provider value={{ ...state, login, register, logout, updateProfile }}>
+        <AuthContext.Provider value={{ ...state, login, register, logout, updateProfile, refreshUser }}>
             {children}
         </AuthContext.Provider>
     );
