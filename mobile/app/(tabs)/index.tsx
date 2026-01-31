@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers } from 'lucide-react-native';
@@ -11,6 +11,8 @@ import { useSocket } from '../../context/SocketContext';
 import Colors from '../../constants/Colors';
 import api, { getImageUrl } from '../../services/api';
 import PostCard from '../../components/PostCard';
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function FeedScreen() {
   const { user, isAuthenticated } = useAuth();
@@ -499,13 +501,14 @@ const styles = StyleSheet.create({
   header: {
     padding: 16,
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: 24,
+    paddingBottom: 30,
+    minHeight: SCREEN_HEIGHT * 0.42,
+    justifyContent: 'space-between',
   },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    marginBottom: 20,
   },
   profileButton: {
     width: 40,
@@ -616,8 +619,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
-    marginTop: 16,
   },
   sectionTitle: {
     fontSize: 20,
