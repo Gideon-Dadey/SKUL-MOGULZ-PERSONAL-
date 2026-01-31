@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, Share, Alert, Modal, Dimensions } from 'react-native';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from 'lucide-react-native';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Play } from 'lucide-react-native';
+import { Video, ResizeMode } from 'expo-av';
 import { useRouter } from 'expo-router';
 import { Post } from '../types';
 import Colors from '../constants/Colors';
@@ -25,18 +26,26 @@ export default function PostCard({ post, onLike, onComment, onBookmark, onEdit, 
     const activeColors = Colors[theme];
     const [aspectRatio, setAspectRatio] = useState(1);
     const [viewImage, setViewImage] = useState(false);
+    const [isVideo, setIsVideo] = useState(false);
 
     const imageUrl = post.media && post.media.length > 0 ? getImageUrl(post.media[0]) : null;
 
     useEffect(() => {
         if (imageUrl) {
-            Image.getSize(imageUrl, (width, height) => {
-                if (width && height) {
-                    setAspectRatio(width / height);
-                }
-            }, (error) => {
-                console.warn('Failed to get image size:', error);
-            });
+            const isVid = imageUrl.match(/\.(mp4|mov|webm|quicktime)$/i) || post.media[0].includes('video');
+            setIsVideo(!!isVid);
+
+            if (!isVid) {
+                Image.getSize(imageUrl, (width, height) => {
+                    if (width && height) {
+                        setAspectRatio(width / height);
+                    }
+                }, (error) => {
+                    console.warn('Failed to get image size:', error);
+                });
+            } else {
+                setAspectRatio(16 / 9); // Default video aspect ratio
+            }
         }
     }, [imageUrl]);
 
@@ -148,35 +157,48 @@ export default function PostCard({ post, onLike, onComment, onBookmark, onEdit, 
                 <View>
                     <TouchableOpacity
                         style={[styles.mediaContainer, { aspectRatio }]}
-                        activeOpacity={0.9}
-                        onPress={() => setViewImage(true)}
+                        activeOpacity={isVideo ? 1 : 0.9}
+                        onPress={() => !isVideo && setViewImage(true)}
                     >
-                        <Image source={{ uri: imageUrl }} style={styles.mainMedia} />
+                        {isVideo ? (
+                            <Video
+                                source={{ uri: imageUrl }}
+                                style={styles.mainMedia}
+                                useNativeControls
+                                resizeMode={ResizeMode.CONTAIN}
+                                isLooping
+                                shouldPlay={false}
+                            />
+                        ) : (
+                            <Image source={{ uri: imageUrl }} style={styles.mainMedia} />
+                        )}
                     </TouchableOpacity>
 
-                    <Modal visible={viewImage} transparent={true} onRequestClose={() => setViewImage(false)} animationType="fade">
-                        <View style={styles.modalContainer}>
-                            <TouchableOpacity
-                                style={styles.modalBackground}
-                                activeOpacity={1}
-                                onPress={() => setViewImage(false)}
-                            >
-                                <Image
-                                    source={{ uri: imageUrl }}
-                                    style={styles.fullscreenImage}
-                                    resizeMode="contain"
-                                />
+                    {!isVideo && (
+                        <Modal visible={viewImage} transparent={true} onRequestClose={() => setViewImage(false)} animationType="fade">
+                            <View style={styles.modalContainer}>
                                 <TouchableOpacity
-                                    style={styles.closeFullscreen}
+                                    style={styles.modalBackground}
+                                    activeOpacity={1}
                                     onPress={() => setViewImage(false)}
                                 >
-                                    <View style={styles.closeBadge}>
-                                        <Text style={styles.closeText}>Close</Text>
-                                    </View>
+                                    <Image
+                                        source={{ uri: imageUrl }}
+                                        style={styles.fullscreenImage}
+                                        resizeMode="contain"
+                                    />
+                                    <TouchableOpacity
+                                        style={styles.closeFullscreen}
+                                        onPress={() => setViewImage(false)}
+                                    >
+                                        <View style={styles.closeBadge}>
+                                            <Text style={styles.closeText}>Close</Text>
+                                        </View>
+                                    </TouchableOpacity>
                                 </TouchableOpacity>
-                            </TouchableOpacity>
-                        </View>
-                    </Modal>
+                            </View>
+                        </Modal>
+                    )}
                 </View>
             )}
 
