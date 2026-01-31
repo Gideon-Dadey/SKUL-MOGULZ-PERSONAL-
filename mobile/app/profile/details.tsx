@@ -429,10 +429,13 @@ export default function ProfileScreen() {
                                         <Text style={[styles.metaText, { color: activeColors.muted }]}>{user.location}</Text>
                                     </View>
                                 )}
-                                <View style={styles.metaItem}>
+                                <TouchableOpacity
+                                    style={styles.metaItem}
+                                    onPress={() => router.push('/profile/connections')}
+                                >
                                     <Users size={14} color={activeColors.tint} />
                                     <Text style={[styles.metaText, { color: activeColors.tint, fontWeight: '600' }]}>{connectionCount} connections</Text>
-                                </View>
+                                </TouchableOpacity>
                             </View>
                         </View>
 

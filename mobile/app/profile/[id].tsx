@@ -130,12 +130,18 @@ export default function UserProfileScreen() {
                                         <Text style={[styles.metaText, { color: activeColors.muted }]}>{user.location}</Text>
                                     </View>
                                 )}
-                                <View style={styles.metaItem}>
+                                <TouchableOpacity
+                                    style={styles.metaItem}
+                                    onPress={() => router.push({
+                                        pathname: '/profile/connections',
+                                        params: { userId: user._id || user.id }
+                                    })}
+                                >
                                     <Users size={14} color={activeColors.tint} />
                                     <Text style={[styles.metaText, { color: activeColors.tint, fontWeight: '600' }]}>
                                         {user.connections?.length || user.connectionsCount || 0} connections
                                     </Text>
-                                </View>
+                                </TouchableOpacity>
                             </View>
                         </View>
 
