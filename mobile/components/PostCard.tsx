@@ -27,6 +27,7 @@ export default function PostCard({ post, onLike, onComment, onBookmark, onEdit, 
     const [aspectRatio, setAspectRatio] = useState(1);
     const [viewImage, setViewImage] = useState(false);
     const [isVideo, setIsVideo] = useState(false);
+    const [status, setStatus] = useState<any>({});
 
     const imageUrl = post.media && post.media.length > 0 ? getImageUrl(post.media[0]) : null;
 
@@ -179,18 +180,35 @@ export default function PostCard({ post, onLike, onComment, onBookmark, onEdit, 
                         <View style={styles.mediaWrapper}>
                             <TouchableOpacity
                                 style={[styles.mediaContainer, { aspectRatio }]}
-                                activeOpacity={isVideo ? 1 : 0.9}
-                                onPress={() => !isVideo && setViewImage(true)}
+                                activeOpacity={1}
+                                onPress={() => {
+                                    if (isVideo) {
+                                        // Toggle play/pause on tap
+                                        setStatus((s: any) => ({ ...s, shouldPlay: !s.shouldPlay }));
+                                    } else {
+                                        setViewImage(true);
+                                    }
+                                }}
                             >
                                 {isVideo ? (
-                                    <Video
-                                        source={{ uri: imageUrl }}
-                                        style={styles.mainMedia}
-                                        useNativeControls
-                                        resizeMode={ResizeMode.CONTAIN}
-                                        isLooping
-                                        shouldPlay={false}
-                                    />
+                                    <View style={{ flex: 1 }}>
+                                        <Video
+                                            source={{ uri: imageUrl }}
+                                            style={styles.mainMedia}
+                                            useNativeControls={status.isPlaying}
+                                            resizeMode={ResizeMode.CONTAIN}
+                                            isLooping
+                                            shouldPlay={status.shouldPlay}
+                                            onPlaybackStatusUpdate={s => setStatus(s)}
+                                        />
+                                        {!status.isPlaying && (
+                                            <View style={styles.playOverlay}>
+                                                <View style={styles.playCircle}>
+                                                    <Play size={32} color="#fff" fill="#fff" />
+                                                </View>
+                                            </View>
+                                        )}
+                                    </View>
                                 ) : (
                                     <Image source={{ uri: imageUrl }} style={styles.mainMedia} resizeMode="contain" />
                                 )}
@@ -380,6 +398,21 @@ const styles = StyleSheet.create({
     actionText: {
         fontSize: 13,
         fontWeight: '400',
+    },
+    playOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.1)',
+    },
+    playCircle: {
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingLeft: 4, // Visual centering for play icon
     },
     modalContainer: {
         flex: 1,
