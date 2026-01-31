@@ -15,13 +15,23 @@ export default function PreferencesScreen() {
     const activeColors = Colors[theme];
 
     // Toggle States
-    const [loadMedia, setLoadMedia] = useState(true);
-    const [autoplayVideos, setAutoplayVideos] = useState(true);
-    const [autoplayGifs, setAutoplayGifs] = useState(true);
-    const [showReposts, setShowReposts] = useState(true);
-    const [showReplies, setShowReplies] = useState(true);
-    const [allowDMs, setAllowDMs] = useState(true);
-    const [uploadLargeMedia, setUploadLargeMedia] = useState(true);
+    const [loadMedia, setLoadMedia] = useState(user?.settings?.loadMedia ?? true);
+    const [autoplayVideos, setAutoplayVideos] = useState(user?.settings?.autoplayVideos ?? true);
+    const [autoplayGifs, setAutoplayGifs] = useState(user?.settings?.autoplayGifs ?? true);
+    const [showReposts, setShowReposts] = useState(user?.settings?.showReposts ?? true);
+    const [showReplies, setShowReplies] = useState(user?.settings?.showReplies ?? true);
+
+    const handleUpdateSettings = async (key: string, value: boolean, setter: (v: boolean) => void) => {
+        setter(value);
+        try {
+            await api.put('/auth/settings', { [key]: value });
+        } catch (error) {
+            Alert.alert('Error', 'Failed to save setting');
+            setter(!value); // Revert on error
+        }
+    };
+    const [allowDMs, setAllowDMs] = useState(user?.settings?.allowDMs ?? true);
+    const [uploadLargeMedia, setUploadLargeMedia] = useState(user?.settings?.uploadLargeMedia ?? true);
     const [twoFactor, setTwoFactor] = useState(user?.twoFactorEnabled || false);
 
     const handleToggle2FA = async (value: boolean) => {
@@ -92,11 +102,11 @@ export default function PreferencesScreen() {
                 {/* Home */}
                 {renderSectionHeader('Home')}
                 <View style={styles.section}>
-                    {renderToggle('Load media', loadMedia, setLoadMedia)}
-                    {renderToggle('Autoplay videos', autoplayVideos, setAutoplayVideos, true)}
-                    {renderToggle('Autoplay animated gifs', autoplayGifs, setAutoplayGifs, true)}
-                    {renderToggle('Show Reposts', showReposts, setShowReposts)}
-                    {renderToggle('Show replies', showReplies, setShowReplies)}
+                    {renderToggle('Load media', loadMedia, (v) => handleUpdateSettings('loadMedia', v, setLoadMedia))}
+                    {renderToggle('Autoplay videos', autoplayVideos, (v) => handleUpdateSettings('autoplayVideos', v, setAutoplayVideos), true)}
+                    {renderToggle('Autoplay animated gifs', autoplayGifs, (v) => handleUpdateSettings('autoplayGifs', v, setAutoplayGifs), true)}
+                    {renderToggle('Show Reposts', showReposts, (v) => handleUpdateSettings('showReposts', v, setShowReposts))}
+                    {renderToggle('Show replies', showReplies, (v) => handleUpdateSettings('showReplies', v, setShowReplies))}
                 </View>
 
                 {/* Direct Messages */}
@@ -108,7 +118,7 @@ export default function PreferencesScreen() {
                         </Text>
                         <Switch
                             value={allowDMs}
-                            onValueChange={setAllowDMs}
+                            onValueChange={(v) => handleUpdateSettings('allowDMs', v, setAllowDMs)}
                             trackColor={{ false: '#767577', true: activeColors.tint }}
                             thumbColor={'#fff'}
                         />
@@ -124,7 +134,7 @@ export default function PreferencesScreen() {
                         </Text>
                         <Switch
                             value={uploadLargeMedia}
-                            onValueChange={setUploadLargeMedia}
+                            onValueChange={(v) => handleUpdateSettings('uploadLargeMedia', v, setUploadLargeMedia)}
                             trackColor={{ false: '#767577', true: activeColors.tint }}
                             thumbColor={'#fff'}
                         />
