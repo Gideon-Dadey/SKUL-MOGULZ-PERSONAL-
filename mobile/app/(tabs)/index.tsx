@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator, Dimensions, Animated, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers, SlidersHorizontal, Bookmark, Ban, VolumeX, HelpCircle, Settings, LogOut, UserPlus } from 'lucide-react-native';
+import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers, SlidersHorizontal, Bookmark, Ban, VolumeX, HelpCircle, Settings, LogOut, UserPlus, BarChart2 } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -26,6 +26,7 @@ export default function FeedScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const [showAccountsMenu, setShowAccountsMenu] = useState(false);
+  const [showAnalyticsMenu, setShowAnalyticsMenu] = useState(false);
   const [commentModalVisible, setCommentModalVisible] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
@@ -46,6 +47,7 @@ export default function FeedScreen() {
   useEffect(() => {
     if (!menuVisible) {
       setShowAccountsMenu(false);
+      setShowAnalyticsMenu(false);
     }
   }, [menuVisible]);
 
@@ -394,13 +396,10 @@ export default function FeedScreen() {
             <View style={styles.sideMenuUserInfo}>
               <Text style={[styles.sideMenuName, { color: activeColors.text }]}>{user?.firstName} {user?.lastName}</Text>
               <Text style={[styles.sideMenuHandle, { color: activeColors.muted }]}>@{user?.username || 'username'}</Text>
-            </View>
-            <View style={styles.sideMenuStats}>
-              <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>0</Text>
-              <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>Followers</Text>
-              <View style={{ width: 12 }} />
-              <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>0</Text>
-              <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>Following</Text>
+              <View style={styles.sideMenuStats}>
+                <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>{user?.connections?.length || 0}</Text>
+                <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>Connections</Text>
+              </View>
             </View>
           </View>
 
@@ -409,6 +408,28 @@ export default function FeedScreen() {
               <CircleUser size={22} color={activeColors.text} />
               <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Profile</Text>
             </TouchableOpacity>
+
+            {/* Analytics Menu Item */}
+            <View>
+              <TouchableOpacity style={styles.sideMenuItem} onPress={() => setShowAnalyticsMenu(!showAnalyticsMenu)}>
+                <BarChart2 size={22} color={activeColors.text} />
+                <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Analytics</Text>
+                <ChevronDown size={20} color={activeColors.muted} style={{ marginLeft: 'auto', transform: [{ rotate: showAnalyticsMenu ? '180deg' : '0deg' }] }} />
+              </TouchableOpacity>
+              {showAnalyticsMenu && (
+                <View style={{ paddingLeft: 54, paddingBottom: 12, gap: 12 }}>
+                  <View>
+                    <Text style={{ fontSize: 16, fontWeight: '700', color: activeColors.text }}>0</Text>
+                    <Text style={{ fontSize: 13, color: activeColors.muted }}>Profile views</Text>
+                  </View>
+                  <View>
+                    <Text style={{ fontSize: 16, fontWeight: '700', color: activeColors.text }}>0</Text>
+                    <Text style={{ fontSize: 13, color: activeColors.muted }}>Post impressions</Text>
+                  </View>
+                </View>
+              )}
+            </View>
+
             <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
               <Sparkles size={22} color={activeColors.text} />
               <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Feeds</Text>
