@@ -68,9 +68,12 @@ const CreatePostPage: React.FC = () => {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             const files = Array.from(e.target.files);
-            const newPreviews = files.map(file => URL.createObjectURL(file));
+            const newPreviews = files.map(file => ({
+                url: URL.createObjectURL(file),
+                type: file.type.startsWith('video/') ? 'video' : 'image'
+            }));
             setSelectedFiles(prev => [...prev, ...files]);
-            setPreviews(prev => [...prev, ...newPreviews]);
+            setPreviews(prev => [...prev, ...newPreviews.map(p => p.url)]);
         }
     };
 
@@ -164,14 +167,21 @@ const CreatePostPage: React.FC = () => {
                         { }
                         {previews.length > 0 && (
                             <div className="create-previews">
-                                {previews.map((src, idx) => (
-                                    <div key={idx} className="preview-item">
-                                        <img src={src} alt="" />
-                                        <button className="remove-preview" onClick={() => handleRemoveImage(idx)}>
-                                            <X size={14} />
-                                        </button>
-                                    </div>
-                                ))}
+                                {previews.map((src, idx) => {
+                                    const isVideo = src.match(/\.(mp4|mov|webm|quicktime)$/i) || src.startsWith('blob:') && selectedFiles[idx]?.type.startsWith('video/') || src.includes('video');
+                                    return (
+                                        <div key={idx} className="preview-item">
+                                            {isVideo ? (
+                                                <video src={src} />
+                                            ) : (
+                                                <img src={src} alt="" />
+                                            )}
+                                            <button className="remove-preview" onClick={() => handleRemoveImage(idx)}>
+                                                <X size={14} />
+                                            </button>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         )}
 
@@ -197,7 +207,7 @@ const CreatePostPage: React.FC = () => {
                                 type="file"
                                 hidden
                                 multiple
-                                accept="image/*"
+                                accept="image/*,video/*"
                                 ref={fileInputRef}
                                 onChange={handleFileChange}
                             />
