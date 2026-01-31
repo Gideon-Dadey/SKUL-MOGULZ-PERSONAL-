@@ -2,7 +2,7 @@ import React from 'react';
 import { Tabs, router } from 'expo-router';
 import { View, Text, Platform, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Home, Users, Folder, MessageCircle, Bell, SquarePlus } from 'lucide-react-native';
+import { House, Users, Folder, MessageCircle, Bell, SquarePlus } from 'lucide-react-native';
 
 import Colors from '../../constants/Colors';
 import { useTheme } from '../../context/ThemeContext';
@@ -67,7 +67,7 @@ export default function TabLayout() {
     : Math.max(insets.bottom, 10);
 
   const renderTabIcon = (Icon: any, focused: boolean) => {
-    const iconColor = focused ? '#1C1C1E' : activeColors.tabIconDefault;
+    const iconColor = focused ? activeColors.tint : activeColors.tabIconDefault;
     return <Icon size={24} color={iconColor} fill={focused ? iconColor : 'transparent'} />;
   };
 
@@ -99,7 +99,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ focused }) => renderTabIcon(Home, focused),
+          tabBarIcon: ({ focused }) => renderTabIcon(House, focused),
         }}
       />
       <Tabs.Screen
