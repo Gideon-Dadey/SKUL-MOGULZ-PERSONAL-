@@ -468,9 +468,7 @@ export default function ProfileScreen() {
                     <ArrowLeft size={24} color={activeColors.text} />
                 </TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: activeColors.text }]}>Profile</Text>
-                <TouchableOpacity onPress={() => setMenuVisible(true)} style={styles.iconBtn}>
-                    <Menu size={24} color={activeColors.text} />
-                </TouchableOpacity>
+                <View style={{ width: 24 }} />
             </View>
 
             <ScrollView
