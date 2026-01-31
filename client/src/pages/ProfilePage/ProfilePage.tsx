@@ -312,8 +312,8 @@ const ProfilePage: React.FC = () => {
     };
 
 
-    if (isLoading) return <div className="profile-page"><div className="loading-spinner"></div></div>;
-    if (!profileUser) return <div className="profile-page">User not found</div>;
+    if (isLoading) return <div className="loading-screen"><div className="loading-spinner"></div></div>;
+    if (!profileUser) return <div className="loading-screen">User not found</div>;
 
     const isOwnProfile = currentUser?.id === (profileUser._id || profileUser.id);
 
