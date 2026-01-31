@@ -6,6 +6,7 @@ import { useCall } from '../../context/CallContext';
 import messageService from '../../services/messageService';
 import { getImageUrl } from '../../services/api';
 import { DEFAULT_AVATAR } from '../../components/Logo';
+import { ModernChatIcon } from '../../components/Icons';
 import './MessagesPage.css';
 
 const MessagesPage: React.FC = () => {
@@ -282,6 +283,7 @@ const MessagesPage: React.FC = () => {
                         </>
                     ) : (
                         <div className="chat-empty-state">
+                            <ModernChatIcon size={64} color="var(--primary)" style={{ marginBottom: '24px', opacity: 0.2 }} />
                             <h3>Select a message</h3>
                             <p>Choose from your existing conversations or start a new one to connect with entrepreneurs and investors.</p>
                             <button className="btn btn-primary">Start New Chat</button>
