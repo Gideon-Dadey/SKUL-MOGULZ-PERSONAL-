@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Trash2, Edit, X, Play } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Trash2, Edit, X, Play, Repeat } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Post } from '../../types';
 import { useAuth } from '../../context/AuthContext';
@@ -11,11 +11,12 @@ import './PostCardMenu.css';
 interface PostCardProps {
     post: any;
     onLike?: (postId: string) => void;
+    onRepost?: (postId: string) => void;
     onDelete?: (postId: string) => void;
     compact?: boolean;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = false }) => {
+const PostCard: React.FC<PostCardProps> = ({ post, onLike, onRepost, onDelete, compact = false }) => {
     const { user, toggleBookmark } = useAuth();
     const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
@@ -24,9 +25,29 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
     const [isPlaying, setIsPlaying] = useState(false);
     const videoRef = React.useRef<HTMLVideoElement>(null);
 
+    const isRepost = !!post.repostOf;
+    const originalPost = isRepost ? post.repostOf : post;
+    const displayAuthor = isRepost ? (post.author || originalPost.author) : originalPost.author;
 
-    const isLiked = user && (post.likedBy || []).includes(user.id);
-    const isBookmarked = user && (user.bookmarks || []).includes(post.id);
+    const isLiked = user && (
+        Array.isArray(originalPost.likedBy) ? originalPost.likedBy.includes(user.id) :
+            Array.isArray(originalPost.likes) ? originalPost.likes.includes(user.id) :
+                false
+    );
+    const isBookmarked = user && (
+        Array.isArray(user.bookmarks) ? user.bookmarks.includes(originalPost._id || originalPost.id) :
+            Array.isArray(originalPost.bookmarkedBy) ? originalPost.bookmarkedBy.includes(user.id) :
+                false
+    );
+    const isReposted = user && (
+        Array.isArray(originalPost.reposts) ? originalPost.reposts.includes(user.id) :
+            false
+    );
+
+    const likesCount = Array.isArray(originalPost.likes) ? originalPost.likes.length : (originalPost.likes || 0);
+    const repostsCount = Array.isArray(originalPost.reposts) ? originalPost.reposts.length : (originalPost.reposts || 0);
+    const commentsCount = Array.isArray(originalPost.comments) ? originalPost.comments.length : (originalPost.comments || 0);
+
     const isAuthor = user && (user.id === post.author.id || user.id === post.author._id);
 
     const handleDelete = async () => {
@@ -69,7 +90,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
             return;
         }
         try {
-            await toggleBookmark(post.id);
+            await toggleBookmark(originalPost.id || originalPost._id);
         } catch (error) {
             console.error("Failed to toggle bookmark", error);
         }
@@ -100,38 +121,44 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
     };
 
     const getFundingProgress = () => {
-        if (!post.fundingGoal || !post.currentFunding) return null;
-        return Math.min((post.currentFunding / post.fundingGoal) * 100, 100);
+        if (!originalPost.fundingGoal || !originalPost.currentFunding) return null;
+        return Math.min((originalPost.currentFunding / originalPost.fundingGoal) * 100, 100);
     };
 
     const fundingProgress = getFundingProgress();
 
     return (
         <article className={`post-card ${compact ? 'post-card--compact' : ''}`}>
+            {isRepost && (
+                <div className="post-card__repost-header">
+                    <Repeat size={14} />
+                    <span>{post.author.firstName} {post.author.lastName} reposted</span>
+                </div>
+            )}
             <div className="post-card__header">
-                <Link to={`/profile/${post.author.username}`} className="post-card__author">
+                <Link to={`/profile/${displayAuthor.username}`} className="post-card__author">
                     <img
-                        src={getImageUrl(post.author.avatar) || DEFAULT_AVATAR}
-                        alt={post.author.firstName}
+                        src={getImageUrl(displayAuthor.avatar) || DEFAULT_AVATAR}
+                        alt={displayAuthor.firstName}
                         className="post-card__avatar"
                     />
                     <div className="post-card__author-info">
                         <span className="post-card__author-name">
-                            {post.author.firstName} {post.author.lastName}
+                            {displayAuthor.firstName} {displayAuthor.lastName}
                         </span>
                         <span className="post-card__meta">
-                            @{post.author.username} · {formatDate(post.createdAt)}
+                            @{displayAuthor.username} · {formatDate(isRepost ? post.createdAt : originalPost.createdAt)}
                         </span>
                     </div>
                 </Link>
                 <div className="post-card__actions-top">
                     <span
                         className="post-card__stage"
-                        style={{ backgroundColor: `${getStageColor(post.projectStage)}20`, color: getStageColor(post.projectStage) }}
+                        style={{ backgroundColor: `${getStageColor(originalPost.projectStage)}20`, color: getStageColor(originalPost.projectStage) }}
                     >
-                        {post.projectStage.charAt(0).toUpperCase() + post.projectStage.slice(1)}
+                        {originalPost.projectStage ? originalPost.projectStage.charAt(0).toUpperCase() + originalPost.projectStage.slice(1) : ''}
                     </span>
-                    {isAuthor && (
+                    {isAuthor && !isRepost && (
                         <div className="post-card__menu-container">
                             <button className="post-card__more-btn" onClick={(e) => {
                                 e.preventDefault();
@@ -155,17 +182,17 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
             </div>
 
             <div className="post-card__content-link">
-                <Link to={`/post/${post.id}`} className="post-card__title-link">
+                <Link to={`/post/${originalPost.id || originalPost._id}`} className="post-card__title-link">
                     <div className="post-card__content">
-                        <h3 className="post-card__title">{post.title}</h3>
+                        <h3 className="post-card__title">{originalPost.title}</h3>
                         <p className="post-card__text">
-                            {compact ? post.content.slice(0, 200) + '...' : post.content.slice(0, 400) + (post.content.length > 400 ? '...' : '')}
+                            {compact ? originalPost.content.slice(0, 200) + '...' : originalPost.content.slice(0, 400) + (originalPost.content.length > 400 ? '...' : '')}
                         </p>
                     </div>
                 </Link>
-                {post.media && post.media.length > 0 && (
-                    <div className={`post-card__media ${post.media.length > 1 ? 'post-card__media--multiple' : ''}`}>
-                        {post.media.slice(0, 3).map((url: string, idx: number) => {
+                {originalPost.media && originalPost.media.length > 0 && (
+                    <div className={`post-card__media ${originalPost.media.length > 1 ? 'post-card__media--multiple' : ''}`}>
+                        {originalPost.media.slice(0, 3).map((url: string, idx: number) => {
                             const isVideo = url.match(/\.(mp4|mov|webm|quicktime)$/i) || url.includes('video');
                             const fullUrl = getImageUrl(url);
 
@@ -188,8 +215,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
                                     ) : (
                                         <img src={fullUrl || ''} alt="" className="post-card__image" />
                                     )}
-                                    {idx === 2 && post.media.length > 3 && (
-                                        <div className="post-card__media-overlay">+{post.media.length - 3}</div>
+                                    {idx === 2 && originalPost.media.length > 3 && (
+                                        <div className="post-card__media-overlay">+{originalPost.media.length - 3}</div>
                                     )}
                                 </div>
                             );
@@ -233,10 +260,10 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
                     <div className="post-card__funding">
                         <div className="post-card__funding-header">
                             <span className="post-card__funding-raised">
-                                ${(post.currentFunding! / 1000).toFixed(0)}K raised
+                                ${((originalPost.currentFunding || 0) / 1000).toFixed(0)}K raised
                             </span>
                             <span className="post-card__funding-goal">
-                                of ${(post.fundingGoal! / 1000).toFixed(0)}K goal
+                                of ${((originalPost.fundingGoal || 0) / 1000).toFixed(0)}K goal
                             </span>
                         </div>
                         <div className="post-card__funding-bar">
@@ -250,27 +277,38 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
             }
 
             <div className="post-card__tags">
-                <span className="post-card__category">{post.category}</span>
-                {post.tags.slice(0, 3).map((tag: string) => (
+                <span className="post-card__category">{originalPost.category}</span>
+                {originalPost.tags?.slice(0, 3).map((tag: string) => (
                     <span key={tag} className="post-card__tag">#{tag}</span>
                 ))}
             </div>
 
             <div className="post-card__footer">
+                <Link to={`/post/${originalPost.id || originalPost._id}`} className="post-card__action-btn">
+                    <MessageCircle size={18} />
+                    <span>{commentsCount}</span>
+                </Link>
+
+                <button
+                    className={`post-card__action-btn ${isReposted ? 'active active--repost' : ''}`}
+                    onClick={() => onRepost?.(originalPost.id || originalPost._id)}
+                >
+                    <Repeat size={18} color={isReposted ? "#00BA7C" : "currentColor"} />
+                    <span style={{ color: isReposted ? "#00BA7C" : "inherit" }}>{repostsCount}</span>
+                </button>
+
                 <button
                     className={`post-card__action-btn ${isLiked ? 'active' : ''}`}
-                    onClick={() => onLike?.(post.id)}
+                    onClick={() => onLike?.(originalPost.id || originalPost._id)}
                 >
                     <Heart size={18} fill={isLiked ? "var(--primary)" : "none"} color={isLiked ? "var(--primary)" : "currentColor"} />
-                    <span>{post.likes}</span>
+                    <span>{likesCount}</span>
                 </button>
-                <Link to={`/post/${post.id}`} className="post-card__action-btn">
-                    <MessageCircle size={18} />
-                    <span>{post.comments.length}</span>
-                </Link>
+
                 <button className="post-card__action-btn">
                     <Share2 size={18} />
                 </button>
+
                 <button
                     className={`post-card__action-btn ${isBookmarked ? 'active' : ''}`}
                     onClick={handleBookmark}

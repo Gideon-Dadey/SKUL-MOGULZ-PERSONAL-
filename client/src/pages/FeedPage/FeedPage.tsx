@@ -116,6 +116,31 @@ const FeedPage: React.FC = () => {
             console.error("Failed to like post", error);
         }
     };
+    const handleRepost = async (postId: string) => {
+        try {
+            const response = await api.put(`/projects/${postId}/repost`);
+            const { reposted } = response.data;
+
+            setPosts(currentPosts => currentPosts.map(post => {
+                if (post.id === postId) {
+                    const newReposts = reposted
+                        ? [...(post.reposts || []), user?.id]
+                        : (post.reposts || []).filter((id: string) => id !== user?.id);
+                    return {
+                        ...post,
+                        reposts: newReposts
+                    };
+                }
+                return post;
+            }));
+
+            if (!reposted) {
+                setPosts(currentPosts => currentPosts.filter(p => !(p.repostOf && (p.repostOf._id === postId || p.repostOf.id === postId) && p.author.id === user?.id)));
+            }
+        } catch (error) {
+            console.error("Failed to repost", error);
+        }
+    };
 
     const handleDeletePost = (postId: string) => {
         setPosts(currentPosts => currentPosts.filter(post => post.id !== postId));
@@ -245,7 +270,7 @@ const FeedPage: React.FC = () => {
                 { }
                 <div className="feed-posts">
                     {isLoading ? <div style={{ padding: '20px', textAlign: 'center' }}>Loading posts...</div> : posts.map(post => (
-                        <PostCard key={post.id} post={post} onLike={handleLike} onDelete={handleDeletePost} />
+                        <PostCard key={post.id} post={post} onLike={handleLike} onRepost={handleRepost} onDelete={handleDeletePost} />
                     ))}
                 </div>
             </main>

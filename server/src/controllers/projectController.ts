@@ -69,6 +69,13 @@ export const getBookmarkedProjects = async (req: any, res: Response) => {
 
         const projects = await Project.find({ _id: { $in: user.bookmarks } })
             .populate('author', 'firstName lastName username avatar headline role')
+            .populate({
+                path: 'repostOf',
+                populate: {
+                    path: 'author',
+                    select: 'firstName lastName username avatar headline role'
+                }
+            })
             .sort({ createdAt: -1 });
 
         res.status(200).json(projects);

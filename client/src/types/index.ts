@@ -74,14 +74,18 @@ export const PROJECT_CATEGORIES: { value: ProjectCategory; label: string; icon: 
 
 export interface Post {
     id: string;
+    _id?: string;
     author: User;
     title: string;
     content: string;
     category: ProjectCategory;
     tags: string[];
     images?: string[];
+    media?: string[];
     likes: number;
     likedBy: string[];
+    reposts?: string[];
+    repostOf?: Post;
     comments: Comment[];
     projectStage: 'idea' | 'prototype' | 'mvp' | 'growth' | 'scaling';
     fundingGoal?: number;
@@ -101,11 +105,14 @@ export interface Comment {
 
 export interface Notification {
     id: string;
-    type: 'like' | 'comment' | 'follow' | 'new_post';
+    _id?: string;
+    type: 'like' | 'comment' | 'follow' | 'new_post' | 'repost' | 'funding';
     message: string;
-    read: boolean;
-    relatedPostId?: string;
-    fromUser?: User;
+    recipient: string | User;
+    sender: User;
+    project?: Post;
+    content?: string;
+    isRead: boolean;
     createdAt: string;
 }
 
