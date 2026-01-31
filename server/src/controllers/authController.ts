@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import User from '../models/User';
+import ConnectionRequest from '../models/ConnectionRequest';
 import jwt from 'jsonwebtoken';
 
 // Generate JWT Token
@@ -172,7 +173,7 @@ export const getMe = async (req: Request, res: Response) => {
 // @desc    Get user by username
 // @route   GET /api/auth/profile/:username
 // @access  Public
-export const getUserProfile = async (req: Request, res: Response) => {
+export const getUserProfile = async (req: any, res: Response) => {
     try {
         const user = await User.findOne({ username: req.params.username });
 
@@ -180,6 +181,34 @@ export const getUserProfile = async (req: Request, res: Response) => {
             // Increment profile views
             user.viewedProfile = (user.viewedProfile || 0) + 1;
             await user.save();
+
+            let connectionStatus: any = { status: 'none' };
+            if (req.user) {
+                const currentUserId = (req.user as any)._id || (req.user as any).id;
+                const targetUserId = user._id;
+
+                if (currentUserId.toString() === targetUserId.toString()) {
+                    connectionStatus = { status: 'self' };
+                } else if (user.connections.some(id => id.toString() === currentUserId.toString())) {
+                    connectionStatus = { status: 'connected' };
+                } else {
+                    const pendingRequest = await ConnectionRequest.findOne({
+                        $or: [
+                            { sender: currentUserId, recipient: targetUserId, status: 'pending' },
+                            { sender: targetUserId, recipient: currentUserId, status: 'pending' }
+                        ]
+                    });
+
+                    if (pendingRequest) {
+                        connectionStatus = {
+                            status: pendingRequest.sender.toString() === currentUserId.toString()
+                                ? 'pending_sent'
+                                : 'pending_received',
+                            requestId: pendingRequest._id
+                        };
+                    }
+                }
+            }
 
             res.json({
                 _id: user._id,
@@ -197,6 +226,8 @@ export const getUserProfile = async (req: Request, res: Response) => {
                 experience: user.experience || [],
                 education: user.education || [],
                 connectionsCount: user.connections.length,
+                connectionStatus: connectionStatus.status,
+                requestId: connectionStatus.requestId,
                 viewedProfile: user.viewedProfile,
                 impressions: user.impressions || 0
             });
