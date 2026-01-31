@@ -10,6 +10,7 @@ import { AuthProvider, useAuth } from '../context/AuthContext';
 import { ThemeProvider, useTheme } from '../context/ThemeContext';
 import { SocketProvider } from '../context/SocketContext';
 import { CallProvider } from '../context/CallContext';
+import { NotificationProvider } from '../context/NotificationContext';
 import Colors from '../constants/Colors';
 
 export {
@@ -53,9 +54,11 @@ export default function RootLayout() {
       <ThemeProvider>
         <AuthProvider>
           <SocketProvider>
-            <CallProvider>
-              <RootLayoutNav />
-            </CallProvider>
+            <NotificationProvider>
+              <CallProvider>
+                <RootLayoutNav />
+              </CallProvider>
+            </NotificationProvider>
           </SocketProvider>
         </AuthProvider>
       </ThemeProvider>
