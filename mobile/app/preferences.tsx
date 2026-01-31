@@ -144,9 +144,9 @@ export default function PreferencesScreen() {
                 {/* Privacy */}
                 {renderSectionHeader('Privacy')}
                 <View style={styles.section}>
-                    {renderNavRow('Mutes', '', () => { })}
-                    {renderNavRow('Blocks', '', () => { })}
-                    {renderNavRow('Discoverability', '', () => { })}
+                    {renderNavRow('Mutes', '', () => router.push('/mutes'))}
+                    {renderNavRow('Blocks', '', () => router.push('/blocks'))}
+                    {renderNavRow('Discoverability', '', () => router.push('/discoverability'))}
                 </View>
 
                 {/* Security */}

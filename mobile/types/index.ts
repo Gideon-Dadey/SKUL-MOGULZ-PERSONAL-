@@ -54,6 +54,8 @@ export interface User {
         showReplies: boolean;
         allowDMs: boolean;
         uploadLargeMedia: boolean;
+        discoverableByEmail: boolean;
+        discoverableByPhone: boolean;
     };
     createdAt: string;
 }

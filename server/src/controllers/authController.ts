@@ -476,3 +476,79 @@ export const updateSettings = async (req: Request, res: Response) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// @desc    Get muted users
+// @route   GET /api/auth/muted
+// @access  Private
+export const getMutedUsers = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findById((req as any).user._id).populate('mutedUsers', 'firstName lastName username avatar');
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json(user.mutedUsers);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Toggle mute user
+// @route   POST /api/auth/muted/:id
+// @access  Private
+export const toggleMuteUser = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findById((req as any).user._id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        const targetId = req.params.id;
+        const index = user.mutedUsers.indexOf(targetId as any);
+
+        if (index > -1) {
+            user.mutedUsers.splice(index, 1);
+            await user.save();
+            res.json({ message: 'User unmuted', muted: false });
+        } else {
+            user.mutedUsers.push(targetId as any);
+            await user.save();
+            res.json({ message: 'User muted', muted: true });
+        }
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Get blocked users
+// @route   GET /api/auth/blocked
+// @access  Private
+export const getBlockedUsers = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findById((req as any).user._id).populate('blockedUsers', 'firstName lastName username avatar');
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json(user.blockedUsers);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Toggle block user
+// @route   POST /api/auth/blocked/:id
+// @access  Private
+export const toggleBlockUser = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findById((req as any).user._id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        const targetId = req.params.id;
+        const index = user.blockedUsers.indexOf(targetId as any);
+
+        if (index > -1) {
+            user.blockedUsers.splice(index, 1);
+            await user.save();
+            res.json({ message: 'User unblocked', blocked: false });
+        } else {
+            user.blockedUsers.push(targetId as any);
+            await user.save();
+            res.json({ message: 'User blocked', blocked: true });
+        }
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};

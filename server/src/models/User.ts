@@ -40,6 +40,8 @@ export interface IUser extends Document {
     viewedProfile?: number;
     impressions?: number;
     bookmarks: mongoose.Types.ObjectId[];
+    mutedUsers: mongoose.Types.ObjectId[];
+    blockedUsers: mongoose.Types.ObjectId[];
     twoFactorEnabled: boolean;
     sessions: {
         id: string;
@@ -56,6 +58,8 @@ export interface IUser extends Document {
         showReplies: boolean;
         allowDMs: boolean;
         uploadLargeMedia: boolean;
+        discoverableByEmail: boolean;
+        discoverableByPhone: boolean;
     };
     createdAt: Date;
     updatedAt: Date;
@@ -111,6 +115,8 @@ const userSchema = new Schema<IUser>({
     viewedProfile: { type: Number, default: 0 },
     impressions: { type: Number, default: 0 },
     bookmarks: [{ type: Schema.Types.ObjectId, ref: 'Project' }],
+    mutedUsers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    blockedUsers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     twoFactorEnabled: { type: Boolean, default: false },
     sessions: [sessionSchema],
     settings: {
@@ -121,6 +127,8 @@ const userSchema = new Schema<IUser>({
         showReplies: { type: Boolean, default: true },
         allowDMs: { type: Boolean, default: true },
         uploadLargeMedia: { type: Boolean, default: true },
+        discoverableByEmail: { type: Boolean, default: true },
+        discoverableByPhone: { type: Boolean, default: true },
     }
 }, {
     timestamps: true
