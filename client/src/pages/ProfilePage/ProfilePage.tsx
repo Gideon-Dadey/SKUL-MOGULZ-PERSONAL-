@@ -8,6 +8,7 @@ import { mockUsers } from '../../data/mockData';
 import { useAuth } from '../../context/AuthContext';
 import authService from '../../services/authService';
 import api, { getImageUrl } from '../../services/api';
+import { ModernChatIcon } from '../../components/Icons';
 import { Experience, Education } from '../../types';
 import Modal from '../../components/Modal/Modal';
 import { DEFAULT_AVATAR } from '../../components/Logo';
@@ -471,7 +472,9 @@ const ProfilePage: React.FC = () => {
                                         ) : (
                                             <button className="btn btn-primary btn--md" onClick={handleConnect}>Connect</button>
                                         )}
-                                        <button className="btn btn-outline btn--md" onClick={() => navigate(`/messages/${profileUser._id || profileUser.id}`)}>Message</button>
+                                        <button className="btn btn-outline btn--md" onClick={() => navigate(`/messages/${profileUser._id || profileUser.id}`)}>
+                                            <ModernChatIcon size={18} style={{ marginRight: '8px' }} /> Message
+                                        </button>
                                         <button className="btn btn-outline btn--md">More</button>
                                     </>
                                 )}
