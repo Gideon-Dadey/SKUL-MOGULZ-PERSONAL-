@@ -16,7 +16,7 @@ import Colors from '../../constants/Colors';
 import notificationService from '../../services/notificationService';
 import { Notification } from '../../types';
 import { getImageUrl } from '../../services/api';
-import { Bell, Heart, MessageCircle, UserPlus, Zap, CheckCheck, MoreVertical } from 'lucide-react-native';
+import { Bell, Heart, MessageCircle, UserPlus, Zap, CheckCheck, MoreVertical, Repeat } from 'lucide-react-native';
 import { formatRelativeTime } from '../../utils/date';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSocket } from '../../context/SocketContext';
@@ -99,7 +99,7 @@ export default function NotificationsScreen() {
 
         // Navigate based on type
         if (type) {
-            if (['like', 'comment', 'funding'].includes(type) && targetId) {
+            if (['like', 'comment', 'funding', 'repost'].includes(type) && targetId) {
                 router.push(`/post/${targetId}`);
             } else if (type === 'follow' && targetId) {
                 router.push(`/profile/${targetId}`);
@@ -125,6 +125,7 @@ export default function NotificationsScreen() {
             case 'comment': return <MessageCircle size={iconSize} color="#00C9FF" fill="#00C9FF" />;
             case 'funding': return <Zap size={iconSize} color="#FDC830" fill="#FDC830" />;
             case 'follow': return <UserPlus size={iconSize} color="#A5D6B7" fill="#A5D6B7" />;
+            case 'repost': return <Repeat size={iconSize} color="#00BA7C" />;
             default: return <Bell size={iconSize} color={activeColors.muted} />;
         }
     };
@@ -165,8 +166,9 @@ export default function NotificationsScreen() {
                             (item.type === 'like' ? 'liked your project' :
                                 item.type === 'comment' ? 'commented on your project' :
                                     item.type === 'funding' ? 'supported your project' :
-                                        item.type === 'follow' ? 'followed you' :
-                                            'sent you a notification')
+                                        item.type === 'repost' ? 'reposted your project' :
+                                            item.type === 'follow' ? 'followed you' :
+                                                'sent you a notification')
                         }
                         {item.project && !item.content && (
                             <Text style={[styles.projectTitle, { color: activeColors.tint }]}>: "{item.project.title}"</Text>
