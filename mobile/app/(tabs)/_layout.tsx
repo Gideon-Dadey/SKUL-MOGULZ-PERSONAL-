@@ -67,7 +67,8 @@ export default function TabLayout() {
     : Math.max(insets.bottom, 10);
 
   const renderTabIcon = (Icon: any, focused: boolean) => {
-    return <Icon size={24} color={focused ? activeColors.tint : activeColors.tabIconDefault} />;
+    const iconColor = focused ? '#1C1C1E' : activeColors.tabIconDefault;
+    return <Icon size={24} color={iconColor} fill={focused ? iconColor : 'transparent'} />;
   };
 
   return (
