@@ -4,9 +4,12 @@ import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Theme = 'light' | 'dark';
+type ThemePreference = 'light' | 'dark' | 'system';
 
 interface ThemeContextType {
     theme: Theme;
+    themePreference: ThemePreference;
+    setThemePreference: (pref: ThemePreference) => void;
     toggleTheme: () => void;
 }
 
@@ -14,29 +17,39 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const systemColorScheme = useColorScheme();
+    const [themePreference, setThemePreferenceState] = useState<ThemePreference>('light');
     const [theme, setTheme] = useState<Theme>('light');
 
     useEffect(() => {
         const loadTheme = async () => {
-            const savedTheme = await AsyncStorage.getItem('theme');
+            const savedTheme = await AsyncStorage.getItem('themePreference');
             if (savedTheme) {
-                setTheme(savedTheme as Theme);
-            } else {
-                // Default to light as per user request
-                setTheme('light');
+                setThemePreferenceState(savedTheme as ThemePreference);
             }
         };
         loadTheme();
     }, []);
 
+    useEffect(() => {
+        if (themePreference === 'system') {
+            setTheme(systemColorScheme === 'dark' ? 'dark' : 'light');
+        } else {
+            setTheme(themePreference);
+        }
+    }, [themePreference, systemColorScheme]);
+
+    const setThemePreference = async (pref: ThemePreference) => {
+        setThemePreferenceState(pref);
+        await AsyncStorage.setItem('themePreference', pref);
+    };
+
     const toggleTheme = async () => {
-        const newTheme = theme === 'light' ? 'dark' : 'light';
-        setTheme(newTheme);
-        await AsyncStorage.setItem('theme', newTheme);
+        const newPref = theme === 'light' ? 'dark' : 'light';
+        await setThemePreference(newPref);
     };
 
     return (
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        <ThemeContext.Provider value={{ theme, themePreference, setThemePreference, toggleTheme }}>
             {children}
         </ThemeContext.Provider>
     );
