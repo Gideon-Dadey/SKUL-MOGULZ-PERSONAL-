@@ -1,5 +1,5 @@
 import express from 'express';
-import { getProjects, getBookmarkedProjects, getProjectById, createProject, likeProject, toggleBookmark, commentProject, likeComment, replyComment, supportProject, deleteProject, updateProject } from '../controllers/projectController';
+import { getProjects, getBookmarkedProjects, getProjectById, createProject, likeProject, toggleBookmark, commentProject, likeComment, replyComment, supportProject, deleteProject, updateProject, repostProject } from '../controllers/projectController';
 import { protect } from '../middleware/authMiddleware';
 import { upload } from '../middleware/uploadMiddleware';
 
@@ -10,6 +10,7 @@ router.get('/bookmarked', protect, getBookmarkedProjects);
 router.get('/:id', getProjectById);
 router.post('/', protect, upload.array('media', 5), createProject);
 router.put('/:id/like', protect, likeProject);
+router.put('/:id/repost', protect, repostProject);
 router.put('/:id/bookmark', protect, toggleBookmark);
 router.post('/:id/comment', protect, commentProject);
 router.put('/:id/comment/:commentId/like', protect, likeComment);

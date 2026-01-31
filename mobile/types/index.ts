@@ -57,6 +57,7 @@ export interface User {
         discoverableByEmail: boolean;
         discoverableByPhone: boolean;
     };
+    bookmarks?: string[];
     createdAt: string;
 }
 
@@ -100,6 +101,8 @@ export interface Post {
     projectStage: 'idea' | 'prototype' | 'mvp' | 'growth' | 'scaling';
     fundingGoal?: number;
     currentFunding?: number;
+    reposts?: string[];
+    repostOf?: Post;
     createdAt: string;
     updatedAt: string;
 }
