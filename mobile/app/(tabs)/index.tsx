@@ -27,6 +27,7 @@ export default function FeedScreen() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [showAccountsMenu, setShowAccountsMenu] = useState(false);
   const [showAnalyticsMenu, setShowAnalyticsMenu] = useState(false);
+  const [connectionCount, setConnectionCount] = useState(0);
   const [commentModalVisible, setCommentModalVisible] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
@@ -126,10 +127,21 @@ export default function FeedScreen() {
     }
   }, [user, isAuthenticated, selectedCategory, selectedStage]);
 
+  const fetchConnectionCount = async () => {
+    try {
+      const response = await api.get('/network/stats');
+      setConnectionCount(response.data.connectionsCount);
+    } catch (error) {
+      console.log("Failed to fetch connection stats", error);
+    }
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       if (isAuthenticated && user) {
+        fetchPosts();
         fetchUnreadCount();
+        fetchConnectionCount();
       }
     }, [user, isAuthenticated])
   );
@@ -397,7 +409,7 @@ export default function FeedScreen() {
               <Text style={[styles.sideMenuName, { color: activeColors.text }]}>{user?.firstName} {user?.lastName}</Text>
               <Text style={[styles.sideMenuHandle, { color: activeColors.muted }]}>@{user?.username || 'username'}</Text>
               <View style={styles.sideMenuStats}>
-                <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>{user?.connections?.length || 0}</Text>
+                <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>{connectionCount}</Text>
                 <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>Connections</Text>
               </View>
             </View>
