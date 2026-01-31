@@ -251,7 +251,7 @@ export default function FeedScreen() {
       style={[
         styles.stickyHeader,
         {
-          backgroundColor: theme === 'dark' ? activeColors.background : '#FFFFFF',
+          backgroundColor: theme === 'dark' ? activeColors.card : '#FFFFFF',
           opacity: showStickyHeader ? 1 : 0,
           transform: [{ translateY: showStickyHeader ? 0 : -STICKY_HEADER_HEIGHT }],
           borderBottomWidth: theme === 'dark' ? 0 : 1, // No border in dark mode
