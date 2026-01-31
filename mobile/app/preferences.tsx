@@ -10,7 +10,7 @@ import api from '../services/api';
 
 export default function PreferencesScreen() {
     const router = useRouter();
-    const { theme, toggleTheme } = useTheme();
+    const { theme, themePreference } = useTheme();
     const { user, logout } = useAuth();
     const activeColors = Colors[theme];
 
@@ -141,7 +141,7 @@ export default function PreferencesScreen() {
                 {/* Other */}
                 {renderSectionHeader('Other')}
                 <View style={styles.section}>
-                    {renderNavRow('App appearance', theme === 'dark' ? 'Dark' : 'Light', toggleTheme)}
+                    {renderNavRow('App appearance', themePreference.charAt(0).toUpperCase() + themePreference.slice(1), () => router.push('/appearance'))}
                     {renderNavRow('Legal', '', () => { })}
                     {renderNavRow('3rd party licenses', '', () => { })}
                     {renderNavRow('Delete account', '', () => {
