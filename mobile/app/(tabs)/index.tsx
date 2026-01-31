@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator, Dimensions, Animated, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers, SlidersHorizontal, Bookmark, Ban, VolumeX, HelpCircle, Settings, LogOut } from 'lucide-react-native';
+import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers, SlidersHorizontal, Bookmark, Ban, VolumeX, HelpCircle, Settings, LogOut, UserPlus } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -25,6 +25,7 @@ export default function FeedScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
+  const [showAccountsMenu, setShowAccountsMenu] = useState(false);
   const [commentModalVisible, setCommentModalVisible] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
@@ -427,13 +428,35 @@ export default function FeedScreen() {
             </TouchableOpacity>
           </ScrollView>
 
-          <TouchableOpacity style={[styles.sideMenuFooter, { borderTopColor: activeColors.border }]} onPress={async () => {
-            await logout();
-            router.replace('/(auth)/login');
-          }}>
-            <Text style={[styles.sideMenuFooterText, { color: activeColors.text }]}>Manage Accounts</Text>
-            <ChevronDown size={20} color={activeColors.muted} />
-          </TouchableOpacity>
+          <View style={{ borderTopWidth: 1, borderTopColor: activeColors.border }}>
+            <TouchableOpacity
+              style={[styles.sideMenuFooter, { borderTopWidth: 0 }]}
+              onPress={() => setShowAccountsMenu(!showAccountsMenu)}
+            >
+              <Text style={[styles.sideMenuFooterText, { color: activeColors.text }]}>Manage Accounts</Text>
+              <ChevronDown size={20} color={activeColors.muted} style={{ transform: [{ rotate: showAccountsMenu ? '180deg' : '0deg' }] }} />
+            </TouchableOpacity>
+
+            {showAccountsMenu && (
+              <View style={{ paddingBottom: 16 }}>
+                <TouchableOpacity style={styles.sideMenuItem} onPress={() => { setMenuVisible(false); router.push('/(auth)/register'); }}>
+                  <UserPlus size={22} color={activeColors.text} />
+                  <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Create a new account</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.sideMenuItem} onPress={() => { setMenuVisible(false); router.push('/(auth)/login'); }}>
+                  <Plus size={22} color={activeColors.text} />
+                  <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Add an existing account</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.sideMenuItem} onPress={async () => {
+                  await logout();
+                  router.replace('/(auth)/login');
+                }}>
+                  <LogOut size={22} color="#ef4444" />
+                  <Text style={[styles.sideMenuText, { color: '#ef4444' }]}>Log out @{user?.username}</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
         </View>
       </TouchableOpacity>
     </Modal>

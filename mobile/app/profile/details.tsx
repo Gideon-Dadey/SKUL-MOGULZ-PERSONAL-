@@ -7,7 +7,7 @@ import {
 import { useRouter, Stack } from 'expo-router';
 import {
     ArrowLeft, Settings, LogOut, MapPin, Users, Edit2, Plus, BarChart2, Eye, PenTool, Moon, Sun,
-    X, Folder, GraduationCap, Award, Trash2, Check, Menu, FileText, Sparkles, Bookmark, Ban, VolumeX, HelpCircle, Briefcase, ChevronDown
+    X, Folder, GraduationCap, Award, Trash2, Check, Menu, FileText, Sparkles, Bookmark, Ban, VolumeX, HelpCircle, Briefcase, ChevronDown, UserPlus
 } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -35,6 +35,7 @@ export default function ProfileScreen() {
     const [educationModalVisible, setEducationModalVisible] = useState(false);
     const [skillsModalVisible, setSkillsModalVisible] = useState(false);
     const [menuVisible, setMenuVisible] = useState(false);
+    const [showAccountsMenu, setShowAccountsMenu] = useState(false);
 
     // Form states
     const [aboutText, setAboutText] = useState(user?.bio || '');
@@ -450,10 +451,35 @@ export default function ProfileScreen() {
                         </TouchableOpacity>
                     </ScrollView>
 
-                    <TouchableOpacity style={[styles.sideMenuFooter, { borderTopColor: activeColors.border }]} onPress={handleLogout}>
-                        <Text style={[styles.sideMenuFooterText, { color: activeColors.text }]}>Manage Accounts</Text>
-                        <ChevronDown size={20} color={activeColors.muted} />
-                    </TouchableOpacity>
+                    <View style={{ borderTopWidth: 1, borderTopColor: activeColors.border }}>
+                        <TouchableOpacity
+                            style={[styles.sideMenuFooter, { borderTopWidth: 0 }]}
+                            onPress={() => setShowAccountsMenu(!showAccountsMenu)}
+                        >
+                            <Text style={[styles.sideMenuFooterText, { color: activeColors.text }]}>Manage Accounts</Text>
+                            <ChevronDown size={20} color={activeColors.muted} style={{ transform: [{ rotate: showAccountsMenu ? '180deg' : '0deg' }] }} />
+                        </TouchableOpacity>
+
+                        {showAccountsMenu && (
+                            <View style={{ paddingBottom: 16 }}>
+                                <TouchableOpacity style={styles.sideMenuItem} onPress={() => { setMenuVisible(false); router.push('/(auth)/register'); }}>
+                                    <UserPlus size={22} color={activeColors.text} />
+                                    <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Create a new account</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.sideMenuItem} onPress={() => { setMenuVisible(false); router.push('/(auth)/login'); }}>
+                                    <Plus size={22} color={activeColors.text} />
+                                    <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Add an existing account</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.sideMenuItem} onPress={async () => {
+                                    await logout();
+                                    router.replace('/(auth)/login');
+                                }}>
+                                    <LogOut size={22} color="#ef4444" />
+                                    <Text style={[styles.sideMenuText, { color: '#ef4444' }]}>Log out @{user?.username}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    </View>
                 </View>
             </TouchableOpacity>
         </Modal>
