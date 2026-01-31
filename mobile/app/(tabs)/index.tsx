@@ -3,7 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator, Dimensions, ScrollView, Animated as RNAnimated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers, SlidersHorizontal, Bookmark, Ban, VolumeX, HelpCircle, Settings, LogOut, UserPlus, BarChart2 } from 'lucide-react-native';
+import { Search, Plus, Bell, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers, SlidersHorizontal, Bookmark, Ban, VolumeX, HelpCircle, Settings, LogOut, UserPlus, BarChart2 } from 'lucide-react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -426,7 +427,7 @@ export default function FeedScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
-          <MessagesSquare size={28} color={activeColors.text} strokeWidth={1.5} />
+          <Ionicons name="chatbubbles-outline" size={28} color={activeColors.text} />
           {unreadMessages > 0 && (
             <View style={[styles.iOSBadge, { backgroundColor: '#FF3B30' }]}>
               <Text style={styles.iOSBadgeText}>{unreadMessages}</Text>
@@ -461,7 +462,7 @@ export default function FeedScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
-          <MessagesSquare size={28} color="#fff" strokeWidth={1.5} />
+          <Ionicons name="chatbubbles-outline" size={28} color="#fff" />
           {unreadMessages > 0 && (
             <View style={[styles.iOSBadge, { backgroundColor: '#FF3B30' }]}>
               <Text style={styles.iOSBadgeText}>{unreadMessages}</Text>

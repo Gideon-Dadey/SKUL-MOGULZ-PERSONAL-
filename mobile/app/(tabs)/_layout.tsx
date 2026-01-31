@@ -2,7 +2,8 @@ import React from 'react';
 import { Tabs, router } from 'expo-router';
 import { View, Text, Platform, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { House, Users, Folder, MessageCircle, Bell, SquarePlus } from 'lucide-react-native';
+import { House, Users, Folder, Bell, SquarePlus } from 'lucide-react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import Colors from '../../constants/Colors';
 import { useTheme } from '../../context/ThemeContext';

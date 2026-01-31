@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-    Home, Users, Folder, MessagesSquare, Bell, Search,
+    Home, Users, Folder, Bell, Search,
     ChevronDown, Settings, LogOut, HelpCircle,
     Sun, Moon, Plus, Grid3X3, TrendingUp, Bookmark
 } from 'lucide-react';
@@ -11,6 +11,7 @@ import { useSocket } from '../../context/SocketContext';
 import notificationService from '../../services/notificationService';
 import { getImageUrl } from '../../services/api';
 import Logo, { DEFAULT_AVATAR } from '../Logo';
+import { ModernChatIcon } from '../Icons';
 
 import './Navbar.css';
 
@@ -131,7 +132,7 @@ const Navbar: React.FC = () => {
         { path: '/feed', icon: Home, label: 'Home' },
         { path: '/network', icon: Users, label: 'Network' },
         { path: '/projects', icon: Folder, label: 'Projects' },
-        { path: '/messages', icon: MessagesSquare, label: 'Messaging', badge: unreadMessages },
+        { path: '/messages', icon: ModernChatIcon, label: 'Messaging', badge: unreadMessages },
         { path: '/notifications', icon: Bell, label: 'Notifications', badge: unreadNotifications },
     ];
 
@@ -192,7 +193,7 @@ const Navbar: React.FC = () => {
                                 onClick={() => item.path === '/notifications' && setShowNotifications(false)}
                             >
                                 <div className="navbar__nav-icon-container">
-                                    <item.icon size={22} />
+                                    <item.icon size={22} color="currentColor" />
                                     {item.badge !== undefined && item.badge > 0 && (
                                         <span className="navbar__notification-badge">{item.badge}</span>
                                     )}

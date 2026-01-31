@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import { ArrowLeft, MapPin, Users, MessageCircle, MoreHorizontal, Folder, GraduationCap, Award } from 'lucide-react-native';
+import { ArrowLeft, MapPin, Users, MoreHorizontal, Folder, GraduationCap, Award } from 'lucide-react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
 import Colors from '../../constants/Colors';
 import api, { getImageUrl } from '../../services/api';
@@ -174,7 +175,7 @@ export default function UserProfileScreen() {
                                 style={[styles.actionBtnPrimary, { backgroundColor: activeColors.tint }]}
                                 onPress={() => router.push(('/messages/' + (user._id || user.id)) as any)}
                             >
-                                <MessageCircle size={18} color="#000" />
+                                <Ionicons name="chatbubbles-outline" size={18} color="#000" />
                                 <Text style={styles.actionBtnTextPrimary}>Message</Text>
                             </TouchableOpacity>
 

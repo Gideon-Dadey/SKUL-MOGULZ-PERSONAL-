@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, FlatList, Image, TouchableOpacity, ActivityIndicator, Dimensions, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, Stack } from 'expo-router';
-import { ArrowLeft, Search, MessageCircle, MoreHorizontal } from 'lucide-react-native';
+import { ArrowLeft, Search, MoreHorizontal } from 'lucide-react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
 import Colors from '../../constants/Colors';
 import api, { getImageUrl } from '../../services/api';
@@ -51,7 +52,7 @@ export default function ConnectionsScreen() {
                     style={[styles.actionBtn, { backgroundColor: activeColors.background }]}
                     onPress={() => router.push(('/messages/' + item._id) as any)}
                 >
-                    <MessageCircle size={20} color={activeColors.tint} />
+                    <Ionicons name="chatbubbles-outline" size={20} color={activeColors.tint} />
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.actionBtn, { backgroundColor: activeColors.background }]}>
                     <MoreHorizontal size={20} color={activeColors.text} />

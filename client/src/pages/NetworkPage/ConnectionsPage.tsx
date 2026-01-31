@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Search, MessageSquare, MoreHorizontal } from 'lucide-react';
+import { Users, Search, MoreHorizontal } from 'lucide-react';
 import networkService from '../../services/networkService';
 import { getImageUrl } from '../../services/api';
+import { ModernChatIcon } from '../../components/Icons';
 import './ConnectionsPage.css';
 
 const ConnectionsPage: React.FC = () => {
@@ -81,7 +82,7 @@ const ConnectionsPage: React.FC = () => {
                                 </Link>
                                 <div className="connection-item__actions">
                                     <button className="btn btn-outline btn--sm">
-                                        <MessageSquare size={16} /> Message
+                                        <ModernChatIcon size={16} style={{ marginRight: '6px' }} /> Message
                                     </button>
                                     <div className="connection-item__more">
                                         <button className="btn btn-icon">
