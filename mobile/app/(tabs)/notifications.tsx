@@ -10,6 +10,7 @@ import {
     ActivityIndicator,
     Pressable
 } from 'react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
 import Colors from '../../constants/Colors';
 import notificationService from '../../services/notificationService';
@@ -23,6 +24,7 @@ export default function NotificationsScreen() {
     const { theme } = useTheme();
     const activeColors = Colors[theme];
     const insets = useSafeAreaInsets();
+    const router = useRouter();
 
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -41,6 +43,23 @@ export default function NotificationsScreen() {
         }
     }, []);
 
+    useFocusEffect(
+        useCallback(() => {
+            fetchNotifications(false);
+            // Mark all as read when viewed
+            const markAll = async () => {
+                try {
+                    await notificationService.markAllAsRead();
+                    // Update local state to reflect read status immediately
+                    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+                } catch (e) {
+                    console.error("Auto mark all read failed", e);
+                }
+            };
+            markAll();
+        }, [fetchNotifications])
+    );
+
     useEffect(() => {
         fetchNotifications();
     }, [fetchNotifications]);
@@ -50,15 +69,26 @@ export default function NotificationsScreen() {
         fetchNotifications(false);
     };
 
-    const handleMarkAsRead = async (id: string, isRead: boolean) => {
-        if (isRead) return;
-        try {
-            await notificationService.markAsRead(id);
-            setNotifications(prev =>
-                prev.map(n => n._id === id ? { ...n, isRead: true } : n)
-            );
-        } catch (error) {
-            console.error("Failed to mark as read", error);
+    const handleMarkAsRead = async (id: string, isRead: boolean, type?: string, targetId?: string) => {
+        // Mark as read in background if not already read
+        if (!isRead) {
+            try {
+                await notificationService.markAsRead(id);
+                setNotifications(prev =>
+                    prev.map(n => n._id === id ? { ...n, isRead: true } : n)
+                );
+            } catch (error) {
+                console.error("Failed to mark as read", error);
+            }
+        }
+
+        // Navigate based on type
+        if (type && targetId) {
+            if (['like', 'comment', 'funding'].includes(type)) {
+                router.push(`/post/${targetId}`);
+            } else if (type === 'follow') {
+                router.push(`/profile/${targetId}`);
+            }
         }
     };
 
@@ -91,7 +121,12 @@ export default function NotificationsScreen() {
                     styles.notifItem,
                     { backgroundColor: item.isRead ? 'transparent' : activeColors.background + '40' }
                 ]}
-                onPress={() => handleMarkAsRead(item._id, item.isRead)}
+                onPress={() => handleMarkAsRead(
+                    item._id,
+                    item.isRead,
+                    item.type,
+                    item.project?._id || item.sender?._id || item.sender?.id
+                )}
             >
                 <View style={styles.avatarContainer}>
                     <Image
