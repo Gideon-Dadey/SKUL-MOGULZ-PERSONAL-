@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Trash2, Edit, X } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Trash2, Edit, X, Play } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Post } from '../../types';
 import { useAuth } from '../../context/AuthContext';
@@ -137,21 +137,35 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
                 </Link>
                 {post.media && post.media.length > 0 && (
                     <div className={`post-card__media ${post.media.length > 1 ? 'post-card__media--multiple' : ''}`}>
-                        {post.media.slice(0, 3).map((url: string, idx: number) => (
-                            <div
-                                key={idx}
-                                className="post-card__image-wrapper"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setSelectedImage(getImageUrl(url));
-                                }}
-                            >
-                                <img src={getImageUrl(url) || ''} alt="" className="post-card__image" />
-                                {idx === 2 && post.media.length > 3 && (
-                                    <div className="post-card__media-overlay">+{post.media.length - 3}</div>
-                                )}
-                            </div>
-                        ))}
+                        {post.media.slice(0, 3).map((url: string, idx: number) => {
+                            const isVideo = url.match(/\.(mp4|mov|webm|quicktime)$/i) || url.includes('video');
+                            const fullUrl = getImageUrl(url);
+
+                            return (
+                                <div
+                                    key={idx}
+                                    className="post-card__image-wrapper"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setSelectedImage(fullUrl);
+                                    }}
+                                >
+                                    {isVideo ? (
+                                        <div className="post-card__video-preview">
+                                            <video src={fullUrl || ''} className="post-card__image" />
+                                            <div className="post-card__video-overlay">
+                                                <Play fill="white" size={32} />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <img src={fullUrl || ''} alt="" className="post-card__image" />
+                                    )}
+                                    {idx === 2 && post.media.length > 3 && (
+                                        <div className="post-card__media-overlay">+{post.media.length - 3}</div>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </div>
                 )}
             </div>
@@ -161,7 +175,17 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
                     <button className="image-lightbox__close" onClick={() => setSelectedImage(null)}>
                         <X size={24} />
                     </button>
-                    <img src={selectedImage} alt="" className="image-lightbox__content" />
+                    {selectedImage.match(/\.(mp4|mov|webm|quicktime)$/i) || selectedImage.includes('video') ? (
+                        <video
+                            src={selectedImage}
+                            controls
+                            autoPlay
+                            className="image-lightbox__content"
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    ) : (
+                        <img src={selectedImage} alt="" className="image-lightbox__content" />
+                    )}
                 </div>
             )}
 
