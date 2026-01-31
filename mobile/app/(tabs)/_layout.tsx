@@ -66,16 +66,8 @@ export default function TabLayout() {
     ? Math.max(insets.bottom, 20)
     : Math.max(insets.bottom, 10);
 
-  const renderTabIcon = (Icon: any, label: string, focused: boolean) => {
-    if (focused) {
-      return (
-        <View style={styles.activePill}>
-          <Icon size={18} color="#fff" />
-          <Text style={styles.activeLabel}>{label}</Text>
-        </View>
-      );
-    }
-    return <Icon size={24} color={activeColors.tabIconDefault} />;
+  const renderTabIcon = (Icon: any, focused: boolean) => {
+    return <Icon size={24} color={focused ? activeColors.tint : activeColors.tabIconDefault} />;
   };
 
   return (
@@ -106,21 +98,21 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ focused }) => renderTabIcon(Home, 'Home', focused),
+          tabBarIcon: ({ focused }) => renderTabIcon(Home, focused),
         }}
       />
       <Tabs.Screen
         name="network"
         options={{
           title: 'Network',
-          tabBarIcon: ({ focused }) => renderTabIcon(Users, 'Network', focused),
+          tabBarIcon: ({ focused }) => renderTabIcon(Users, focused),
         }}
       />
       <Tabs.Screen
         name="post"
         options={{
           title: 'Post',
-          tabBarIcon: ({ focused }) => renderTabIcon(SquarePlus, 'Post', focused),
+          tabBarIcon: ({ focused }) => renderTabIcon(SquarePlus, focused),
           tabBarButton: (props) => (
             <TouchableOpacity
               {...(props as any)}
@@ -135,7 +127,7 @@ export default function TabLayout() {
         name="notifications"
         options={{
           title: 'Alerts',
-          tabBarIcon: ({ focused }) => renderTabIcon(Bell, 'Alerts', focused),
+          tabBarIcon: ({ focused }) => renderTabIcon(Bell, focused),
           tabBarBadge: unreadAlerts > 0 ? unreadAlerts : undefined,
           tabBarBadgeStyle: { backgroundColor: '#FF4B2B', color: '#fff' }
         }}
@@ -144,7 +136,7 @@ export default function TabLayout() {
         name="projects"
         options={{
           title: 'Projects',
-          tabBarIcon: ({ focused }) => renderTabIcon(Folder, 'Projects', focused),
+          tabBarIcon: ({ focused }) => renderTabIcon(Folder, focused),
         }}
       />
       <Tabs.Screen
@@ -164,24 +156,4 @@ export default function TabLayout() {
 }
 
 const styles = StyleSheet.create({
-  activePill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#074B43',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 25,
-    gap: 8,
-    // Add a slight lift to the pill
-    shadowColor: '#074B43',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8,
-  },
-  activeLabel: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '700',
-  },
 });
