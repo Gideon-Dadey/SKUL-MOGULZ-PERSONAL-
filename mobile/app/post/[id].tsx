@@ -22,6 +22,8 @@ export default function PostDetailScreen() {
     const [loading, setLoading] = useState(true);
     const [commentText, setCommentText] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const [replyingTo, setReplyingTo] = useState<any>(null); // { id, authorName }
+    const [replyText, setReplyText] = useState('');
 
     useEffect(() => {
         if (id) fetchPostDetails();
@@ -61,6 +63,40 @@ export default function PostDetailScreen() {
             }));
         } catch (error) {
             console.error('Failed to like post', error);
+        }
+    };
+
+    const handleLikeComment = async (commentId: string) => {
+        try {
+            const response = await api.put(`/projects/${post.id}/comment/${commentId}/like`);
+            const updatedLikes = response.data;
+            setPost((prev: any) => ({
+                ...prev,
+                comments: prev.comments.map((c: any) =>
+                    c._id === commentId ? { ...c, likes: updatedLikes } : c
+                )
+            }));
+        } catch (error) {
+            console.error('Failed to like comment', error);
+        }
+    };
+
+    const handleReplyComment = async () => {
+        if (!replyText.trim() || !replyingTo) return;
+
+        try {
+            setSubmitting(true);
+            Keyboard.dismiss();
+            await api.post(`/projects/${post.id}/comment/${replyingTo.id}/reply`, {
+                content: replyText
+            });
+            setReplyText('');
+            setReplyingTo(null);
+            fetchPostDetails(); // Refresh to get the new reply
+        } catch (error) {
+            console.error('Failed to post reply', error);
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -118,25 +154,76 @@ export default function PostDetailScreen() {
 
     const isLiked = user && (post.likedBy || []).includes(user.id);
 
-    const renderComment = ({ item }: { item: any }) => (
-        <View style={[styles.commentItem, { borderBottomColor: activeColors.border }]}>
-            <Image
-                source={{ uri: getImageUrl(item.author?.avatar) || `https://ui-avatars.com/api/?name=${item.author?.firstName || 'User'}&background=A5D6B7&color=fff` }}
-                style={styles.commentAvatar}
-            />
-            <View style={styles.commentContent}>
-                <View style={styles.commentHeader}>
-                    <Text style={[styles.commentAuthor, { color: activeColors.text }]}>
-                        {item.author?.firstName} {item.author?.lastName}
-                    </Text>
-                    <Text style={[styles.commentDate, { color: activeColors.muted }]}>
-                        {new Date(item.createdAt).toLocaleDateString()}
-                    </Text>
+    const renderComment = ({ item }: { item: any }) => {
+        const commentIsLiked = user && (item.likes || []).includes(user.id);
+
+        return (
+            <View style={[styles.commentItem, { borderBottomColor: activeColors.border }]}>
+                <Image
+                    source={{ uri: getImageUrl(item.author?.avatar) || `https://ui-avatars.com/api/?name=${item.author?.firstName || 'User'}&background=A5D6B7&color=fff` }}
+                    style={styles.commentAvatar}
+                />
+                <View style={styles.commentContent}>
+                    <View style={styles.commentHeader}>
+                        <Text style={[styles.commentAuthor, { color: activeColors.text }]}>
+                            {item.author?.firstName} {item.author?.lastName}
+                        </Text>
+                        <Text style={[styles.commentDate, { color: activeColors.muted }]}>
+                            {new Date(item.createdAt).toLocaleDateString()}
+                        </Text>
+                    </View>
+                    <Text style={[styles.commentText, { color: activeColors.text }]}>{item.content}</Text>
+
+                    <View style={styles.commentActions}>
+                        <TouchableOpacity
+                            style={styles.commentActionBtn}
+                            onPress={() => handleLikeComment(item._id)}
+                        >
+                            <Heart
+                                size={14}
+                                color={commentIsLiked ? activeColors.tint : activeColors.muted}
+                                fill={commentIsLiked ? activeColors.tint : 'transparent'}
+                            />
+                            <Text style={[styles.commentActionText, { color: commentIsLiked ? activeColors.tint : activeColors.muted }]}>
+                                {item.likes?.length || 0}
+                            </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.commentActionBtn}
+                            onPress={() => {
+                                setReplyingTo({ id: item._id, authorName: item.author?.firstName });
+                                inputRef.current?.focus();
+                            }}
+                        >
+                            <MessageCircle size={14} color={activeColors.muted} />
+                            <Text style={[styles.commentActionText, { color: activeColors.muted }]}>Reply</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Replies */}
+                    {item.replies && item.replies.length > 0 && (
+                        <View style={styles.repliesContainer}>
+                            {item.replies.map((reply: any) => (
+                                <View key={reply._id || reply.id} style={styles.replyItem}>
+                                    <Image
+                                        source={{ uri: getImageUrl(reply.author?.avatar) || `https://ui-avatars.com/api/?name=${reply.author?.firstName || 'User'}&background=A5D6B7&color=fff` }}
+                                        style={styles.replyAvatar}
+                                    />
+                                    <View style={styles.replyContent}>
+                                        <Text style={[styles.replyAuthor, { color: activeColors.text }]}>
+                                            {reply.author?.firstName} {reply.author?.lastName}
+                                        </Text>
+                                        <Text style={[styles.commentText, { color: activeColors.text, fontSize: 13 }]}>{reply.content}</Text>
+                                    </View>
+                                </View>
+                            ))}
+                        </View>
+                    )}
                 </View>
-                <Text style={[styles.commentText, { color: activeColors.text }]}>{item.content}</Text>
             </View>
-        </View>
-    );
+        );
+    };
 
     return (
         <KeyboardAvoidingView
@@ -235,7 +322,17 @@ export default function PostDetailScreen() {
                 )}
             />
 
-            {/* Comment Input */}
+            {/* Comment/Reply Input */}
+            {replyingTo && (
+                <View style={[styles.replyStatus, { backgroundColor: activeColors.card, borderTopColor: activeColors.border }]}>
+                    <Text style={[styles.replyStatusText, { color: activeColors.muted }]}>
+                        Replying to <Text style={{ fontWeight: '700' }}>{replyingTo.authorName}</Text>
+                    </Text>
+                    <TouchableOpacity onPress={() => setReplyingTo(null)}>
+                        <Text style={{ color: activeColors.tint }}>Cancel</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
             <View style={[styles.inputContainer, { backgroundColor: activeColors.card, borderTopColor: activeColors.border }]}>
                 <Image
                     source={{ uri: getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
@@ -244,16 +341,16 @@ export default function PostDetailScreen() {
                 <TextInput
                     ref={inputRef}
                     style={[styles.input, { backgroundColor: activeColors.background, color: activeColors.text }]}
-                    placeholder="Post your reply"
+                    placeholder={replyingTo ? "Post your reply" : "Post your thoughts"}
                     placeholderTextColor={activeColors.muted}
-                    value={commentText}
-                    onChangeText={setCommentText}
+                    value={replyingTo ? replyText : commentText}
+                    onChangeText={replyingTo ? setReplyText : setCommentText}
                     multiline
                 />
                 <TouchableOpacity
-                    style={[styles.sendBtn, { opacity: commentText.trim() ? 1 : 0.5 }]}
-                    disabled={!commentText.trim() || submitting}
-                    onPress={handleSubmitComment}
+                    style={[styles.sendBtn, { opacity: (replyingTo ? replyText.trim() : commentText.trim()) ? 1 : 0.5 }]}
+                    disabled={submitting || (replyingTo ? !replyText.trim() : !commentText.trim())}
+                    onPress={replyingTo ? handleReplyComment : handleSubmitComment}
                 >
                     <Send size={20} color={activeColors.tint} />
                 </TouchableOpacity>
@@ -430,5 +527,53 @@ const styles = StyleSheet.create({
     },
     sendBtn: {
         padding: 8,
+    },
+    commentActions: {
+        flexDirection: 'row',
+        marginTop: 8,
+        gap: 16,
+    },
+    commentActionBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+    },
+    commentActionText: {
+        fontSize: 12,
+        fontWeight: '600',
+    },
+    repliesContainer: {
+        marginTop: 12,
+        gap: 12,
+        borderLeftWidth: 2,
+        borderLeftColor: 'rgba(0,0,0,0.05)',
+        paddingLeft: 12,
+    },
+    replyItem: {
+        flexDirection: 'row',
+        gap: 10,
+    },
+    replyAvatar: {
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+    },
+    replyContent: {
+        flex: 1,
+    },
+    replyAuthor: {
+        fontSize: 13,
+        fontWeight: '700',
+        marginBottom: 2,
+    },
+    replyStatus: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderTopWidth: 1,
+    },
+    replyStatusText: {
+        fontSize: 12,
     },
 });

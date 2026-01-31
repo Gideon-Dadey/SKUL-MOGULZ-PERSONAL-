@@ -171,10 +171,12 @@ export const commentProject = async (req: any, res: Response) => {
         const newComment = {
             content: req.body.content,
             author: req.user.id,
+            likes: [],
+            replies: [],
             createdAt: new Date()
         };
 
-        project.comments.unshift(newComment);
+        project.comments.unshift(newComment as any);
         await project.save();
 
         // Create Notification
@@ -314,6 +316,78 @@ export const deleteProject = async (req: any, res: Response) => {
         await project.deleteOne();
 
         res.status(200).json({ message: 'Project removed' });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+// @desc    Like a comment
+// @route   PUT /api/projects/:id/comment/:commentId/like
+// @access  Private
+export const likeComment = async (req: any, res: Response) => {
+    try {
+        const project = await Project.findById(req.params.id);
+
+        if (!project) {
+            res.status(404).json({ message: 'Project not found' });
+            return;
+        }
+
+        const comment = (project.comments as any).id(req.params.commentId);
+        if (!comment) {
+            // Check in replies if needed, but for now just top-level
+            res.status(404).json({ message: 'Comment not found' });
+            return;
+        }
+
+        const likeIndex = comment.likes.indexOf(req.user.id);
+        if (likeIndex !== -1) {
+            comment.likes.splice(likeIndex, 1);
+        } else {
+            comment.likes.push(req.user.id);
+        }
+
+        await project.save();
+        res.status(200).json(comment.likes);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Reply to a comment
+// @route   POST /api/projects/:id/comment/:commentId/reply
+// @access  Private
+export const replyComment = async (req: any, res: Response) => {
+    try {
+        const project = await Project.findById(req.params.id);
+
+        if (!project) {
+            res.status(404).json({ message: 'Project not found' });
+            return;
+        }
+
+        const comment = (project.comments as any).id(req.params.commentId);
+        if (!comment) {
+            res.status(404).json({ message: 'Comment not found' });
+            return;
+        }
+
+        const newReply = {
+            content: req.body.content,
+            author: req.user.id,
+            createdAt: new Date(),
+            likes: [],
+            replies: []
+        };
+
+        comment.replies.push(newReply as any);
+        await project.save();
+
+        await project.populate([
+            { path: 'comments.author', select: 'firstName lastName avatar' },
+            { path: 'comments.replies.author', select: 'firstName lastName avatar' }
+        ]);
+
+        res.status(200).json(project.comments);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
