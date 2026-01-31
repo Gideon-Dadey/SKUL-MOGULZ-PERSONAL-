@@ -22,7 +22,17 @@ export default function PreferencesScreen() {
     const [showReplies, setShowReplies] = useState(true);
     const [allowDMs, setAllowDMs] = useState(true);
     const [uploadLargeMedia, setUploadLargeMedia] = useState(true);
-    const [twoFactor, setTwoFactor] = useState(false);
+    const [twoFactor, setTwoFactor] = useState(user?.twoFactorEnabled || false);
+
+    const handleToggle2FA = async (value: boolean) => {
+        try {
+            const response = await api.put('/auth/2fa');
+            setTwoFactor(response.data.enabled);
+        } catch (error) {
+            Alert.alert('Error', 'Failed to update 2FA settings');
+            setTwoFactor(!value); // Revert switch if failed
+        }
+    };
 
     const renderToggle = (label: string, value: boolean, onValueChange: (val: boolean) => void, indent = false) => (
         <View style={[styles.row, { backgroundColor: activeColors.card }]}>
@@ -132,10 +142,10 @@ export default function PreferencesScreen() {
                 {/* Security */}
                 {renderSectionHeader('Security')}
                 <View style={styles.section}>
-                    {renderNavRow('Change email', user?.email || 'email@example.com', () => { })}
-                    {renderNavRow('Change password', '', () => { })}
-                    {renderToggle('Two-factor authentication (2FA)', twoFactor, setTwoFactor)}
-                    {renderNavRow('Active Sessions', '', () => { })}
+                    {renderNavRow('Change email', user?.email || 'email@example.com', () => router.push('/change-email'))}
+                    {renderNavRow('Change password', '', () => router.push('/change-password'))}
+                    {renderToggle('Two-factor authentication (2FA)', twoFactor, handleToggle2FA)}
+                    {renderNavRow('Active Sessions', '', () => router.push('/active-sessions'))}
                 </View>
 
                 {/* Other */}
