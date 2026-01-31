@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
 import {
-    ArrowLeft, Settings, LogOut, MapPin, Users, Edit2, Plus, BarChart2, Eye, PenTool, Moon, Sun,
+    ArrowLeft, Settings, LogOut, MapPin, Users, Edit2, Plus, BarChart2, Eye, PenTool,
     X, Folder, GraduationCap, Award, Trash2, Check, Menu, FileText, Sparkles, Bookmark, Ban, VolumeX, HelpCircle, Briefcase, ChevronDown, UserPlus
 } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
@@ -583,27 +583,6 @@ export default function ProfileScreen() {
                         </View>
                     </View>
                 </View>
-
-                {/* Theme Switcher */}
-                <View style={[styles.section, { backgroundColor: activeColors.card }]}>
-                    <View style={styles.settingItem}>
-                        <View style={styles.settingLabelContainer}>
-                            {theme === 'dark' ? <Moon size={20} color={activeColors.text} /> : <Sun size={20} color={activeColors.text} />}
-                            <View style={{ marginLeft: 12 }}>
-                                <Text style={[styles.settingLabel, { color: activeColors.text }]}>Dark Mode</Text>
-                                <Text style={[styles.settingSublabel, { color: activeColors.muted }]}>{theme === 'dark' ? 'On' : 'Off'}</Text>
-                            </View>
-                        </View>
-                        <Switch
-                            value={theme === 'dark'}
-                            onValueChange={toggleTheme}
-                            trackColor={{ false: '#767577', true: activeColors.tint }}
-                            thumbColor={theme === 'dark' ? '#fff' : '#f4f3f4'}
-                        />
-                    </View>
-                </View>
-
-
 
                 {/* About Section */}
                 <View style={[styles.section, { backgroundColor: activeColors.card }]}>
