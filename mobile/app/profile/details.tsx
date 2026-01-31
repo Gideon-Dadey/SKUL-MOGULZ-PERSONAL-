@@ -460,14 +460,7 @@ export default function ProfileScreen() {
                             <Bookmark size={22} color={activeColors.text} />
                             <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Bookmarks</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
-                            <Ban size={22} color={activeColors.text} />
-                            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Blocks</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
-                            <VolumeX size={22} color={activeColors.text} />
-                            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Mutes</Text>
-                        </TouchableOpacity>
+
                         <TouchableOpacity style={styles.sideMenuItem} onPress={() => { setMenuVisible(false); router.push('/preferences'); }}>
                             <Settings size={22} color={activeColors.text} />
                             <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Preferences</Text>

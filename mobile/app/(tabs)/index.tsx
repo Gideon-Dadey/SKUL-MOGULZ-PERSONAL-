@@ -552,14 +552,7 @@ export default function FeedScreen() {
             <Bookmark size={22} color={activeColors.text} />
             <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Bookmarks</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sideMenuItem} onPress={() => toggleMenu(false)}>
-            <Ban size={22} color={activeColors.text} />
-            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Blocks</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.sideMenuItem} onPress={() => toggleMenu(false)}>
-            <VolumeX size={22} color={activeColors.text} />
-            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Mutes</Text>
-          </TouchableOpacity>
+
           <TouchableOpacity style={styles.sideMenuItem} onPress={() => { toggleMenu(false); router.push('/preferences'); }}>
             <Settings size={22} color={activeColors.text} />
             <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Preferences</Text>
