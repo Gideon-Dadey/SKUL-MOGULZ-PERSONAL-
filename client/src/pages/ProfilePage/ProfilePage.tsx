@@ -589,21 +589,34 @@ const ProfilePage: React.FC = () => {
                                 return (
                                     <div key={skill} className="skill-item">
                                         <div className="skill-item__main">
-                                            <h3 className="skill-item__name">{skill}</h3>
-                                            <div className="skill-item__endorsements">
-                                                <div className="endorsement-avatars">
-                                                    {mockUsers.slice(index, index + 3).map((u, i) => (
-                                                        <img
-                                                            key={i}
-                                                            src={getImageUrl(u.avatar) || DEFAULT_AVATAR}
-                                                            alt=""
-                                                            className="endorsement-avatar"
-                                                        />
-                                                    ))}
+                                            <h3 className="skill-item__name">
+                                                {skill}
+                                                {index < 2 && <span className="top-skill-badge">Top Skill</span>}
+                                            </h3>
+
+                                            <div className="skill-item__meta">
+                                                <div className="skill-item__endorsements">
+                                                    <div className="endorsement-avatars">
+                                                        {mockUsers.slice(index, index + 2).map((u, i) => (
+                                                            <img
+                                                                key={i}
+                                                                src={getImageUrl(u.avatar) || DEFAULT_AVATAR}
+                                                                alt=""
+                                                                className="endorsement-avatar"
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                    <span className="endorsement-text">
+                                                        Endorsed by <strong>{mockUsers[index].firstName} {mockUsers[index].lastName}</strong> and {endorsementCount - 1} others
+                                                    </span>
                                                 </div>
-                                                <span className="endorsement-text">
-                                                    Endorsed by <strong>{mockUsers[index].firstName} {mockUsers[index].lastName}</strong> and {endorsementCount - 1} others
-                                                </span>
+
+                                                {index % 2 === 0 && (
+                                                    <div className="skill-item__proof">
+                                                        <Folder size={12} />
+                                                        <span>Verified by <strong>{userPosts[0]?.title || 'Recent Project'}</strong></span>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                         {!isOwnProfile && (
