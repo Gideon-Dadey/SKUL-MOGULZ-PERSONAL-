@@ -7,7 +7,7 @@ import {
 import { useRouter, Stack } from 'expo-router';
 import {
     ArrowLeft, Settings, LogOut, MapPin, Users, Edit2, Plus, BarChart2, Eye, PenTool, Moon, Sun,
-    X, Folder, GraduationCap, Award, Trash2, Check
+    X, Folder, GraduationCap, Award, Trash2, Check, Menu, FileText, Sparkles, Bookmark, Ban, VolumeX, HelpCircle, Briefcase, ChevronDown
 } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -34,6 +34,7 @@ export default function ProfileScreen() {
     const [experienceModalVisible, setExperienceModalVisible] = useState(false);
     const [educationModalVisible, setEducationModalVisible] = useState(false);
     const [skillsModalVisible, setSkillsModalVisible] = useState(false);
+    const [menuVisible, setMenuVisible] = useState(false);
 
     // Form states
     const [aboutText, setAboutText] = useState(user?.bio || '');
@@ -396,6 +397,68 @@ export default function ProfileScreen() {
         </View>
     );
 
+    const renderSideMenu = () => (
+        <Modal visible={menuVisible} animationType="fade" transparent onRequestClose={() => setMenuVisible(false)}>
+            <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setMenuVisible(false)}>
+                <View style={[styles.sideMenuContainer, { backgroundColor: activeColors.card }]}>
+                    <View style={styles.sideMenuHeader}>
+                        <Image
+                            source={{ uri: getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
+                            style={styles.sideMenuAvatar}
+                        />
+                        <View style={styles.sideMenuUserInfo}>
+                            <Text style={[styles.sideMenuName, { color: activeColors.text }]}>{user?.firstName} {user?.lastName}</Text>
+                            <Text style={[styles.sideMenuHandle, { color: activeColors.muted }]}>@{user?.username || 'username'}</Text>
+                        </View>
+                        <View style={styles.sideMenuStats}>
+                            <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>{connectionCount}</Text>
+                            <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>Followers</Text>
+                            <View style={{ width: 12 }} />
+                            <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>18</Text>
+                            <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>Following</Text>
+                        </View>
+                    </View>
+
+                    <ScrollView style={styles.sideMenuContent} showsVerticalScrollIndicator={false}>
+                        <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
+                            <Users size={22} color={activeColors.text} />
+                            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Profile</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
+                            <Sparkles size={22} color={activeColors.text} />
+                            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Feeds</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
+                            <Bookmark size={22} color={activeColors.text} />
+                            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Bookmarks</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
+                            <Ban size={22} color={activeColors.text} />
+                            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Blocks</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
+                            <VolumeX size={22} color={activeColors.text} />
+                            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Mutes</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.sideMenuItem} onPress={() => { setMenuVisible(false); router.push('/edit-profile'); }}>
+                            <Settings size={22} color={activeColors.text} />
+                            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Preferences</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
+                            <HelpCircle size={22} color={activeColors.text} />
+                            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Help Center</Text>
+                        </TouchableOpacity>
+                    </ScrollView>
+
+                    <TouchableOpacity style={[styles.sideMenuFooter, { borderTopColor: activeColors.border }]} onPress={handleLogout}>
+                        <Text style={[styles.sideMenuFooterText, { color: activeColors.text }]}>Manage Accounts</Text>
+                        <ChevronDown size={20} color={activeColors.muted} />
+                    </TouchableOpacity>
+                </View>
+            </TouchableOpacity>
+        </Modal>
+    );
+
     return (
         <View style={[styles.container, { backgroundColor: activeColors.background }]}>
             <Stack.Screen options={{ headerShown: false }} />
@@ -405,8 +468,8 @@ export default function ProfileScreen() {
                     <ArrowLeft size={24} color={activeColors.text} />
                 </TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: activeColors.text }]}>Profile</Text>
-                <TouchableOpacity onPress={() => router.push('/edit-profile')} style={styles.iconBtn}>
-                    <Settings size={22} color={activeColors.text} />
+                <TouchableOpacity onPress={() => setMenuVisible(true)} style={styles.iconBtn}>
+                    <Menu size={24} color={activeColors.text} />
                 </TouchableOpacity>
             </View>
 
@@ -739,6 +802,7 @@ export default function ProfileScreen() {
                     </View>
                 </View>
             ), () => setSkillsModalVisible(false))}
+            {renderSideMenu()}
         </View>
     );
 }
@@ -835,4 +899,19 @@ const styles = StyleSheet.create({
     addSkillRow: { flexDirection: 'row', gap: 12, marginBottom: 24 },
     addSkillBtn: { width: 48, height: 48, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
     skillListTitle: { fontSize: 16, fontWeight: '600', marginBottom: 12 },
+    // Side Menu Styles
+    sideMenuContainer: { width: '80%', height: '100%', backgroundColor: '#fff', paddingVertical: 40, paddingHorizontal: 24, paddingBottom: 20 },
+    sideMenuHeader: { marginBottom: 30 },
+    sideMenuAvatar: { width: 60, height: 60, borderRadius: 30, marginBottom: 12 },
+    sideMenuUserInfo: { marginBottom: 16 },
+    sideMenuName: { fontSize: 18, fontWeight: '800', marginBottom: 2 },
+    sideMenuHandle: { fontSize: 15 },
+    sideMenuStats: { flexDirection: 'row', alignItems: 'center' },
+    sideMenuStatValue: { fontWeight: '700', fontSize: 15, marginRight: 4 },
+    sideMenuStatLabel: { fontSize: 15 },
+    sideMenuContent: { flex: 1 },
+    sideMenuItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 16, gap: 16 },
+    sideMenuText: { fontSize: 18, fontWeight: '600' },
+    sideMenuFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 20, borderTopWidth: 1 },
+    sideMenuFooterText: { fontSize: 16, fontWeight: '600' },
 });

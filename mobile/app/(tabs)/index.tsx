@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator, Dimensions, Animated } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator, Dimensions, Animated, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers, SlidersHorizontal } from 'lucide-react-native';
+import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers, SlidersHorizontal, Bookmark, Ban, VolumeX, HelpCircle, Settings, LogOut } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -15,7 +15,7 @@ import PostCard from '../../components/PostCard';
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function FeedScreen() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const { theme } = useTheme();
   const { socket } = useSocket();
   const router = useRouter();
@@ -24,6 +24,7 @@ export default function FeedScreen() {
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
   const [commentModalVisible, setCommentModalVisible] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
@@ -268,7 +269,7 @@ export default function FeedScreen() {
       <StatusBar style={showStickyHeader && theme !== 'dark' ? 'dark' : 'light'} />
       <View style={styles.stickyTopBar}>
         <TouchableOpacity
-          onPress={() => router.push('/profile/details')}
+          onPress={() => setMenuVisible(true)}
           style={[styles.profileButton, { borderColor: activeColors.border, backgroundColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}
         >
           {user?.avatar ? (
@@ -306,7 +307,7 @@ export default function FeedScreen() {
       <StatusBar style="light" />
       <View style={styles.topBar}>
         <TouchableOpacity
-          onPress={() => router.push('/profile/details')}
+          onPress={() => setMenuVisible(true)}
           style={styles.profileButton}
         >
           {user?.avatar ? (
@@ -371,6 +372,71 @@ export default function FeedScreen() {
         </TouchableOpacity>
       </View>
     </View>
+  );
+
+  const renderSideMenu = () => (
+    <Modal visible={menuVisible} animationType="fade" transparent onRequestClose={() => setMenuVisible(false)}>
+      <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setMenuVisible(false)}>
+        <View style={[styles.sideMenuContainer, { backgroundColor: activeColors.card }]}>
+          <View style={styles.sideMenuHeader}>
+            <Image
+              source={{ uri: getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
+              style={styles.sideMenuAvatar}
+            />
+            <View style={styles.sideMenuUserInfo}>
+              <Text style={[styles.sideMenuName, { color: activeColors.text }]}>{user?.firstName} {user?.lastName}</Text>
+              <Text style={[styles.sideMenuHandle, { color: activeColors.muted }]}>@{user?.username || 'username'}</Text>
+            </View>
+            <View style={styles.sideMenuStats}>
+              <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>0</Text>
+              <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>Followers</Text>
+              <View style={{ width: 12 }} />
+              <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>0</Text>
+              <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>Following</Text>
+            </View>
+          </View>
+
+          <ScrollView style={styles.sideMenuContent} showsVerticalScrollIndicator={false}>
+            <TouchableOpacity style={styles.sideMenuItem} onPress={() => { setMenuVisible(false); router.push('/profile/details'); }}>
+              <CircleUser size={22} color={activeColors.text} />
+              <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Profile</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
+              <Sparkles size={22} color={activeColors.text} />
+              <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Feeds</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
+              <Bookmark size={22} color={activeColors.text} />
+              <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Bookmarks</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
+              <Ban size={22} color={activeColors.text} />
+              <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Blocks</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
+              <VolumeX size={22} color={activeColors.text} />
+              <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Mutes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sideMenuItem} onPress={() => { setMenuVisible(false); router.push('/edit-profile'); }}>
+              <Settings size={22} color={activeColors.text} />
+              <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Preferences</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
+              <HelpCircle size={22} color={activeColors.text} />
+              <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Help Center</Text>
+            </TouchableOpacity>
+          </ScrollView>
+
+          <TouchableOpacity style={[styles.sideMenuFooter, { borderTopColor: activeColors.border }]} onPress={async () => {
+            await logout();
+            router.replace('/(auth)/login');
+          }}>
+            <Text style={[styles.sideMenuFooterText, { color: activeColors.text }]}>Manage Accounts</Text>
+            <ChevronDown size={20} color={activeColors.muted} />
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    </Modal>
   );
 
   return (
@@ -562,6 +628,7 @@ export default function FeedScreen() {
           </View>
         </View>
       </Modal>
+      {renderSideMenu()}
     </View>
   );
 }
@@ -822,4 +889,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '800',
   },
+  // Side Menu Styles
+  sideMenuContainer: { width: '80%', height: '100%', backgroundColor: '#fff', paddingVertical: 40, paddingHorizontal: 24, paddingBottom: 20 },
+  sideMenuHeader: { marginBottom: 30 },
+  sideMenuAvatar: { width: 60, height: 60, borderRadius: 30, marginBottom: 12 },
+  sideMenuUserInfo: { marginBottom: 16 },
+  sideMenuName: { fontSize: 18, fontWeight: '800', marginBottom: 2 },
+  sideMenuHandle: { fontSize: 15 },
+  sideMenuStats: { flexDirection: 'row', alignItems: 'center' },
+  sideMenuStatValue: { fontWeight: '700', fontSize: 15, marginRight: 4 },
+  sideMenuStatLabel: { fontSize: 15 },
+  sideMenuContent: { flex: 1 },
+  sideMenuItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 16, gap: 16 },
+  sideMenuText: { fontSize: 18, fontWeight: '600' },
+  sideMenuFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 20, borderTopWidth: 1 },
+  sideMenuFooterText: { fontSize: 16, fontWeight: '600' },
 });
