@@ -502,7 +502,7 @@ export default function ProfileScreen() {
                                     router.replace('/(auth)/login');
                                 }}>
                                     <LogOut size={22} color="#ef4444" />
-                                    <Text style={[styles.sideMenuText, { color: '#ef4444' }]}>Log out @{user?.username}</Text>
+                                    <Text style={[styles.sideMenuText, { color: '#ef4444' }]}>Log out</Text>
                                 </TouchableOpacity>
                             </View>
                         )}

@@ -421,7 +421,6 @@ export default function FeedScreen() {
             />
             <View style={styles.sideMenuUserInfo}>
               <Text style={[styles.sideMenuName, { color: activeColors.text }]}>{user?.firstName} {user?.lastName}</Text>
-              <Text style={[styles.sideMenuHandle, { color: activeColors.muted }]}>@{user?.username || 'username'}</Text>
               <View style={styles.sideMenuStats}>
                 <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>{connectionCount}</Text>
                 <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>Connections</Text>
@@ -506,7 +505,7 @@ export default function FeedScreen() {
                   router.replace('/(auth)/login');
                 }}>
                   <LogOut size={22} color="#ef4444" />
-                  <Text style={[styles.sideMenuText, { color: '#ef4444' }]}>Log out @{user?.username}</Text>
+                  <Text style={[styles.sideMenuText, { color: '#ef4444' }]}>Log out</Text>
                 </TouchableOpacity>
               </View>
             )}
