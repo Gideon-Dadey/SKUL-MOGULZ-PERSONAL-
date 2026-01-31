@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Platfo
 import { useRouter, Stack, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { X, Image as ImageIcon, Sparkles, Hash, DollarSign, Folder, ChevronRight, Target } from 'lucide-react-native';
+import { X, Image as ImageIcon, Sparkles, Hash, DollarSign, Folder, ChevronRight, Target, Video } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useTheme } from '../context/ThemeContext';
 import Colors from '../constants/Colors';
@@ -72,7 +72,7 @@ export default function ModalScreen() {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsMultipleSelection: true,
       selectionLimit: 4 - images.length,
       quality: 0.7,
@@ -121,14 +121,23 @@ export default function ModalScreen() {
         formData.append('currentFunding', currentFunding.replace(/[^0-9.]/g, '') || '0');
       }
 
-      images.forEach((image, index) => {
-        const filename = image.uri.split('/').pop() || `image_${index}.jpg`;
+      images.forEach((mediaItem, index) => {
+        const filename = mediaItem.uri.split('/').pop() || `media_${index}`;
         const match = /\.(\w+)$/.exec(filename);
-        const type = match ? `image/${match[1]}` : `image/jpeg`;
+        let type = mediaItem.type === 'video' ? 'video/mp4' : 'image/jpeg';
+
+        if (match) {
+          const ext = match[1].toLowerCase();
+          if (mediaItem.type === 'video') {
+            type = `video/${ext === 'mov' ? 'quicktime' : ext}`;
+          } else {
+            type = `image/${ext === 'png' ? 'png' : 'jpeg'}`;
+          }
+        }
 
         formData.append('media', {
-          uri: Platform.OS === 'ios' ? image.uri.replace('file://', '') : image.uri,
-          name: filename,
+          uri: Platform.OS === 'ios' ? mediaItem.uri.replace('file://', '') : mediaItem.uri,
+          name: filename + (match ? '' : (mediaItem.type === 'video' ? '.mp4' : '.jpg')),
           type,
         } as any);
       });
@@ -200,8 +209,17 @@ export default function ModalScreen() {
 
           {/* Add Media Button */}
           <TouchableOpacity onPress={pickImage} style={[styles.addMediaBtn, { borderColor: activeColors.border }]}>
-            <ImageIcon size={20} color={activeColors.tint} />
-            <Text style={[styles.addMediaText, { color: activeColors.tint }]}>Add Photos</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                <ImageIcon size={20} color={activeColors.tint} />
+                <Text style={[styles.addMediaText, { color: activeColors.tint }]}>Photos</Text>
+              </View>
+              <View style={{ width: 1, height: 16, backgroundColor: activeColors.border }} />
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                <Video size={20} color={activeColors.tint} />
+                <Text style={[styles.addMediaText, { color: activeColors.tint }]}>Videos</Text>
+              </View>
+            </View>
           </TouchableOpacity>
 
           {/* Media Previews */}
