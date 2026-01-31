@@ -394,69 +394,75 @@ const PostDetailPage: React.FC = () => {
                                         alt={comment.author.firstName}
                                         className="comment-item__avatar"
                                     />
-                                    <div className="comment-item__box">
-                                        <div className="comment-item__header">
-                                            <div className="comment-item__info">
-                                                <span className="comment-item__name">{comment.author.firstName} {comment.author.lastName}</span>
-                                                <span className="comment-item__headline">Student • {formatDate(comment.createdAt)}</span>
+                                    <div className="comment-item__main">
+                                        <div className="comment-item__box">
+                                            <div className="comment-item__header">
+                                                <div className="comment-item__info">
+                                                    <span className="comment-item__name">{comment.author.firstName} {comment.author.lastName}</span>
+                                                    <span className="comment-item__headline">Student • {formatDate(comment.createdAt)}</span>
+                                                </div>
                                             </div>
+                                            <p className="comment-item__text">{comment.content}</p>
                                         </div>
-                                        <p className="comment-item__text">{comment.content}</p>
-                                    </div>
-                                    <div className="comment-item__actions">
-                                        <button
-                                            className={`comment-action-btn ${(comment.likes || []).includes(user?.id) ? 'active' : ''}`}
-                                            onClick={() => handleLikeComment(comment.id)}
-                                        >
-                                            Like {(comment.likes || []).length > 0 && `(${comment.likes.length})`}
-                                        </button>
-                                        <span className="comment-item__dot-divider">•</span>
-                                        <button
-                                            className="comment-action-btn"
-                                            onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
-                                        >
-                                            Reply
-                                        </button>
-                                    </div>
-
-                                    {replyingTo === comment.id && (
-                                        <div className="reply-input-area">
-                                            <input
-                                                type="text"
-                                                placeholder="Write a reply..."
-                                                value={replyText}
-                                                onChange={(e) => setReplyText(e.target.value)}
-                                                autoFocus
-                                            />
+                                        <div className="comment-item__actions">
                                             <button
-                                                disabled={!replyText.trim()}
-                                                onClick={() => handleReplyComment(comment.id)}
+                                                className={`comment-action-btn ${(comment.likes || []).includes(user?.id) ? 'active' : ''}`}
+                                                onClick={() => handleLikeComment(comment.id)}
                                             >
-                                                Reply
+                                                <ThumbsUp size={14} />
+                                                <span>{(comment.likes || []).length > 0 ? comment.likes.length : 'Like'}</span>
+                                            </button>
+                                            <button
+                                                className="comment-action-btn"
+                                                onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
+                                            >
+                                                <MessageCircle size={14} />
+                                                <span>Reply</span>
                                             </button>
                                         </div>
-                                    )}
 
-                                    {comment.replies && comment.replies.length > 0 && (
-                                        <div className="replies-list">
-                                            {comment.replies.map((reply: any) => (
-                                                <div key={reply.id} className="comment-item reply-item">
-                                                    <img
-                                                        src={reply.author.avatar || `https://ui-avatars.com/api/?name=${reply.author.firstName}&background=A5D6B7&color=fff`}
-                                                        alt={reply.author.firstName}
-                                                        className="comment-item__avatar--sm"
-                                                    />
-                                                    <div className="comment-item__box">
-                                                        <div className="comment-item__header">
-                                                            <span className="comment-item__name">{reply.author.firstName} {reply.author.lastName}</span>
-                                                            <span className="comment-item__headline">• {formatDate(reply.createdAt)}</span>
+                                        {replyingTo === comment.id && (
+                                            <div className="reply-input-area">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Write a reply..."
+                                                    value={replyText}
+                                                    onChange={(e) => setReplyText(e.target.value)}
+                                                    autoFocus
+                                                />
+                                                <button
+                                                    className="btn btn-primary btn--sm"
+                                                    disabled={!replyText.trim()}
+                                                    onClick={() => handleReplyComment(comment.id)}
+                                                >
+                                                    Reply
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {comment.replies && comment.replies.length > 0 && (
+                                            <div className="replies-list">
+                                                {comment.replies.map((reply: any) => (
+                                                    <div key={reply.id} className="comment-item reply-item">
+                                                        <img
+                                                            src={reply.author.avatar || `https://ui-avatars.com/api/?name=${reply.author.firstName}&background=A5D6B7&color=fff`}
+                                                            alt={reply.author.firstName}
+                                                            className="comment-item__avatar--sm"
+                                                        />
+                                                        <div className="comment-item__main">
+                                                            <div className="comment-item__box">
+                                                                <div className="comment-item__header">
+                                                                    <span className="comment-item__name">{reply.author.firstName} {reply.author.lastName}</span>
+                                                                    <span className="comment-item__headline">• {formatDate(reply.createdAt)}</span>
+                                                                </div>
+                                                                <p className="comment-item__text">{reply.content}</p>
+                                                            </div>
                                                         </div>
-                                                        <p className="comment-item__text">{reply.content}</p>
                                                     </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             ))}
                         </div>
