@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Platform, KeyboardAvoidingView, Switch, Image, Alert, ActivityIndicator } from 'react-native';
-import { useRouter, Stack } from 'expo-router';
+import { useRouter, Stack, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { X, Image as ImageIcon, Sparkles, Hash, DollarSign, Folder, ChevronRight, Target } from 'lucide-react-native';
@@ -35,6 +35,34 @@ export default function ModalScreen() {
   const [currentFunding, setCurrentFunding] = useState('');
   const [images, setImages] = useState<ImagePicker.ImagePickerAsset[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { editId } = useLocalSearchParams();
+  const isEditMode = !!editId;
+
+  useEffect(() => {
+    if (isEditMode) {
+      const fetchProject = async () => {
+        try {
+          const response = await api.get(`/projects/${editId}`);
+          const p = response.data;
+          setTitle(p.title || '');
+          setContent(p.content || '');
+          setCategory(p.category || 'technology');
+          setStage(p.projectStage || 'idea');
+          setTags(p.tags || []);
+          if (p.fundingGoal) {
+            setHasFunding(true);
+            setFundingGoal(String(p.fundingGoal));
+            setCurrentFunding(String(p.currentFunding || 0));
+          }
+        } catch (error) {
+          console.error('Fetch project error:', error);
+          Alert.alert('Error', 'Failed to load project data');
+        }
+      };
+      fetchProject();
+    }
+  }, [editId]);
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -105,11 +133,19 @@ export default function ModalScreen() {
         } as any);
       });
 
-      await api.post('/projects', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      if (isEditMode) {
+        await api.put(`/projects/${editId}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+      } else {
+        await api.post('/projects', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+      }
 
       router.back();
     } catch (error: any) {
@@ -127,7 +163,7 @@ export default function ModalScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
           <X size={24} color={activeColors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: activeColors.text }]}>New Project</Text>
+        <Text style={[styles.headerTitle, { color: activeColors.text }]}>{isEditMode ? 'Edit Project' : 'New Project'}</Text>
         <TouchableOpacity
           onPress={handleSubmit}
           disabled={isSubmitting}

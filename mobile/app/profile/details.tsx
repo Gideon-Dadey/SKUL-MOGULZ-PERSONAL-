@@ -13,7 +13,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import Colors from '../../constants/Colors';
 import api, { getImageUrl } from '../../services/api';
-
+import PostCard from '../../components/PostCard';
 import { Experience, Education } from '../../types';
 
 export default function ProfileScreen() {
@@ -79,7 +79,8 @@ export default function ProfileScreen() {
             const adaptedPosts = response.data.map((p: any) => ({
                 ...p,
                 id: p._id || p.id,
-                likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
+                likesCount: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
+                likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0), // PostCard uses 'likes'
                 likedBy: Array.isArray(p.likes) ? p.likes : [],
                 comments: p.comments || [],
                 author: { ...p.author, id: p.author?._id || p.author?.id }
@@ -96,6 +97,24 @@ export default function ProfileScreen() {
     useEffect(() => {
         fetchMyProjects();
     }, [user]);
+
+    const handleEditPost = (post: any) => {
+        router.push({
+            pathname: '/modal',
+            params: { editId: post.id }
+        });
+    };
+
+    const handleDeletePost = async (postId: string) => {
+        try {
+            await api.delete(`/projects/${postId}`);
+            setMyProjects(current => current.filter(p => p.id !== postId));
+            Alert.alert('Success', 'Project deleted');
+        } catch (error) {
+            console.error('Delete error:', error);
+            Alert.alert('Error', 'Failed to delete project');
+        }
+    };
 
     const onRefresh = () => {
         setRefreshing(true);
@@ -618,18 +637,14 @@ export default function ProfileScreen() {
                         </TouchableOpacity>
                     </View>
                     {myProjects.length > 0 ? (
-                        <View style={styles.projectsList}>
-                            {myProjects.slice(0, 3).map((project) => (
-                                <View key={project.id} style={[styles.projectItem, { borderBottomColor: activeColors.border }]}>
-                                    <View style={styles.projectInfo}>
-                                        <Text style={[styles.projectTitle, { color: activeColors.text }]} numberOfLines={1}>{project.title}</Text>
-                                        <Text style={[styles.projectStage, { color: activeColors.tint }]}>{project.projectStage?.toUpperCase()}</Text>
-                                        <Text style={[styles.projectDesc, { color: activeColors.muted }]} numberOfLines={2}>{project.content}</Text>
-                                    </View>
-                                    {project.media && project.media.length > 0 && (
-                                        <Image source={{ uri: getImageUrl(project.media[0]) || '' }} style={styles.projectImage} />
-                                    )}
-                                </View>
+                        <View style={styles.projectsContainer}>
+                            {myProjects.map((project) => (
+                                <PostCard
+                                    key={project.id}
+                                    post={project}
+                                    onEdit={handleEditPost}
+                                    onDelete={handleDeletePost}
+                                />
                             ))}
                         </View>
                     ) : (

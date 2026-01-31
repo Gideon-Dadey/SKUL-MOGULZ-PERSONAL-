@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, Share } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, Share, Alert } from 'react-native';
 import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { Post } from '../types';
@@ -14,9 +14,11 @@ interface PostCardProps {
     onLike?: (postId: string) => void;
     onComment?: (postId: string) => void;
     onBookmark?: (postId: string) => void;
+    onEdit?: (post: any) => void;
+    onDelete?: (postId: string) => void;
 }
 
-export default function PostCard({ post, onLike, onComment, onBookmark }: PostCardProps) {
+export default function PostCard({ post, onLike, onComment, onBookmark, onEdit, onDelete }: PostCardProps) {
     const router = useRouter();
     const { theme } = useTheme();
     const { user } = useAuth();
@@ -59,6 +61,41 @@ export default function PostCard({ post, onLike, onComment, onBookmark }: PostCa
         }
     };
 
+    const handleMorePress = () => {
+        const isAuthor = user && (user.id === post.author.id || user.id === post.author._id);
+
+        if (!isAuthor) {
+            Alert.alert('Options', 'Select an action', [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Report Post', onPress: () => Alert.alert('Reported', 'Thank you for your feedback.') }
+            ]);
+            return;
+        }
+
+        Alert.alert(
+            'Project Options',
+            'What would you like to do?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Edit Project', onPress: () => onEdit?.(post) },
+                {
+                    text: 'Delete Project',
+                    style: 'destructive',
+                    onPress: () => {
+                        Alert.alert(
+                            'Delete Project',
+                            'Are you sure you want to delete this project? This action cannot be undone.',
+                            [
+                                { text: 'Cancel', style: 'cancel' },
+                                { text: 'Delete', style: 'destructive', onPress: () => onDelete?.(post.id) }
+                            ]
+                        );
+                    }
+                }
+            ]
+        );
+    };
+
     return (
         <View style={[styles.container, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
             <View style={styles.header}>
@@ -78,7 +115,7 @@ export default function PostCard({ post, onLike, onComment, onBookmark }: PostCa
                             {post.projectStage?.charAt(0).toUpperCase() + post.projectStage?.slice(1)}
                         </Text>
                     </View>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={handleMorePress}>
                         <MoreHorizontal size={20} color={activeColors.light} />
                     </TouchableOpacity>
                 </View>
