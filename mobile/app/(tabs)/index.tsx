@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator, Dimensions, Animated, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator, Dimensions, ScrollView, Animated as RNAnimated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers, SlidersHorizontal, Bookmark, Ban, VolumeX, HelpCircle, Settings, LogOut, UserPlus, BarChart2 } from 'lucide-react-native';
@@ -10,9 +10,20 @@ import { useTheme } from '../../context/ThemeContext';
 import { useSocket } from '../../context/SocketContext';
 import Colors from '../../constants/Colors';
 import api, { getImageUrl } from '../../services/api';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  interpolate,
+  Extrapolate,
+  runOnJS
+} from 'react-native-reanimated';
 import PostCard from '../../components/PostCard';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const DRAWER_WIDTH = SCREEN_WIDTH * 0.8;
 
 export default function FeedScreen() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -35,13 +46,69 @@ export default function FeedScreen() {
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
+  // Drawer Animation States
+  const translateX = useSharedValue(-DRAWER_WIDTH);
+
+  const toggleMenu = (show: boolean) => {
+    translateX.value = withSpring(show ? 0 : -DRAWER_WIDTH, {
+      damping: 25,
+      stiffness: 150,
+      mass: 0.8,
+      restDisplacementThreshold: 0.01,
+      restSpeedThreshold: 0.01
+    });
+    setMenuVisible(show);
+  };
+
+  const panGesture = Gesture.Pan()
+    .onStart((event) => {
+      'worklet';
+    })
+    .onUpdate((event) => {
+      'worklet';
+      // Only allow opening from the left edge when closed
+      if (translateX.value <= -DRAWER_WIDTH && event.x > 50) return;
+
+      const newX = event.translationX - DRAWER_WIDTH;
+      translateX.value = Math.min(0, Math.max(-DRAWER_WIDTH, newX));
+    })
+    .onEnd((event) => {
+      'worklet';
+      const shouldOpen = event.velocityX > 500 || translateX.value > -DRAWER_WIDTH * 0.4;
+
+      translateX.value = withSpring(shouldOpen ? 0 : -DRAWER_WIDTH, {
+        damping: 25,
+        stiffness: 150,
+        velocity: event.velocityX
+      });
+      runOnJS(setMenuVisible)(shouldOpen);
+    });
+
+  const animatedDrawerStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
+
+  const animatedBackdropStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      translateX.value,
+      [-DRAWER_WIDTH, 0],
+      [0, 1],
+      Extrapolate.CLAMP
+    );
+    return {
+      opacity,
+      pointerEvents: opacity > 0 ? 'auto' : 'none',
+      backgroundColor: `rgba(0, 0, 0, ${opacity * 0.5})`,
+    };
+  });
+
   // Filter states
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedStage, setSelectedStage] = useState('all');
 
   // Scroll tracking for sticky header
-  const scrollY = useRef(new Animated.Value(0)).current;
+  const scrollY = useRef(new RNAnimated.Value(0)).current;
   const [showStickyHeader, setShowStickyHeader] = useState(false);
   const STICKY_HEADER_HEIGHT = Platform.OS === 'ios' ? 110 : 90;
 
@@ -305,7 +372,7 @@ export default function FeedScreen() {
       <StatusBar style={showStickyHeader && theme !== 'dark' ? 'dark' : 'light'} />
       <View style={styles.stickyTopBar}>
         <TouchableOpacity
-          onPress={() => setMenuVisible(true)}
+          onPress={() => toggleMenu(true)}
           style={[styles.profileButton, { borderColor: activeColors.border, backgroundColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }]}
         >
           {user?.avatar ? (
@@ -343,7 +410,7 @@ export default function FeedScreen() {
       <StatusBar style="light" />
       <View style={styles.topBar}>
         <TouchableOpacity
-          onPress={() => setMenuVisible(true)}
+          onPress={() => toggleMenu(true)}
           style={styles.profileButton}
         >
           {user?.avatar ? (
@@ -411,301 +478,314 @@ export default function FeedScreen() {
   );
 
   const renderSideMenu = () => (
-    <Modal visible={menuVisible} animationType="fade" transparent onRequestClose={() => setMenuVisible(false)}>
-      <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setMenuVisible(false)}>
-        <View style={[styles.sideMenuContainer, { backgroundColor: activeColors.card }]}>
-          <View style={styles.sideMenuHeader}>
-            <Image
-              source={{ uri: getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
-              style={styles.sideMenuAvatar}
-            />
-            <View style={styles.sideMenuUserInfo}>
-              <Text style={[styles.sideMenuName, { color: activeColors.text }]}>{user?.firstName} {user?.lastName}</Text>
-              <View style={styles.sideMenuStats}>
-                <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>{connectionCount}</Text>
-                <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>Connections</Text>
-              </View>
+    <>
+      <Animated.View
+        style={[
+          styles.drawerBackdrop,
+          animatedBackdropStyle
+        ]}
+      >
+        <TouchableOpacity
+          style={{ flex: 1 }}
+          activeOpacity={1}
+          onPress={() => toggleMenu(false)}
+        />
+      </Animated.View>
+
+      <Animated.View style={[styles.sideMenuContainer, { backgroundColor: activeColors.card }, animatedDrawerStyle]}>
+        <View style={styles.sideMenuHeader}>
+          <Image
+            source={{ uri: getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
+            style={styles.sideMenuAvatar}
+          />
+          <View style={styles.sideMenuUserInfo}>
+            <Text style={[styles.sideMenuName, { color: activeColors.text }]}>{user?.firstName} {user?.lastName}</Text>
+            <View style={styles.sideMenuStats}>
+              <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>{connectionCount}</Text>
+              <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>Connections</Text>
             </View>
           </View>
+        </View>
 
-          <ScrollView style={styles.sideMenuContent} showsVerticalScrollIndicator={false}>
-            <TouchableOpacity style={styles.sideMenuItem} onPress={() => { setMenuVisible(false); router.push('/profile/details'); }}>
-              <CircleUser size={22} color={activeColors.text} />
-              <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Profile</Text>
+        <ScrollView style={styles.sideMenuContent} showsVerticalScrollIndicator={false}>
+          <TouchableOpacity style={styles.sideMenuItem} onPress={() => { toggleMenu(false); router.push('/profile/details'); }}>
+            <CircleUser size={22} color={activeColors.text} />
+            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Profile</Text>
+          </TouchableOpacity>
+
+          {/* Analytics Menu Item */}
+          <View>
+            <TouchableOpacity style={styles.sideMenuItem} onPress={() => setShowAnalyticsMenu(!showAnalyticsMenu)}>
+              <BarChart2 size={22} color={activeColors.text} />
+              <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Analytics</Text>
+              <ChevronDown size={20} color={activeColors.muted} style={{ marginLeft: 'auto', transform: [{ rotate: showAnalyticsMenu ? '180deg' : '0deg' }] }} />
             </TouchableOpacity>
-
-            {/* Analytics Menu Item */}
-            <View>
-              <TouchableOpacity style={styles.sideMenuItem} onPress={() => setShowAnalyticsMenu(!showAnalyticsMenu)}>
-                <BarChart2 size={22} color={activeColors.text} />
-                <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Analytics</Text>
-                <ChevronDown size={20} color={activeColors.muted} style={{ marginLeft: 'auto', transform: [{ rotate: showAnalyticsMenu ? '180deg' : '0deg' }] }} />
-              </TouchableOpacity>
-              {showAnalyticsMenu && (
-                <View style={{ paddingLeft: 54, paddingBottom: 12, gap: 12 }}>
-                  <View>
-                    <Text style={{ fontSize: 16, fontWeight: '700', color: activeColors.text }}>{analytics.profileViews}</Text>
-                    <Text style={{ fontSize: 13, color: activeColors.muted }}>Profile views</Text>
-                  </View>
-                  <View>
-                    <Text style={{ fontSize: 16, fontWeight: '700', color: activeColors.text }}>{analytics.postImpressions}</Text>
-                    <Text style={{ fontSize: 13, color: activeColors.muted }}>Post impressions</Text>
-                  </View>
+            {showAnalyticsMenu && (
+              <View style={{ paddingLeft: 54, paddingBottom: 12, gap: 12 }}>
+                <View>
+                  <Text style={{ fontSize: 16, fontWeight: '700', color: activeColors.text }}>{analytics.profileViews}</Text>
+                  <Text style={{ fontSize: 13, color: activeColors.muted }}>Profile views</Text>
                 </View>
-              )}
-            </View>
-
-            <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
-              <Sparkles size={22} color={activeColors.text} />
-              <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Feeds</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
-              <Bookmark size={22} color={activeColors.text} />
-              <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Bookmarks</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
-              <Ban size={22} color={activeColors.text} />
-              <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Blocks</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
-              <VolumeX size={22} color={activeColors.text} />
-              <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Mutes</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.sideMenuItem} onPress={() => { setMenuVisible(false); router.push('/preferences'); }}>
-              <Settings size={22} color={activeColors.text} />
-              <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Preferences</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
-              <HelpCircle size={22} color={activeColors.text} />
-              <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Help Center</Text>
-            </TouchableOpacity>
-          </ScrollView>
-
-          <View style={{ borderTopWidth: 1, borderTopColor: activeColors.border }}>
-            <TouchableOpacity
-              style={[styles.sideMenuFooter, { borderTopWidth: 0 }]}
-              onPress={() => setShowAccountsMenu(!showAccountsMenu)}
-            >
-              <Text style={[styles.sideMenuFooterText, { color: activeColors.text }]}>Manage Accounts</Text>
-              <ChevronDown size={20} color={activeColors.muted} style={{ transform: [{ rotate: showAccountsMenu ? '180deg' : '0deg' }] }} />
-            </TouchableOpacity>
-
-            {showAccountsMenu && (
-              <View style={{ paddingBottom: 16 }}>
-                <TouchableOpacity style={styles.sideMenuItem} onPress={() => { setMenuVisible(false); router.push('/(auth)/register'); }}>
-                  <UserPlus size={22} color={activeColors.text} />
-                  <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Create a new account</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.sideMenuItem} onPress={() => { setMenuVisible(false); router.push('/(auth)/login'); }}>
-                  <Plus size={22} color={activeColors.text} />
-                  <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Add an existing account</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.sideMenuItem} onPress={async () => {
-                  await logout();
-                  router.replace('/(auth)/login');
-                }}>
-                  <LogOut size={22} color="#ef4444" />
-                  <Text style={[styles.sideMenuText, { color: '#ef4444' }]}>Log out</Text>
-                </TouchableOpacity>
+                <View>
+                  <Text style={{ fontSize: 16, fontWeight: '700', color: activeColors.text }}>{analytics.postImpressions}</Text>
+                  <Text style={{ fontSize: 13, color: activeColors.muted }}>Post impressions</Text>
+                </View>
               </View>
             )}
           </View>
+
+          <TouchableOpacity style={styles.sideMenuItem} onPress={() => toggleMenu(false)}>
+            <Sparkles size={22} color={activeColors.text} />
+            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Feeds</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sideMenuItem} onPress={() => toggleMenu(false)}>
+            <Bookmark size={22} color={activeColors.text} />
+            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Bookmarks</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sideMenuItem} onPress={() => toggleMenu(false)}>
+            <Ban size={22} color={activeColors.text} />
+            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Blocks</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sideMenuItem} onPress={() => toggleMenu(false)}>
+            <VolumeX size={22} color={activeColors.text} />
+            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Mutes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sideMenuItem} onPress={() => { toggleMenu(false); router.push('/preferences'); }}>
+            <Settings size={22} color={activeColors.text} />
+            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Preferences</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sideMenuItem} onPress={() => toggleMenu(false)}>
+            <HelpCircle size={22} color={activeColors.text} />
+            <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Help Center</Text>
+          </TouchableOpacity>
+        </ScrollView>
+
+        <View style={{ borderTopWidth: 1, borderTopColor: activeColors.border }}>
+          <TouchableOpacity
+            style={[styles.sideMenuFooter, { borderTopWidth: 0 }]}
+            onPress={() => setShowAccountsMenu(!showAccountsMenu)}
+          >
+            <Text style={[styles.sideMenuFooterText, { color: activeColors.text }]}>Manage Accounts</Text>
+            <ChevronDown size={20} color={activeColors.muted} style={{ transform: [{ rotate: showAccountsMenu ? '180deg' : '0deg' }] }} />
+          </TouchableOpacity>
+
+          {showAccountsMenu && (
+            <View style={{ paddingBottom: 16 }}>
+              <TouchableOpacity style={styles.sideMenuItem} onPress={() => { toggleMenu(false); router.push('/(auth)/register'); }}>
+                <UserPlus size={22} color={activeColors.text} />
+                <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Create a new account</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.sideMenuItem} onPress={() => { toggleMenu(false); router.push('/(auth)/login'); }}>
+                <Plus size={22} color={activeColors.text} />
+                <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Add an existing account</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.sideMenuItem} onPress={async () => {
+                await logout();
+                router.replace('/(auth)/login');
+              }}>
+                <LogOut size={22} color="#ef4444" />
+                <Text style={[styles.sideMenuText, { color: '#ef4444' }]}>Log out</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
-      </TouchableOpacity>
-    </Modal>
+      </Animated.View>
+    </>
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: activeColors.background }]}>
-      {/* Sticky Header */}
-      {renderStickyHeader()}
+    <GestureDetector gesture={panGesture}>
+      <View style={[styles.container, { backgroundColor: activeColors.background }]}>
+        {/* Sticky Header */}
+        {renderStickyHeader()}
 
-      <FlatList
-        data={posts}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <PostCard
-            post={item}
-            onLike={handleLike}
-            onComment={handleComment}
-            onBookmark={handleBookmark}
-            onEdit={handleEditPost}
-            onDelete={handleDeletePost}
-          />
-        )}
-        ListHeaderComponent={renderHeader}
-        contentContainerStyle={styles.listContent}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={activeColors.tint} />
-        }
-        ListEmptyComponent={
-          isLoading ? null : (
-            <View style={styles.emptyContainer}>
-              <Text style={[styles.emptyText, { color: activeColors.muted }]}>No posts yet. Be the first to share!</Text>
-            </View>
-          )
-        }
-      />
+        <FlatList
+          data={posts}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <PostCard
+              post={item}
+              onLike={handleLike}
+              onComment={handleComment}
+              onBookmark={handleBookmark}
+              onEdit={handleEditPost}
+              onDelete={handleDeletePost}
+            />
+          )}
+          ListHeaderComponent={renderHeader}
+          contentContainerStyle={styles.listContent}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={activeColors.tint} />
+          }
+          ListEmptyComponent={
+            isLoading ? null : (
+              <View style={styles.emptyContainer}>
+                <Text style={[styles.emptyText, { color: activeColors.muted }]}>No posts yet. Be the first to share!</Text>
+              </View>
+            )
+          }
+        />
 
-      {/* Comment Modal */}
-      <Modal
-        visible={commentModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setCommentModalVisible(false)}
-      >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalOverlay}
+        {/* Comment Modal */}
+        <Modal
+          visible={commentModalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setCommentModalVisible(false)}
         >
-          <TouchableOpacity
-            style={styles.modalBackdrop}
-            activeOpacity={1}
-            onPress={() => setCommentModalVisible(false)}
-          />
-          <View style={[styles.commentModal, { backgroundColor: activeColors.card }]}>
-            <View style={[styles.modalHeader, { borderBottomColor: activeColors.border }]}>
-              <Text style={[styles.modalTitle, { color: activeColors.text }]}>Add Comment</Text>
-              <TouchableOpacity onPress={() => setCommentModalVisible(false)}>
-                <X size={24} color={activeColors.muted} />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.commentInputContainer}>
-              <Image
-                source={user?.avatar ? { uri: getImageUrl(user.avatar) } : require('../../assets/images/icon.png')}
-                style={styles.commentAvatar}
-              />
-              <TextInput
-                style={[styles.commentInput, { backgroundColor: activeColors.background, color: activeColors.text, borderColor: activeColors.border }]}
-                placeholder="Share your thoughts..."
-                placeholderTextColor={activeColors.light}
-                value={commentText}
-                onChangeText={setCommentText}
-                multiline
-                autoFocus
-              />
-            </View>
-
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.modalOverlay}
+          >
             <TouchableOpacity
-              style={[styles.submitCommentBtn, { backgroundColor: activeColors.tint, opacity: commentText.trim() ? 1 : 0.5 }]}
-              onPress={handleSubmitComment}
-              disabled={!commentText.trim() || isSubmittingComment}
-            >
-              {isSubmittingComment ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <>
-                  <Send size={18} color="#fff" />
-                  <Text style={styles.submitCommentText}>Post Comment</Text>
-                </>
-              )}
-            </TouchableOpacity>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
+              style={styles.modalBackdrop}
+              activeOpacity={1}
+              onPress={() => setCommentModalVisible(false)}
+            />
+            <View style={[styles.commentModal, { backgroundColor: activeColors.card }]}>
+              <View style={[styles.modalHeader, { borderBottomColor: activeColors.border }]}>
+                <Text style={[styles.modalTitle, { color: activeColors.text }]}>Add Comment</Text>
+                <TouchableOpacity onPress={() => setCommentModalVisible(false)}>
+                  <X size={24} color={activeColors.muted} />
+                </TouchableOpacity>
+              </View>
 
-      {/* Filter Modal */}
-      <Modal
-        visible={filterModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setFilterModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <TouchableOpacity
-            style={styles.modalBackdrop}
-            activeOpacity={1}
-            onPress={() => setFilterModalVisible(false)}
-          />
-          <View style={[styles.filterModal, { backgroundColor: activeColors.card }]}>
-            <View style={[styles.modalHeader, { borderBottomColor: activeColors.border }]}>
-              <Text style={[styles.modalTitle, { color: activeColors.text }]}>Filter Innovation</Text>
-              <TouchableOpacity onPress={() => setFilterModalVisible(false)}>
-                <X size={24} color={activeColors.muted} />
+              <View style={styles.commentInputContainer}>
+                <Image
+                  source={user?.avatar ? { uri: getImageUrl(user.avatar) } : require('../../assets/images/icon.png')}
+                  style={styles.commentAvatar}
+                />
+                <TextInput
+                  style={[styles.commentInput, { backgroundColor: activeColors.background, color: activeColors.text, borderColor: activeColors.border }]}
+                  placeholder="Share your thoughts..."
+                  placeholderTextColor={activeColors.light}
+                  value={commentText}
+                  onChangeText={setCommentText}
+                  multiline
+                  autoFocus
+                />
+              </View>
+
+              <TouchableOpacity
+                style={[styles.submitCommentBtn, { backgroundColor: activeColors.tint, opacity: commentText.trim() ? 1 : 0.5 }]}
+                onPress={handleSubmitComment}
+                disabled={!commentText.trim() || isSubmittingComment}
+              >
+                {isSubmittingComment ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <>
+                    <Send size={18} color="#fff" />
+                    <Text style={styles.submitCommentText}>Post Comment</Text>
+                  </>
+                )}
               </TouchableOpacity>
             </View>
+          </KeyboardAvoidingView>
+        </Modal>
 
-            <FlatList
-              data={[{ key: 'filters' }]}
-              renderItem={() => (
-                <View>
-                  <Text style={[styles.filterLabel, { color: activeColors.text }]}>Category</Text>
-                  <View style={styles.filterGrid}>
-                    {categories.map((cat) => (
-                      <TouchableOpacity
-                        key={cat.id}
-                        style={[
-                          styles.filterChip,
-                          {
-                            backgroundColor: selectedCategory === cat.id ? activeColors.tint : activeColors.background,
-                            borderColor: selectedCategory === cat.id ? activeColors.tint : activeColors.border,
-                          }
-                        ]}
-                        onPress={() => {
-                          setSelectedCategory(cat.id);
-                        }}
-                      >
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                          <cat.icon
-                            size={16}
-                            color={selectedCategory === cat.id ? '#fff' : activeColors.text}
-                          />
+        {/* Filter Modal */}
+        <Modal
+          visible={filterModalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setFilterModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <TouchableOpacity
+              style={styles.modalBackdrop}
+              activeOpacity={1}
+              onPress={() => setFilterModalVisible(false)}
+            />
+            <View style={[styles.filterModal, { backgroundColor: activeColors.card }]}>
+              <View style={[styles.modalHeader, { borderBottomColor: activeColors.border }]}>
+                <Text style={[styles.modalTitle, { color: activeColors.text }]}>Filter Innovation</Text>
+                <TouchableOpacity onPress={() => setFilterModalVisible(false)}>
+                  <X size={24} color={activeColors.muted} />
+                </TouchableOpacity>
+              </View>
+
+              <FlatList
+                data={[{ key: 'filters' }]}
+                renderItem={() => (
+                  <View>
+                    <Text style={[styles.filterLabel, { color: activeColors.text }]}>Category</Text>
+                    <View style={styles.filterGrid}>
+                      {categories.map((cat) => (
+                        <TouchableOpacity
+                          key={cat.id}
+                          style={[
+                            styles.filterChip,
+                            {
+                              backgroundColor: selectedCategory === cat.id ? activeColors.tint : activeColors.background,
+                              borderColor: selectedCategory === cat.id ? activeColors.tint : activeColors.border,
+                            }
+                          ]}
+                          onPress={() => {
+                            setSelectedCategory(cat.id);
+                          }}
+                        >
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                            <cat.icon
+                              size={16}
+                              color={selectedCategory === cat.id ? '#fff' : activeColors.text}
+                            />
+                            <Text style={[
+                              styles.filterChipText,
+                              { color: selectedCategory === cat.id ? '#fff' : activeColors.text }
+                            ]}>
+                              {cat.label}
+                            </Text>
+                          </View>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+
+                    <Text style={[styles.filterLabel, { color: activeColors.text, marginTop: 24 }]}>Project Stage</Text>
+                    <View style={styles.filterGrid}>
+                      {stages.map((stage) => (
+                        <TouchableOpacity
+                          key={stage.id}
+                          style={[
+                            styles.filterChip,
+                            {
+                              backgroundColor: selectedStage === stage.id ? activeColors.tint : activeColors.background,
+                              borderColor: selectedStage === stage.id ? activeColors.tint : activeColors.border,
+                            }
+                          ]}
+                          onPress={() => {
+                            setSelectedStage(stage.id);
+                          }}
+                        >
                           <Text style={[
                             styles.filterChipText,
-                            { color: selectedCategory === cat.id ? '#fff' : activeColors.text }
+                            { color: selectedStage === stage.id ? '#fff' : activeColors.text }
                           ]}>
-                            {cat.label}
+                            {stage.label}
                           </Text>
-                        </View>
-                      </TouchableOpacity>
-                    ))}
+                        </TouchableOpacity>
+                      ))}
+                    </View>
                   </View>
+                )}
+                keyExtractor={(item) => item.key}
+                contentContainerStyle={{ paddingBottom: 40 }}
+              />
 
-                  <Text style={[styles.filterLabel, { color: activeColors.text, marginTop: 24 }]}>Project Stage</Text>
-                  <View style={styles.filterGrid}>
-                    {stages.map((stage) => (
-                      <TouchableOpacity
-                        key={stage.id}
-                        style={[
-                          styles.filterChip,
-                          {
-                            backgroundColor: selectedStage === stage.id ? activeColors.tint : activeColors.background,
-                            borderColor: selectedStage === stage.id ? activeColors.tint : activeColors.border,
-                          }
-                        ]}
-                        onPress={() => {
-                          setSelectedStage(stage.id);
-                        }}
-                      >
-                        <Text style={[
-                          styles.filterChipText,
-                          { color: selectedStage === stage.id ? '#fff' : activeColors.text }
-                        ]}>
-                          {stage.label}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                </View>
-              )}
-              keyExtractor={(item) => item.key}
-              contentContainerStyle={{ paddingBottom: 40 }}
-            />
-
-            <TouchableOpacity
-              style={[styles.applyBtn, { backgroundColor: activeColors.tint }]}
-              onPress={() => setFilterModalVisible(false)}
-            >
-              <Text style={styles.applyBtnText}>Apply Filters</Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.applyBtn, { backgroundColor: activeColors.tint }]}
+                onPress={() => setFilterModalVisible(false)}
+              >
+                <Text style={styles.applyBtnText}>Apply Filters</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </Modal>
-      {renderSideMenu()}
-    </View>
+        </Modal>
+        {renderSideMenu()}
+      </View>
+    </GestureDetector>
   );
 }
 
@@ -966,7 +1046,28 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   // Side Menu Styles
-  sideMenuContainer: { width: '80%', height: '100%', backgroundColor: '#fff', paddingVertical: 40, paddingHorizontal: 24, paddingBottom: 20 },
+  drawerBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 1001,
+  },
+  sideMenuContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    width: '80%',
+    height: '100%',
+    backgroundColor: '#fff',
+    paddingVertical: 40,
+    paddingHorizontal: 24,
+    paddingBottom: 20,
+    zIndex: 1002,
+    shadowColor: "#000",
+    shadowOffset: { width: 5, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 16,
+  },
   sideMenuHeader: { marginBottom: 30 },
   sideMenuAvatar: { width: 60, height: 60, borderRadius: 30, marginBottom: 12 },
   sideMenuUserInfo: { marginBottom: 16 },
