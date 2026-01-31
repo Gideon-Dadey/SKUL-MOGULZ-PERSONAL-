@@ -144,28 +144,7 @@ export default function PreferencesScreen() {
                     {renderNavRow('App appearance', themePreference.charAt(0).toUpperCase() + themePreference.slice(1), () => router.push('/appearance'))}
                     {renderNavRow('Legal', '', () => { })}
                     {renderNavRow('3rd party licenses', '', () => { })}
-                    {renderNavRow('Delete account', '', () => {
-                        Alert.alert(
-                            'Delete Account',
-                            'Are you sure you want to delete your account? This action cannot be undone.',
-                            [
-                                { text: 'Cancel', style: 'cancel' },
-                                {
-                                    text: 'Delete',
-                                    style: 'destructive',
-                                    onPress: async () => {
-                                        try {
-                                            await api.delete('/auth/delete');
-                                            await logout();
-                                            router.replace('/(auth)/login');
-                                        } catch (error) {
-                                            Alert.alert('Error', 'Failed to delete account');
-                                        }
-                                    }
-                                }
-                            ]
-                        );
-                    }, true)}
+                    {renderNavRow('Delete account', '', () => router.push('/delete-account'), true)}
                 </View>
 
                 <Text style={[styles.version, { color: activeColors.muted }]}>Version: 1.25.0 (474)</Text>
