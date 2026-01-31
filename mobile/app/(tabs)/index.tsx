@@ -273,10 +273,10 @@ export default function FeedScreen() {
           )}
         </TouchableOpacity>
 
-        <View style={styles.searchBar}>
+        <TouchableOpacity style={styles.searchBar} onPress={() => router.push('/search')}>
           <Search size={18} color="#074B43" />
           <Text style={styles.searchText}>Search ecosystem...</Text>
-        </View>
+        </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
           <MessagesSquare size={28} color="#fff" strokeWidth={1.5} />
@@ -308,10 +308,10 @@ export default function FeedScreen() {
           )}
         </TouchableOpacity>
 
-        <View style={styles.searchBar}>
+        <TouchableOpacity style={styles.searchBar} onPress={() => router.push('/search')}>
           <Search size={18} color="#074B43" />
           <Text style={styles.searchText}>Search ecosystem...</Text>
-        </View>
+        </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
           <MessagesSquare size={28} color="#fff" strokeWidth={1.5} />
