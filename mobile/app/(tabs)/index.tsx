@@ -254,13 +254,13 @@ export default function FeedScreen() {
           backgroundColor: theme === 'dark' ? activeColors.background : '#FFFFFF',
           opacity: showStickyHeader ? 1 : 0,
           transform: [{ translateY: showStickyHeader ? 0 : -STICKY_HEADER_HEIGHT }],
-          borderBottomWidth: 1,
-          borderBottomColor: theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+          borderBottomWidth: theme === 'dark' ? 0 : 1, // No border in dark mode
+          borderBottomColor: 'rgba(0,0,0,0.05)',
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: theme === 'dark' ? 0.3 : 0.05,
+          shadowOpacity: theme === 'dark' ? 0 : 0.05, // No shadow in dark mode
           shadowRadius: 3,
-          elevation: 3,
+          elevation: theme === 'dark' ? 0 : 3, // No elevation in dark mode
         }
       ]}
       pointerEvents={showStickyHeader ? 'auto' : 'none'}
