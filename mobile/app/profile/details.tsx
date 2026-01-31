@@ -43,6 +43,13 @@ export default function ProfileScreen() {
     const [editingEducation, setEditingEducation] = useState<Education | null>(null);
     const [newSkill, setNewSkill] = useState('');
 
+    // Reset accounts menu when side menu closes
+    useEffect(() => {
+        if (!menuVisible) {
+            setShowAccountsMenu(false);
+        }
+    }, [menuVisible]);
+
     // Experience form
     const [expForm, setExpForm] = useState<Experience>({
         title: '', company: '', location: '', startDate: '', endDate: '', current: false, description: ''
