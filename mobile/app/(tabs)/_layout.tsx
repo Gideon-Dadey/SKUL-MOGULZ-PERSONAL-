@@ -34,7 +34,7 @@ export default function TabLayout() {
           const totalUnreadMsg = convRes.data.reduce((acc: number, conv: any) => acc + (conv.unreadCount || 0), 0);
           setUnreadMessages(totalUnreadMsg);
         } catch (error) {
-          console.error("Failed to fetch unread counts on mobile", error);
+          console.warn("Failed to fetch unread counts on mobile", error);
         }
       }
     };

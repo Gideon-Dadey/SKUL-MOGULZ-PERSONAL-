@@ -17,7 +17,7 @@ import api, { getImageUrl } from '../../services/api';
 import { Experience, Education } from '../../types';
 
 export default function ProfileScreen() {
-    const { user, logout, updateProfile } = useAuth();
+    const { user, logout, updateProfile, refreshUser } = useAuth();
     const { theme, toggleTheme } = useTheme();
     const router = useRouter();
     const activeColors = Colors[theme];
@@ -26,6 +26,7 @@ export default function ProfileScreen() {
     const [isLoading, setIsLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [connectionCount, setConnectionCount] = useState(0);
+    const [analytics, setAnalytics] = useState({ profileViews: 0, postImpressions: 0 });
     const [isSaving, setIsSaving] = useState(false);
 
     // Modal states
@@ -52,8 +53,16 @@ export default function ProfileScreen() {
 
     const fetchStats = async () => {
         try {
-            const res = await api.get('/network/stats');
-            setConnectionCount(res.data.connectionsCount);
+            const [statsRes, analyticsRes] = await Promise.all([
+                api.get('/network/stats'),
+                api.get('/analytics')
+            ]);
+            setConnectionCount(statsRes.data.connectionsCount);
+            setAnalytics({
+                profileViews: analyticsRes.data.summary.profileViews,
+                postImpressions: analyticsRes.data.summary.totalViews
+            });
+            refreshUser();
         } catch (e) {
             console.log(e);
         }
@@ -472,7 +481,7 @@ export default function ProfileScreen() {
                         <View style={styles.analyticsItem}>
                             <View style={styles.analyticsHeader}>
                                 <Users size={20} color={activeColors.text} />
-                                <Text style={[styles.analyticsValue, { color: activeColors.text }]}>{user?.viewedProfile || 0}</Text>
+                                <Text style={[styles.analyticsValue, { color: activeColors.text }]}>{analytics.profileViews}</Text>
                             </View>
                             <Text style={[styles.analyticsLabel, { color: activeColors.text }]}>profile views</Text>
                             <Text style={[styles.analyticsSub, { color: activeColors.muted }]}>See who's viewed your profile.</Text>
@@ -480,7 +489,7 @@ export default function ProfileScreen() {
                         <View style={[styles.analyticsItem, { borderLeftWidth: 1, borderLeftColor: activeColors.border }]}>
                             <View style={styles.analyticsHeader}>
                                 <BarChart2 size={20} color={activeColors.text} />
-                                <Text style={[styles.analyticsValue, { color: activeColors.text }]}>{user?.impressions || 0}</Text>
+                                <Text style={[styles.analyticsValue, { color: activeColors.text }]}>{analytics.postImpressions}</Text>
                             </View>
                             <Text style={[styles.analyticsLabel, { color: activeColors.text }]}>post impressions</Text>
                             <Text style={[styles.analyticsSub, { color: activeColors.muted }]}>Check out who's engaging.</Text>

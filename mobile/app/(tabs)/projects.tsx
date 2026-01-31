@@ -26,7 +26,7 @@ const VIEW_MODES = {
 
 export default function ProjectsScreen() {
     const { theme } = useTheme();
-    const { user } = useAuth();
+    const { user, isAuthenticated } = useAuth();
     const router = useRouter();
     const activeColors = Colors[theme];
 
@@ -44,14 +44,20 @@ export default function ProjectsScreen() {
     });
 
     useEffect(() => {
-        fetchProjects();
-    }, []);
+        if (isAuthenticated && user) {
+            fetchProjects();
+        }
+    }, [isAuthenticated, user]);
 
     useEffect(() => {
         filterProjects();
     }, [projects, selectedStage]);
 
     const fetchProjects = async () => {
+        if (!isAuthenticated || !user) {
+            setIsLoading(false);
+            return;
+        }
         try {
             const response = await api.get('/projects');
             const userProjects = response.data.filter((p: any) => p.author._id === user?.id || p.author.id === user?.id);
