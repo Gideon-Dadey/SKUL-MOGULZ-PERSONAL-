@@ -211,6 +211,24 @@ export default function FeedScreen() {
     }
   };
 
+  const handleEditPost = (post: any) => {
+    router.push({
+      pathname: '/modal',
+      params: { editId: post.id }
+    });
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    try {
+      await api.delete(`/projects/${postId}`);
+      setPosts(currentPosts => currentPosts.filter(p => p.id !== postId));
+      Alert.alert('Success', 'Project deleted');
+    } catch (error) {
+      console.error('Delete error:', error);
+      Alert.alert('Error', 'Failed to delete project');
+    }
+  };
+
   const renderHeader = () => (
     <View style={[styles.header, { backgroundColor: '#074B43' }]}>
       <StatusBar style="light" />
@@ -288,7 +306,16 @@ export default function FeedScreen() {
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <PostCard post={item} onLike={handleLike} onComment={handleComment} onBookmark={handleBookmark} />}
+        renderItem={({ item }) => (
+          <PostCard
+            post={item}
+            onLike={handleLike}
+            onComment={handleComment}
+            onBookmark={handleBookmark}
+            onEdit={handleEditPost}
+            onDelete={handleDeletePost}
+          />
+        )}
         ListHeaderComponent={renderHeader}
         contentContainerStyle={styles.listContent}
         refreshControl={
