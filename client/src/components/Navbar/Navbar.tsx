@@ -290,7 +290,6 @@ const Navbar: React.FC = () => {
                                     />
                                     <div className="navbar__dropdown-user-info">
                                         <h4>{user?.firstName} {user?.lastName}</h4>
-                                        <p>{user?.bio || 'Add a headline to your profile'}</p>
                                     </div>
                                 </div>
                                 <Link to={`/profile/${user?.username}`} className="navbar__dropdown-view-profile">
