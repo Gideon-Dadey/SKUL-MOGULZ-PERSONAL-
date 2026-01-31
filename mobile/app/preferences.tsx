@@ -6,11 +6,12 @@ import { ArrowLeft, ChevronRight } from 'lucide-react-native';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import Colors from '../constants/Colors';
+import api from '../services/api';
 
 export default function PreferencesScreen() {
     const router = useRouter();
-    const { theme } = useTheme();
-    const { user } = useAuth();
+    const { theme, toggleTheme } = useTheme();
+    const { user, logout } = useAuth();
     const activeColors = Colors[theme];
 
     // Toggle States
@@ -140,10 +141,31 @@ export default function PreferencesScreen() {
                 {/* Other */}
                 {renderSectionHeader('Other')}
                 <View style={styles.section}>
-                    {renderNavRow('App appearance', theme === 'dark' ? 'Dark' : 'Light', () => { })}
+                    {renderNavRow('App appearance', theme === 'dark' ? 'Dark' : 'Light', toggleTheme)}
                     {renderNavRow('Legal', '', () => { })}
                     {renderNavRow('3rd party licenses', '', () => { })}
-                    {renderNavRow('Delete account', '', () => Alert.alert('Delete Account', 'This action cannot be undone.'), true)}
+                    {renderNavRow('Delete account', '', () => {
+                        Alert.alert(
+                            'Delete Account',
+                            'Are you sure you want to delete your account? This action cannot be undone.',
+                            [
+                                { text: 'Cancel', style: 'cancel' },
+                                {
+                                    text: 'Delete',
+                                    style: 'destructive',
+                                    onPress: async () => {
+                                        try {
+                                            await api.delete('/auth/delete');
+                                            await logout();
+                                            router.replace('/(auth)/login');
+                                        } catch (error) {
+                                            Alert.alert('Error', 'Failed to delete account');
+                                        }
+                                    }
+                                }
+                            ]
+                        );
+                    }, true)}
                 </View>
 
                 <Text style={[styles.version, { color: activeColors.muted }]}>Version: 1.25.0 (474)</Text>

@@ -338,3 +338,16 @@ export const updateProfile = async (req: any, res: Response) => {
     }
 };
 
+// @desc    Delete user account
+// @route   DELETE /api/auth/delete
+// @access  Private
+export const deleteAccount = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user._id;
+        // Optionally delete related data like Projects, etc here if needed, but for MVP simple user deletion
+        await User.findByIdAndDelete(userId);
+        res.json({ message: 'User deleted' });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
