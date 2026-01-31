@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, ScrollView, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import { ArrowLeft, MapPin, Users, MessageCircle, MoreHorizontal, Briefcase, GraduationCap, Award } from 'lucide-react-native';
+import { ArrowLeft, MapPin, Users, MessageCircle, MoreHorizontal, Folder, GraduationCap, Award } from 'lucide-react-native';
 import { useTheme } from '../../context/ThemeContext';
 import Colors from '../../constants/Colors';
 import api, { getImageUrl } from '../../services/api';
@@ -213,7 +213,7 @@ export default function UserProfileScreen() {
                         experiences.map((exp, index) => (
                             <View key={exp.id || exp._id || index} style={[styles.listItem, { borderTopColor: activeColors.border }]}>
                                 <View style={[styles.listIcon, { backgroundColor: activeColors.tint + '20' }]}>
-                                    <Briefcase size={20} color={activeColors.tint} />
+                                    <Folder size={20} color={activeColors.tint} />
                                 </View>
                                 <View style={styles.listContent}>
                                     <Text style={[styles.listTitle, { color: activeColors.text }]}>{exp.title}</Text>

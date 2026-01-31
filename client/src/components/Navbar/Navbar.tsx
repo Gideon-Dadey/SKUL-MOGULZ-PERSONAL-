@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-    Home, Users, Briefcase, MessagesSquare, Bell, Search,
+    Home, Users, Folder, MessagesSquare, Bell, Search,
     ChevronDown, Settings, LogOut, HelpCircle,
     Sun, Moon, Plus, Grid3X3, TrendingUp, Bookmark
 } from 'lucide-react';
@@ -130,7 +130,7 @@ const Navbar: React.FC = () => {
     const navItems = [
         { path: '/feed', icon: Home, label: 'Home' },
         { path: '/network', icon: Users, label: 'Network' },
-        { path: '/projects', icon: Briefcase, label: 'Projects' },
+        { path: '/projects', icon: Folder, label: 'Projects' },
         { path: '/messages', icon: MessagesSquare, label: 'Messaging', badge: unreadMessages },
         { path: '/notifications', icon: Bell, label: 'Notifications', badge: unreadNotifications },
     ];

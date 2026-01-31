@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Platform, RefreshControl, Image, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Briefcase, TrendingUp, Rocket, Zap, Target, DollarSign, Filter, Grid, List, Search, Plus, BarChart3, Users, Calendar } from 'lucide-react-native';
+import { Folder, TrendingUp, Rocket, Zap, Target, DollarSign, Filter, Grid, List, Search, Plus, BarChart3, Users, Calendar } from 'lucide-react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import Colors from '../../constants/Colors';
@@ -133,7 +133,7 @@ export default function ProjectsScreen() {
                                 <Image source={{ uri: getImageUrl(project.media[0]) || '' }} style={styles.listCardImage} />
                             ) : (
                                 <View style={[styles.listCardImagePlaceholder, { backgroundColor: `${getStageColor(project.projectStage)}20` }]}>
-                                    <Briefcase size={24} color={getStageColor(project.projectStage)} />
+                                    <Folder size={24} color={getStageColor(project.projectStage)} />
                                 </View>
                             )}
                             <View style={styles.listCardInfo}>
@@ -178,7 +178,7 @@ export default function ProjectsScreen() {
                     <Image source={{ uri: getImageUrl(project.media[0]) || '' }} style={styles.gridCardImage} />
                 ) : (
                     <View style={[styles.gridCardImagePlaceholder, { backgroundColor: `${getStageColor(project.projectStage)}20` }]}>
-                        <Briefcase size={32} color={getStageColor(project.projectStage)} />
+                        <Folder size={32} color={getStageColor(project.projectStage)} />
                     </View>
                 )}
 
@@ -261,7 +261,7 @@ export default function ProjectsScreen() {
                     style={styles.statsContainer}
                     contentContainerStyle={styles.statsContent}
                 >
-                    {renderStatCard(Briefcase, 'Total', stats.total, '#6366f1')}
+                    {renderStatCard(Folder, 'Total', stats.total, '#6366f1')}
                     {renderStatCard(Rocket, 'Active', stats.active, '#10b981')}
                     {renderStatCard(TrendingUp, 'Growing', stats.completed, '#f59e0b')}
                     {renderStatCard(DollarSign, 'Raised', formatCurrency(stats.funding), '#ef4444')}
@@ -330,7 +330,7 @@ export default function ProjectsScreen() {
             >
                 {filteredProjects.length === 0 ? (
                     <View style={styles.emptyState}>
-                        <Briefcase size={64} color={activeColors.muted} />
+                        <Folder size={64} color={activeColors.muted} />
                         <Text style={[styles.emptyTitle, { color: activeColors.text }]}>
                             {selectedStage === 'all' ? 'No Projects Yet' : `No ${selectedStage} Projects`}
                         </Text>

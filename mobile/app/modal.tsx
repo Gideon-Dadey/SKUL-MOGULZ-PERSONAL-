@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Platfo
 import { useRouter, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { X, Image as ImageIcon, Sparkles, Hash, DollarSign, Briefcase, ChevronRight, Target } from 'lucide-react-native';
+import { X, Image as ImageIcon, Sparkles, Hash, DollarSign, Folder, ChevronRight, Target } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useTheme } from '../context/ThemeContext';
 import Colors from '../constants/Colors';
@@ -13,7 +13,7 @@ import { PROJECT_CATEGORIES, ProjectCategory } from '../types';
 const STAGES = [
   { value: 'idea', label: 'Idea', description: 'Just started', icon: Sparkles },
   { value: 'prototype', label: 'Prototype', description: 'In progress', icon: Target },
-  { value: 'mvp', label: 'MVP', description: 'Ready to test', icon: Briefcase },
+  { value: 'mvp', label: 'MVP', description: 'Ready to test', icon: Folder },
   { value: 'growth', label: 'Growth', description: 'Gaining traction', icon: DollarSign },
   { value: 'scaling', label: 'Scaling', description: 'Expanding', icon: Hash },
 ];

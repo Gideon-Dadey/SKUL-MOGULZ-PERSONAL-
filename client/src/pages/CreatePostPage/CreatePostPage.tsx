@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Image, X, Sparkles, Hash, DollarSign, Target, Briefcase } from 'lucide-react';
+import { ArrowLeft, Image, X, Sparkles, Hash, DollarSign, Target, Folder } from 'lucide-react';
 import { PROJECT_CATEGORIES, ProjectCategory } from '../../types';
 import api from '../../services/api';
 import './CreatePostPage.css';
@@ -8,7 +8,7 @@ import './CreatePostPage.css';
 const STAGES = [
     { value: 'idea', label: 'Idea', description: 'Just started', icon: <Sparkles size={18} /> },
     { value: 'prototype', label: 'Prototype', description: 'In progress', icon: <Target size={18} /> },
-    { value: 'mvp', label: 'MVP', description: 'Ready to test', icon: <Briefcase size={18} /> },
+    { value: 'mvp', label: 'MVP', description: 'Ready to test', icon: <Folder size={18} /> },
     { value: 'growth', label: 'Growth', description: 'Gaining traction', icon: <DollarSign size={18} /> },
     { value: 'scaling', label: 'Scaling', description: 'Expanding', icon: <Hash size={18} /> },
 ];
@@ -46,7 +46,7 @@ const CreatePostPage: React.FC = () => {
         }
     }, [editingPost]);
 
-    
+
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -161,7 +161,7 @@ const CreatePostPage: React.FC = () => {
                             onChange={(e) => setContent(e.target.value)}
                         />
 
-                        {}
+                        { }
                         {previews.length > 0 && (
                             <div className="create-previews">
                                 {previews.map((src, idx) => (
@@ -209,7 +209,7 @@ const CreatePostPage: React.FC = () => {
                     </div>
 
                     <aside className="create-settings">
-                        {}
+                        { }
                         <section className="settings-group">
                             <h3>Category</h3>
                             <div className="settings-pills">

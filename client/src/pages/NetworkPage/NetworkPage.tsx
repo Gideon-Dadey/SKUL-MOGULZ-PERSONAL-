@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Briefcase, ChevronRight, UserCheck } from 'lucide-react';
+import { Users, Folder, ChevronRight, UserCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import networkService from '../../services/networkService';
 import { getImageUrl } from '../../services/api';
@@ -86,7 +86,7 @@ const NetworkPage: React.FC = () => {
                         </li>
                         <li>
                             <Link to="/contacts" className="sidebar-menu-item">
-                                <span className="menu-icon"><Briefcase size={20} /></span>
+                                <span className="menu-icon"><Folder size={20} /></span>
                                 <span className="menu-label">Contacts</span>
                             </Link>
                         </li>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import {
-    MapPin, Edit2, Plus, MoreHorizontal, Briefcase, GraduationCap, Camera, Trash2
+    MapPin, Edit2, Plus, MoreHorizontal, Folder, GraduationCap, Camera, Trash2
 } from 'lucide-react';
 import PostCard from '../../components/PostCard/PostCard';
 import { mockUsers } from '../../data/mockData';
@@ -506,7 +506,7 @@ const ProfilePage: React.FC = () => {
                             profileUser.experience.map((exp: Experience) => (
                                 <div key={exp.id} className="profile-list-item">
                                     <div className="profile-list-item__icon">
-                                        <Briefcase size={24} />
+                                        <Folder size={24} />
                                     </div>
                                     <div className="profile-list-item__content">
                                         <h3>{exp.title}</h3>
