@@ -746,11 +746,6 @@ export default function ProfileScreen() {
                     )}
                 </View>
 
-                {/* Logout */}
-                <TouchableOpacity style={[styles.logoutButton, { borderColor: '#ef4444' }]} onPress={handleLogout}>
-                    <LogOut size={20} color="#ef4444" />
-                    <Text style={styles.logoutText}>Sign Out</Text>
-                </TouchableOpacity>
                 <View style={{ height: 40 }} />
             </ScrollView>
 
@@ -907,11 +902,6 @@ const styles = StyleSheet.create({
     projectStage: { fontSize: 11, fontWeight: '800', marginTop: 2 },
     projectDesc: { fontSize: 13, marginTop: 4, lineHeight: 18 },
     projectImage: { width: 80, height: 80, borderRadius: 8 },
-    logoutButton: {
-        flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-        height: 50, borderRadius: 8, borderWidth: 1, gap: 12, marginHorizontal: 16, marginTop: 12,
-    },
-    logoutText: { color: '#ef4444', fontSize: 15, fontWeight: '600' },
     // Modal styles
     modalOverlay: { flex: 1, justifyContent: 'flex-end' },
     modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)' },
