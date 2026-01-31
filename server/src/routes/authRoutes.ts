@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, getMe, getUserProfile, updateProfile, deleteAccount, changePassword, changeEmail, toggle2FA, getSessions, revokeSession } from '../controllers/authController';
+import { register, login, getMe, getUserProfile, updateProfile, deleteAccount, changePassword, changeEmail, toggle2FA, getSessions, revokeSession, updateSettings } from '../controllers/authController';
 import { protect, optionalProtect } from '../middleware/authMiddleware';
 
 import { upload } from '../middleware/uploadMiddleware';
@@ -17,5 +17,6 @@ router.put('/email', protect, changeEmail);
 router.put('/2fa', protect, toggle2FA);
 router.get('/sessions', protect, getSessions);
 router.delete('/sessions/:id', protect, revokeSession);
+router.put('/settings', protect, updateSettings);
 
 export default router;

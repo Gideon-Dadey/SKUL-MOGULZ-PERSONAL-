@@ -46,6 +46,15 @@ export interface User {
     impressions?: number;
     viewedProfile?: number;
     twoFactorEnabled?: boolean;
+    settings?: {
+        loadMedia: boolean;
+        autoplayVideos: boolean;
+        autoplayGifs: boolean;
+        showReposts: boolean;
+        showReplies: boolean;
+        allowDMs: boolean;
+        uploadLargeMedia: boolean;
+    };
     createdAt: string;
 }
 

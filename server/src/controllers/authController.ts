@@ -459,3 +459,20 @@ export const revokeSession = async (req: Request, res: Response) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// @desc    Update user settings
+// @route   PUT /api/auth/settings
+// @access  Private
+export const updateSettings = async (req: Request, res: Response) => {
+    try {
+        const user = await User.findById((req as any).user._id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        user.settings = { ...user.settings, ...req.body };
+        await user.save();
+
+        res.json(user.settings);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};

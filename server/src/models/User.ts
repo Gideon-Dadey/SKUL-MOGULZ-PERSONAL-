@@ -48,6 +48,15 @@ export interface IUser extends Document {
         ip: string;
         lastActive: Date;
     }[];
+    settings: {
+        loadMedia: boolean;
+        autoplayVideos: boolean;
+        autoplayGifs: boolean;
+        showReposts: boolean;
+        showReplies: boolean;
+        allowDMs: boolean;
+        uploadLargeMedia: boolean;
+    };
     createdAt: Date;
     updatedAt: Date;
     comparePassword(candidatePassword: string): Promise<boolean>;
@@ -103,7 +112,16 @@ const userSchema = new Schema<IUser>({
     impressions: { type: Number, default: 0 },
     bookmarks: [{ type: Schema.Types.ObjectId, ref: 'Project' }],
     twoFactorEnabled: { type: Boolean, default: false },
-    sessions: [sessionSchema]
+    sessions: [sessionSchema],
+    settings: {
+        loadMedia: { type: Boolean, default: true },
+        autoplayVideos: { type: Boolean, default: true },
+        autoplayGifs: { type: Boolean, default: true },
+        showReposts: { type: Boolean, default: true },
+        showReplies: { type: Boolean, default: true },
+        allowDMs: { type: Boolean, default: true },
+        uploadLargeMedia: { type: Boolean, default: true },
+    }
 }, {
     timestamps: true
 });
