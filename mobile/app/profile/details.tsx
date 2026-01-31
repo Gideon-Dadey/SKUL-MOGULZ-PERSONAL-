@@ -36,6 +36,7 @@ export default function ProfileScreen() {
     const [skillsModalVisible, setSkillsModalVisible] = useState(false);
     const [menuVisible, setMenuVisible] = useState(false);
     const [showAccountsMenu, setShowAccountsMenu] = useState(false);
+    const [showAnalyticsMenu, setShowAnalyticsMenu] = useState(false);
 
     // Form states
     const [aboutText, setAboutText] = useState(user?.bio || '');
@@ -43,10 +44,11 @@ export default function ProfileScreen() {
     const [editingEducation, setEditingEducation] = useState<Education | null>(null);
     const [newSkill, setNewSkill] = useState('');
 
-    // Reset accounts menu when side menu closes
+    // Reset menus when side menu closes
     useEffect(() => {
         if (!menuVisible) {
             setShowAccountsMenu(false);
+            setShowAnalyticsMenu(false);
         }
     }, [menuVisible]);
 
@@ -420,10 +422,7 @@ export default function ProfileScreen() {
                         </View>
                         <View style={styles.sideMenuStats}>
                             <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>{connectionCount}</Text>
-                            <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>Followers</Text>
-                            <View style={{ width: 12 }} />
-                            <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>18</Text>
-                            <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>Following</Text>
+                            <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>Connections</Text>
                         </View>
                     </View>
 
@@ -432,6 +431,28 @@ export default function ProfileScreen() {
                             <Users size={22} color={activeColors.text} />
                             <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Profile</Text>
                         </TouchableOpacity>
+
+                        {/* Analytics Menu Item */}
+                        <View>
+                            <TouchableOpacity style={styles.sideMenuItem} onPress={() => setShowAnalyticsMenu(!showAnalyticsMenu)}>
+                                <BarChart2 size={22} color={activeColors.text} />
+                                <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Analytics</Text>
+                                <ChevronDown size={20} color={activeColors.muted} style={{ marginLeft: 'auto', transform: [{ rotate: showAnalyticsMenu ? '180deg' : '0deg' }] }} />
+                            </TouchableOpacity>
+                            {showAnalyticsMenu && (
+                                <View style={{ paddingLeft: 54, paddingBottom: 12, gap: 12 }}>
+                                    <View>
+                                        <Text style={{ fontSize: 16, fontWeight: '700', color: activeColors.text }}>{analytics.profileViews}</Text>
+                                        <Text style={{ fontSize: 13, color: activeColors.muted }}>Profile views</Text>
+                                    </View>
+                                    <View>
+                                        <Text style={{ fontSize: 16, fontWeight: '700', color: activeColors.text }}>{analytics.postImpressions}</Text>
+                                        <Text style={{ fontSize: 13, color: activeColors.muted }}>Post impressions</Text>
+                                    </View>
+                                </View>
+                            )}
+                        </View>
+
                         <TouchableOpacity style={styles.sideMenuItem} onPress={() => setMenuVisible(false)}>
                             <Sparkles size={22} color={activeColors.text} />
                             <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Feeds</Text>
@@ -582,36 +603,7 @@ export default function ProfileScreen() {
                     </View>
                 </View>
 
-                {/* Analytics Section */}
-                <View style={[styles.section, { backgroundColor: activeColors.card }]}>
-                    <View style={styles.sectionHeader}>
-                        <View>
-                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Analytics</Text>
-                            <View style={styles.privateRow}>
-                                <Eye size={12} color={activeColors.muted} />
-                                <Text style={[styles.privateLabel, { color: activeColors.muted }]}>Private to you</Text>
-                            </View>
-                        </View>
-                    </View>
-                    <View style={styles.analyticsGrid}>
-                        <View style={styles.analyticsItem}>
-                            <View style={styles.analyticsHeader}>
-                                <Users size={20} color={activeColors.text} />
-                                <Text style={[styles.analyticsValue, { color: activeColors.text }]}>{analytics.profileViews}</Text>
-                            </View>
-                            <Text style={[styles.analyticsLabel, { color: activeColors.text }]}>profile views</Text>
-                            <Text style={[styles.analyticsSub, { color: activeColors.muted }]}>See who's viewed your profile.</Text>
-                        </View>
-                        <View style={[styles.analyticsItem, { borderLeftWidth: 1, borderLeftColor: activeColors.border }]}>
-                            <View style={styles.analyticsHeader}>
-                                <BarChart2 size={20} color={activeColors.text} />
-                                <Text style={[styles.analyticsValue, { color: activeColors.text }]}>{analytics.postImpressions}</Text>
-                            </View>
-                            <Text style={[styles.analyticsLabel, { color: activeColors.text }]}>post impressions</Text>
-                            <Text style={[styles.analyticsSub, { color: activeColors.muted }]}>Check out who's engaging.</Text>
-                        </View>
-                    </View>
-                </View>
+
 
                 {/* About Section */}
                 <View style={[styles.section, { backgroundColor: activeColors.card }]}>
