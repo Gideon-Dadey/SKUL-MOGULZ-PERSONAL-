@@ -51,7 +51,7 @@ export default function SearchScreen() {
         try {
             setIsLoading(true);
             const [usersRes, projectsRes] = await Promise.all([
-                api.get(`/users/search?q=${encodeURIComponent(searchQuery)}`).catch(() => ({ data: [] })),
+                api.get(`/network/search?q=${encodeURIComponent(searchQuery)}`).catch(() => ({ data: [] })),
                 api.get(`/projects?search=${encodeURIComponent(searchQuery)}`).catch(() => ({ data: [] })),
             ]);
 
