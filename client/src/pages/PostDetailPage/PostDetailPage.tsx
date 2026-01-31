@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, MessageCircle, Share2, Send, MoreHorizontal, ThumbsUp, Trash2, Edit } from 'lucide-react';
+import { ArrowLeft, Heart, MessageCircle, Share2, Send, MoreHorizontal, ThumbsUp, Trash2, Edit, Bookmark } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import './PostDetailPage.css';
@@ -8,7 +8,7 @@ import './PostDetailPage.css';
 const PostDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, toggleBookmark } = useAuth();
     const [post, setPost] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
     const [commentText, setCommentText] = useState('');
@@ -207,6 +207,18 @@ const PostDetailPage: React.FC = () => {
         }
     };
 
+    const handleBookmark = async () => {
+        if (!post || !user) {
+            if (!user) navigate('/login');
+            return;
+        }
+        try {
+            await toggleBookmark(post.id);
+        } catch (error) {
+            console.error("Failed to toggle bookmark", error);
+        }
+    };
+
     if (loading) return <div className="post-detail-layout">Loading...</div>;
 
     if (!post) {
@@ -353,6 +365,13 @@ const PostDetailPage: React.FC = () => {
                         <button className="action-btn">
                             <MessageCircle size={20} />
                             <span>Comment</span>
+                        </button>
+                        <button
+                            className={`action-btn ${user && (user.bookmarks || []).includes(post.id) ? 'active' : ''}`}
+                            onClick={handleBookmark}
+                        >
+                            <Bookmark size={20} fill={user && (user.bookmarks || []).includes(post.id) ? "var(--primary)" : "none"} color={user && (user.bookmarks || []).includes(post.id) ? "var(--primary)" : "currentColor"} />
+                            <span>Bookmark</span>
                         </button>
                         <button className="action-btn">
                             <Share2 size={20} />

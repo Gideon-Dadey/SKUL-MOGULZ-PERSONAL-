@@ -16,7 +16,7 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = false }) => {
-    const { user } = useAuth();
+    const { user, toggleBookmark } = useAuth();
     const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -26,6 +26,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
 
 
     const isLiked = user && (post.likedBy || []).includes(user.id);
+    const isBookmarked = user && (user.bookmarks || []).includes(post.id);
     const isAuthor = user && (user.id === post.author.id || user.id === post.author._id);
 
     const handleDelete = async () => {
@@ -57,6 +58,20 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
             } else {
                 videoRef.current.pause();
             }
+        }
+    };
+
+    const handleBookmark = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+        try {
+            await toggleBookmark(post.id);
+        } catch (error) {
+            console.error("Failed to toggle bookmark", error);
         }
     };
 
@@ -256,8 +271,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
                 <button className="post-card__action-btn">
                     <Share2 size={18} />
                 </button>
-                <button className="post-card__action-btn">
-                    <Bookmark size={18} />
+                <button
+                    className={`post-card__action-btn ${isBookmarked ? 'active' : ''}`}
+                    onClick={handleBookmark}
+                >
+                    <Bookmark size={18} fill={isBookmarked ? "var(--primary)" : "none"} color={isBookmarked ? "var(--primary)" : "currentColor"} />
                 </button>
             </div>
         </article >

@@ -18,6 +18,7 @@ export interface User {
     viewedProfile?: number;
     experience?: Experience[];
     education?: Education[];
+    bookmarks?: string[];
     createdAt: string;
 }
 

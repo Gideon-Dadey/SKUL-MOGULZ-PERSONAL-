@@ -7,6 +7,7 @@ interface AuthContextType extends AuthState {
     register: (userData: Partial<User> & { password: string }) => Promise<void>;
     logout: () => void;
     updateProfile: (data: Partial<User>) => Promise<any>;
+    toggleBookmark: (projectId: string) => Promise<void>;
     refreshUser: () => Promise<void>;
 }
 
@@ -96,6 +97,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
     };
 
+    const toggleBookmark = async (projectId: string) => {
+        try {
+            const updatedBookmarks = await authService.toggleBookmark(projectId);
+            setState(prev => prev.user ? ({
+                ...prev,
+                user: { ...prev.user, bookmarks: updatedBookmarks }
+            }) : prev);
+        } catch (error) {
+            console.error("Toggle bookmark failed", error);
+            throw error;
+        }
+    };
+
     const refreshUser = async () => {
         try {
             const freshUserData = await authService.getMe();
@@ -121,7 +135,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     return (
-        <AuthContext.Provider value={{ ...state, login, register, logout, updateProfile, refreshUser }}>
+        <AuthContext.Provider value={{ ...state, login, register, logout, updateProfile, toggleBookmark, refreshUser }}>
             {children}
         </AuthContext.Provider>
     );

@@ -15,6 +15,7 @@ import ProjectsPage from './pages/ProjectsPage/ProjectsPage';
 import MessagesPage from './pages/MessagesPage/MessagesPage';
 import NotificationsPage from './pages/NotificationsPage/NotificationsPage';
 import AnalyticsPage from './pages/AnalyticsPage/AnalyticsPage';
+import SavedPage from './pages/SavedPage/SavedPage';
 import Logo from './components/Logo';
 import './styles/index.css';
 
@@ -90,6 +91,9 @@ function AppContent() {
                     } />
                     <Route path="/analytics" element={
                         <ProtectedRoute><AnalyticsPage /></ProtectedRoute>
+                    } />
+                    <Route path="/saved" element={
+                        <ProtectedRoute><SavedPage /></ProtectedRoute>
                     } />
 
 
