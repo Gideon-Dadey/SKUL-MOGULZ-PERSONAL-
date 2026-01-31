@@ -121,7 +121,7 @@ export interface Notification {
     _id: string;
     id?: string;
     sender: User;
-    type: 'like' | 'comment' | 'follow' | 'funding' | 'new_post';
+    type: 'like' | 'comment' | 'follow' | 'funding' | 'repost' | 'new_post';
     message?: string;
     isRead: boolean;
     project?: {
