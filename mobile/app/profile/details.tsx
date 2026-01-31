@@ -535,9 +535,7 @@ export default function ProfileScreen() {
                         {user?.banner && (
                             <Image source={{ uri: getImageUrl(user.banner) || '' }} style={styles.bannerImage} />
                         )}
-                        <TouchableOpacity style={styles.editBannerBtn} onPress={() => router.push('/edit-profile')}>
-                            <PenTool size={18} color="#fff" />
-                        </TouchableOpacity>
+
                     </View>
 
                     <View style={styles.profileInfoContainer}>
@@ -548,9 +546,7 @@ export default function ProfileScreen() {
                             />
                         </View>
 
-                        <TouchableOpacity style={styles.editProfileIcon} onPress={() => router.push('/edit-profile')}>
-                            <Edit2 size={20} color={activeColors.muted} />
-                        </TouchableOpacity>
+
 
                         <View style={styles.userDetails}>
                             <Text style={[styles.name, { color: activeColors.text }]}>{user?.firstName} {user?.lastName}</Text>
@@ -588,9 +584,6 @@ export default function ProfileScreen() {
                 <View style={[styles.section, { backgroundColor: activeColors.card }]}>
                     <View style={styles.sectionHeader}>
                         <Text style={[styles.sectionTitle, { color: activeColors.text }]}>About</Text>
-                        <TouchableOpacity onPress={() => { setAboutText(user?.bio || ''); setAboutModalVisible(true); }}>
-                            <Edit2 size={20} color={activeColors.muted} />
-                        </TouchableOpacity>
                     </View>
                     <Text style={[styles.bodyText, { color: user?.bio ? activeColors.text : activeColors.muted }]}>
                         {user?.bio || "Tell your story. What drives you? What are you building?"}
