@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Bell, Heart, MessageCircle, UserPlus, Zap, Repeat } from 'lucide-react';
+import { Settings, Bell, Heart, MessageSquareText, UserPlus, Zap, Repeat } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import notificationService from '../../services/notificationService';
 import './NotificationsPage.css';
@@ -38,7 +38,7 @@ const NotificationsPage: React.FC = () => {
     const getNotificationIcon = (type: string) => {
         switch (type) {
             case 'like': return <Heart size={20} className="notif-icon notif-icon--like" />;
-            case 'comment': return <MessageCircle size={20} className="notif-icon notif-icon--comment" />;
+            case 'comment': return <MessageSquareText size={20} className="notif-icon notif-icon--comment" />;
             case 'funding': return <Zap size={20} className="notif-icon notif-icon--funding" />;
             case 'follow': return <UserPlus size={20} className="notif-icon notif-icon--follow" />;
             case 'repost': return <Repeat size={20} className="notif-icon notif-icon--repost" />;

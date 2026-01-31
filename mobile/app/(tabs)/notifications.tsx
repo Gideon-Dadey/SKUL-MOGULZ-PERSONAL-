@@ -16,7 +16,7 @@ import Colors from '../../constants/Colors';
 import notificationService from '../../services/notificationService';
 import { Notification } from '../../types';
 import { getImageUrl } from '../../services/api';
-import { Bell, Heart, MessageCircle, UserPlus, Zap, CheckCheck, MoreVertical, Repeat } from 'lucide-react-native';
+import { Bell, Heart, MessageSquareText, UserPlus, Zap, CheckCheck, MoreVertical, Repeat } from 'lucide-react-native';
 import { formatRelativeTime } from '../../utils/date';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSocket } from '../../context/SocketContext';
@@ -125,7 +125,7 @@ export default function NotificationsScreen() {
         const iconSize = 14;
         switch (type) {
             case 'like': return <Heart size={iconSize} color="#FF4B2B" fill="#FF4B2B" />;
-            case 'comment': return <MessageCircle size={iconSize} color="#00C9FF" fill="#00C9FF" />;
+            case 'comment': return <MessageSquareText size={iconSize} color="#00C9FF" fill="#00C9FF" />;
             case 'funding': return <Zap size={iconSize} color="#FDC830" fill="#FDC830" />;
             case 'follow': return <UserPlus size={iconSize} color="#A5D6B7" fill="#A5D6B7" />;
             case 'repost': return <Repeat size={iconSize} color="#00BA7C" />;

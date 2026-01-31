@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, MessageCircle, Share2, Send, MoreHorizontal, ThumbsUp, Trash2, Edit, Bookmark, Repeat } from 'lucide-react';
+import { ArrowLeft, Heart, MessageSquareText, Share2, Send, MoreHorizontal, ThumbsUp, Trash2, Edit, Bookmark, Repeat } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import './PostDetailPage.css';
@@ -388,7 +388,7 @@ const PostDetailPage: React.FC = () => {
                             <span>Repost</span>
                         </button>
                         <button className="action-btn">
-                            <MessageCircle size={20} />
+                            <MessageSquareText size={20} />
                             <span>Comment</span>
                         </button>
                         <button
@@ -460,7 +460,7 @@ const PostDetailPage: React.FC = () => {
                                                 className="comment-action-btn"
                                                 onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
                                             >
-                                                <MessageCircle size={14} />
+                                                <MessageSquareText size={14} />
                                                 <span>Reply</span>
                                             </button>
                                         </div>
