@@ -410,6 +410,7 @@ const PostDetailPage: React.FC = () => {
                                         >
                                             Like {(comment.likes || []).length > 0 && `(${comment.likes.length})`}
                                         </button>
+                                        <span className="comment-item__dot-divider">•</span>
                                         <button
                                             className="comment-action-btn"
                                             onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
