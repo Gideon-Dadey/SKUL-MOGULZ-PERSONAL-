@@ -64,7 +64,7 @@ const FeedPage: React.FC = () => {
                     comments: (p.comments || []).map((c: any) => ({
                         ...c,
                         id: c._id || c.id,
-                        author: { ...c.author, id: c.author?._id || c.author?.id }
+                        author: c.author ? { ...c.author, id: c.author._id || c.author.id } : null
                     })),
                     author: {
                         ...p.author,

@@ -175,7 +175,11 @@ export const getMe = async (req: Request, res: Response) => {
 // @access  Public
 export const getUserProfile = async (req: any, res: Response) => {
     try {
-        const user = await User.findOne({ username: req.params.username });
+        const { username: id } = req.params;
+        const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
+
+        const query = isObjectId ? { _id: id } : { username: id };
+        const user = await User.findOne(query);
 
         if (user) {
             // Increment profile views
