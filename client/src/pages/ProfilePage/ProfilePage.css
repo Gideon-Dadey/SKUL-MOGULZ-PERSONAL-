@@ -287,6 +287,43 @@
     font-size: 1rem;
     font-weight: 700;
     color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.top-skill-badge {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    background: var(--bg-main);
+    color: var(--primary);
+    border: 1px solid var(--primary-light);
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.skill-item__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.skill-item__proof {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.skill-item__proof svg {
+    color: var(--text-light);
+}
+
+.skill-item__proof strong {
+    color: var(--text-main);
 }
 
 .skill-item__endorsements {
