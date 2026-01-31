@@ -187,12 +187,12 @@ export default function PostCard({ post, onLike, onComment, onBookmark, onEdit, 
                                         source={{ uri: imageUrl }}
                                         style={styles.mainMedia}
                                         useNativeControls
-                                        resizeMode={ResizeMode.COVER}
+                                        resizeMode={ResizeMode.CONTAIN}
                                         isLooping
                                         shouldPlay={false}
                                     />
                                 ) : (
-                                    <Image source={{ uri: imageUrl }} style={styles.mainMedia} resizeMode="cover" />
+                                    <Image source={{ uri: imageUrl }} style={styles.mainMedia} resizeMode="contain" />
                                 )}
                             </TouchableOpacity>
 
