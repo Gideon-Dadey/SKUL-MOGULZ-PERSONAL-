@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, Share, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, Image, TouchableOpacity, Share, Alert, Modal, Dimensions } from 'react-native';
 import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { Post } from '../types';
@@ -23,6 +23,22 @@ export default function PostCard({ post, onLike, onComment, onBookmark, onEdit, 
     const { theme } = useTheme();
     const { user } = useAuth();
     const activeColors = Colors[theme];
+    const [aspectRatio, setAspectRatio] = useState(1);
+    const [viewImage, setViewImage] = useState(false);
+
+    const imageUrl = post.media && post.media.length > 0 ? getImageUrl(post.media[0]) : null;
+
+    useEffect(() => {
+        if (imageUrl) {
+            Image.getSize(imageUrl, (width, height) => {
+                if (width && height) {
+                    setAspectRatio(width / height);
+                }
+            }, (error) => {
+                console.warn('Failed to get image size:', error);
+            });
+        }
+    }, [imageUrl]);
 
     const isLiked = user && (post.likedBy || []).includes(user.id);
     const isBookmarked = user && (post.bookmarkedBy || []).includes(user.id);
@@ -128,10 +144,40 @@ export default function PostCard({ post, onLike, onComment, onBookmark, onEdit, 
                 </Text>
             </TouchableOpacity>
 
-            {post.media && post.media.length > 0 && (
-                <TouchableOpacity style={styles.mediaContainer} activeOpacity={0.9} onPress={() => router.push(('/post/' + post.id) as any)}>
-                    <Image source={{ uri: getImageUrl(post.media[0]) || '' }} style={styles.mainMedia} />
-                </TouchableOpacity>
+            {imageUrl && (
+                <View>
+                    <TouchableOpacity
+                        style={[styles.mediaContainer, { aspectRatio }]}
+                        activeOpacity={0.9}
+                        onPress={() => setViewImage(true)}
+                    >
+                        <Image source={{ uri: imageUrl }} style={styles.mainMedia} />
+                    </TouchableOpacity>
+
+                    <Modal visible={viewImage} transparent={true} onRequestClose={() => setViewImage(false)} animationType="fade">
+                        <View style={styles.modalContainer}>
+                            <TouchableOpacity
+                                style={styles.modalBackground}
+                                activeOpacity={1}
+                                onPress={() => setViewImage(false)}
+                            >
+                                <Image
+                                    source={{ uri: imageUrl }}
+                                    style={styles.fullscreenImage}
+                                    resizeMode="contain"
+                                />
+                                <TouchableOpacity
+                                    style={styles.closeFullscreen}
+                                    onPress={() => setViewImage(false)}
+                                >
+                                    <View style={styles.closeBadge}>
+                                        <Text style={styles.closeText}>Close</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </TouchableOpacity>
+                        </View>
+                    </Modal>
+                </View>
             )}
 
             <View style={styles.tagsContainer}>
@@ -222,13 +268,44 @@ const styles = StyleSheet.create({
     },
     mediaContainer: {
         width: '100%',
-        height: 200,
         backgroundColor: '#000',
     },
     mainMedia: {
         width: '100%',
         height: '100%',
-        resizeMode: 'cover',
+        resizeMode: 'contain',
+    },
+    modalContainer: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.9)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalBackground: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    fullscreenImage: {
+        width: '100%',
+        height: '100%',
+    },
+    closeFullscreen: {
+        position: 'absolute',
+        top: 50,
+        right: 20,
+        zIndex: 10,
+    },
+    closeBadge: {
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
+    },
+    closeText: {
+        color: '#fff',
+        fontWeight: '700',
     },
     tagsContainer: {
         flexDirection: 'row',
