@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform, FlatList, Keyboard } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import { ArrowLeft, Heart, MessageCircle, Share2, Bookmark, Send, MoreHorizontal } from 'lucide-react-native';
+import { ArrowLeft, Heart, MessageSquareText, Share2, Bookmark, Send, MoreHorizontal } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -214,7 +214,7 @@ export default function PostDetailScreen() {
                                 inputRef.current?.focus();
                             }}
                         >
-                            <MessageCircle size={14} color={activeColors.muted} />
+                            <MessageSquareText size={14} color={activeColors.muted} />
                             <Text style={[styles.commentActionText, { color: activeColors.muted }]}>Reply</Text>
                         </TouchableOpacity>
                     </View>
@@ -327,7 +327,7 @@ export default function PostDetailScreen() {
                                 <Heart size={22} color={isLiked ? activeColors.tint : activeColors.muted} fill={isLiked ? activeColors.tint : 'transparent'} />
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.actionBtn} onPress={() => inputRef.current?.focus()}>
-                                <MessageCircle size={22} color={activeColors.muted} />
+                                <MessageSquareText size={22} color={activeColors.muted} />
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.actionBtn}>
                                 <Bookmark size={22} color={activeColors.muted} />

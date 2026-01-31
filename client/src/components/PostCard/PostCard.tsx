@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Trash2, Edit, X, Play, Repeat } from 'lucide-react';
+import { Heart, MessageSquareText, Share2, Bookmark, MoreHorizontal, Trash2, Edit, X, Play, Repeat } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Post } from '../../types';
 import { useAuth } from '../../context/AuthContext';
@@ -285,7 +285,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onRepost, onDelete, c
 
             <div className="post-card__footer">
                 <Link to={`/post/${originalPost.id || originalPost._id}`} className="post-card__action-btn">
-                    <MessageCircle size={18} />
+                    <MessageSquareText size={18} />
                     <span>{commentsCount}</span>
                 </Link>
 
