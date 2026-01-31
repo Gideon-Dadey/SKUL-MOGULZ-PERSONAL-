@@ -21,11 +21,14 @@ import { formatRelativeTime } from '../../utils/date';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSocket } from '../../context/SocketContext';
 
+import { useNotifications } from '../../context/NotificationContext';
+
 export default function NotificationsScreen() {
     const { theme } = useTheme();
     const activeColors = Colors[theme];
     const insets = useSafeAreaInsets();
     const router = useRouter();
+    const { markAllAsRead, markAsRead } = useNotifications();
 
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -49,17 +52,17 @@ export default function NotificationsScreen() {
         useCallback(() => {
             fetchNotifications(false);
             // Mark all as read when viewed
-            const markAll = async () => {
+            const autoMark = async () => {
                 try {
-                    await notificationService.markAllAsRead();
+                    await markAllAsRead();
                     // Update local state to reflect read status immediately
                     setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
                 } catch (e) {
                     console.error("Auto mark all read failed", e);
                 }
             };
-            markAll();
-        }, [fetchNotifications])
+            autoMark();
+        }, [fetchNotifications, markAllAsRead])
     );
 
     useEffect(() => {
@@ -88,7 +91,7 @@ export default function NotificationsScreen() {
         // Mark as read in background if not already read
         if (!isRead) {
             try {
-                await notificationService.markAsRead(id);
+                await markAsRead(id);
                 setNotifications(prev =>
                     prev.map(n => n._id === id ? { ...n, isRead: true } : n)
                 );
@@ -109,7 +112,7 @@ export default function NotificationsScreen() {
 
     const handleMarkAllRead = async () => {
         try {
-            await notificationService.markAllAsRead();
+            await markAllAsRead();
             setNotifications(prev =>
                 prev.map(n => ({ ...n, isRead: true }))
             );
