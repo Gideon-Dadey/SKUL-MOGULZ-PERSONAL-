@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Platform, KeyboardAvoidingView, Alert, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Save, User as UserIcon, Briefcase, MapPin, AlignLeft, Info, Camera, X } from 'lucide-react-native';
+import { ArrowLeft, Save, User as UserIcon, Folder, MapPin, AlignLeft, Info, Camera, X } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -225,7 +225,7 @@ export default function EditProfileScreen() {
                     formData.headline,
                     (text) => setFormData({ ...formData, headline: text }),
                     'Ex: Student Founder | Building Fintech for GenZ',
-                    <Briefcase size={18} color={activeColors.muted} />
+                    <Folder size={18} color={activeColors.muted} />
                 )}
 
                 {renderInput(

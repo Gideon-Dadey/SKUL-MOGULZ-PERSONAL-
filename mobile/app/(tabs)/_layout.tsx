@@ -2,7 +2,7 @@ import React from 'react';
 import { Tabs, router } from 'expo-router';
 import { View, Text, Platform, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Home, Users, Briefcase, MessageCircle, Bell, SquarePlus } from 'lucide-react-native';
+import { Home, Users, Folder, MessageCircle, Bell, SquarePlus } from 'lucide-react-native';
 
 import Colors from '../../constants/Colors';
 import { useTheme } from '../../context/ThemeContext';
@@ -144,7 +144,7 @@ export default function TabLayout() {
         name="projects"
         options={{
           title: 'Projects',
-          tabBarIcon: ({ focused }) => renderTabIcon(Briefcase, 'Projects', focused),
+          tabBarIcon: ({ focused }) => renderTabIcon(Folder, 'Projects', focused),
         }}
       />
       <Tabs.Screen

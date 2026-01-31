@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, BarChart2, Globe, Shield, Users, Zap, Briefcase } from 'lucide-react';
+import { ArrowRight, BarChart2, Globe, Shield, Users, Zap, Folder } from 'lucide-react';
 import profile1 from '../assets/profile-1.png';
 import profile2 from '../assets/profile-2.png';
 import logo from '../assets/logo.png';
@@ -58,7 +58,7 @@ const LandingPage: React.FC = () => {
                         </div>
 
                         <div className="floating-badge b-3">
-                            <div className="badge-icon"><Briefcase size={20} /></div>
+                            <div className="badge-icon"><Folder size={20} /></div>
                             <div className="badge-text">
                                 <div>$12M Raised</div>
                                 <div>By students in 2025</div>
@@ -101,7 +101,7 @@ const LandingPage: React.FC = () => {
 
                 <div className="features-grid">
                     <div className="glass-card">
-                        <div className="feature-icon"><Briefcase size={28} /></div>
+                        <div className="feature-icon"><Folder size={28} /></div>
                         <h3 className="feature-title">Portfolio Builder</h3>
                         <p className="feature-desc">Dynamic showcases for your technical and creative projects that grab investor attention.</p>
                     </div>

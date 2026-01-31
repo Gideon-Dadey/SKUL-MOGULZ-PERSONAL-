@@ -7,7 +7,7 @@ import {
 import { useRouter, Stack } from 'expo-router';
 import {
     ArrowLeft, Settings, LogOut, MapPin, Users, Edit2, Plus, BarChart2, Eye, PenTool, Moon, Sun,
-    X, Briefcase, GraduationCap, Award, Trash2, Check
+    X, Folder, GraduationCap, Award, Trash2, Check
 } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -525,7 +525,7 @@ export default function ProfileScreen() {
                         user.experience.map((exp: Experience, index: number) => (
                             <View key={exp.id || exp._id || index} style={[styles.listItem, { borderTopColor: activeColors.border }]}>
                                 <View style={[styles.listIcon, { backgroundColor: activeColors.tint + '20' }]}>
-                                    <Briefcase size={20} color={activeColors.tint} />
+                                    <Folder size={20} color={activeColors.tint} />
                                 </View>
                                 <View style={styles.listContent}>
                                     <Text style={[styles.listTitle, { color: activeColors.text }]}>{exp.title}</Text>
