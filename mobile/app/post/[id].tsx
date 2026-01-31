@@ -8,6 +8,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import Colors from '../../constants/Colors';
 import api, { getImageUrl } from '../../services/api';
+import { useSocket } from '../../context/SocketContext';
 
 export default function PostDetailScreen() {
     const { id } = useLocalSearchParams();
@@ -22,12 +23,29 @@ export default function PostDetailScreen() {
     const [loading, setLoading] = useState(true);
     const [commentText, setCommentText] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const { socket } = useSocket();
     const [replyingTo, setReplyingTo] = useState<any>(null); // { id, authorName }
     const [replyText, setReplyText] = useState('');
 
     useEffect(() => {
         if (id) fetchPostDetails();
     }, [id]);
+
+    useEffect(() => {
+        if (!socket || !id) return;
+
+        const handleNotification = (notif: any) => {
+            // If the notification is related to this post, refresh
+            if (notif.project?._id === id || notif.project === id) {
+                fetchPostDetails();
+            }
+        };
+
+        socket.on('notification', handleNotification);
+        return () => {
+            socket.off('notification', handleNotification);
+        };
+    }, [socket, id]);
 
     const fetchPostDetails = async () => {
         try {
