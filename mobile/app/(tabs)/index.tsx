@@ -8,6 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useSocket } from '../../context/SocketContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Colors from '../../constants/Colors';
 import api, { getImageUrl } from '../../services/api';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
@@ -31,6 +32,7 @@ export default function FeedScreen() {
   const { socket } = useSocket();
   const router = useRouter();
   const activeColors = Colors[theme];
+  const insets = useSafeAreaInsets();
 
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -490,7 +492,15 @@ export default function FeedScreen() {
         />
       </Animated.View>
 
-      <Animated.View style={[styles.sideMenuContainer, { backgroundColor: activeColors.card }, animatedDrawerStyle]}>
+      <Animated.View style={[
+        styles.sideMenuContainer,
+        {
+          backgroundColor: activeColors.card,
+          paddingTop: Math.max(insets.top, 60),
+          paddingBottom: insets.bottom + 110
+        },
+        animatedDrawerStyle
+      ]}>
         <View style={styles.sideMenuHeader}>
           <Image
             source={{ uri: getImageUrl(user?.avatar) || `https://ui-avatars.com/api/?name=${user?.firstName || 'User'}&background=A5D6B7&color=fff` }}
@@ -500,7 +510,9 @@ export default function FeedScreen() {
             <Text style={[styles.sideMenuName, { color: activeColors.text }]}>{user?.firstName} {user?.lastName}</Text>
             <View style={styles.sideMenuStats}>
               <Text style={[styles.sideMenuStatValue, { color: activeColors.text }]}>{connectionCount}</Text>
-              <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>Connections</Text>
+              <Text style={[styles.sideMenuStatLabel, { color: activeColors.muted }]}>
+                {connectionCount === 1 ? 'Connection' : 'Connections'}
+              </Text>
             </View>
           </View>
         </View>
@@ -1056,9 +1068,7 @@ const styles = StyleSheet.create({
     width: '80%',
     height: '100%',
     backgroundColor: '#fff',
-    paddingVertical: 40,
     paddingHorizontal: 24,
-    paddingBottom: 20,
     zIndex: 1002,
     shadowColor: "#000",
     shadowOffset: { width: 5, height: 0 },
@@ -1070,7 +1080,6 @@ const styles = StyleSheet.create({
   sideMenuAvatar: { width: 60, height: 60, borderRadius: 30, marginBottom: 12 },
   sideMenuUserInfo: { marginBottom: 16 },
   sideMenuName: { fontSize: 18, fontWeight: '800', marginBottom: 2 },
-  sideMenuHandle: { fontSize: 15 },
   sideMenuStats: { flexDirection: 'row', alignItems: 'center' },
   sideMenuStatValue: { fontWeight: '700', fontSize: 15, marginRight: 4 },
   sideMenuStatLabel: { fontSize: 15 },
