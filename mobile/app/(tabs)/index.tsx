@@ -235,20 +235,6 @@ export default function FeedScreen() {
     <View style={[styles.header, { backgroundColor: '#074B43' }]}>
       <StatusBar style="light" />
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
-          <MessagesSquare size={28} color="#fff" strokeWidth={1.5} />
-          {unreadMessages > 0 && (
-            <View style={[styles.iOSBadge, { backgroundColor: '#FF3B30' }]}>
-              <Text style={styles.iOSBadgeText}>{unreadMessages}</Text>
-            </View>
-          )}
-        </TouchableOpacity>
-
-        <View style={styles.searchBar}>
-          <Search size={18} color="#074B43" />
-          <Text style={styles.searchText}>Search ecosystem...</Text>
-        </View>
-
         <TouchableOpacity
           onPress={() => router.push('/profile/details')}
           style={styles.profileButton}
@@ -260,6 +246,20 @@ export default function FeedScreen() {
             />
           ) : (
             <CircleUser size={30} color="#fff" />
+          )}
+        </TouchableOpacity>
+
+        <View style={styles.searchBar}>
+          <Search size={18} color="#074B43" />
+          <Text style={styles.searchText}>Search ecosystem...</Text>
+        </View>
+
+        <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
+          <MessagesSquare size={28} color="#fff" strokeWidth={1.5} />
+          {unreadMessages > 0 && (
+            <View style={[styles.iOSBadge, { backgroundColor: '#FF3B30' }]}>
+              <Text style={styles.iOSBadgeText}>{unreadMessages}</Text>
+            </View>
           )}
         </TouchableOpacity>
       </View>
