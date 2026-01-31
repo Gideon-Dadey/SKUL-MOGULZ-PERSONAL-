@@ -28,6 +28,7 @@ export default function FeedScreen() {
   const [showAccountsMenu, setShowAccountsMenu] = useState(false);
   const [showAnalyticsMenu, setShowAnalyticsMenu] = useState(false);
   const [connectionCount, setConnectionCount] = useState(0);
+  const [analytics, setAnalytics] = useState({ profileViews: 0, postImpressions: 0 });
   const [commentModalVisible, setCommentModalVisible] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
@@ -136,12 +137,25 @@ export default function FeedScreen() {
     }
   };
 
+  const fetchAnalytics = async () => {
+    try {
+      const response = await api.get('/analytics');
+      setAnalytics({
+        profileViews: response.data.summary.profileViews,
+        postImpressions: response.data.summary.totalViews
+      });
+    } catch (error) {
+      console.log("Failed to fetch analytics", error);
+    }
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       if (isAuthenticated && user) {
         fetchPosts();
         fetchUnreadCount();
         fetchConnectionCount();
+        fetchAnalytics();
       }
     }, [user, isAuthenticated])
   );
@@ -431,11 +445,11 @@ export default function FeedScreen() {
               {showAnalyticsMenu && (
                 <View style={{ paddingLeft: 54, paddingBottom: 12, gap: 12 }}>
                   <View>
-                    <Text style={{ fontSize: 16, fontWeight: '700', color: activeColors.text }}>0</Text>
+                    <Text style={{ fontSize: 16, fontWeight: '700', color: activeColors.text }}>{analytics.profileViews}</Text>
                     <Text style={{ fontSize: 13, color: activeColors.muted }}>Profile views</Text>
                   </View>
                   <View>
-                    <Text style={{ fontSize: 16, fontWeight: '700', color: activeColors.text }}>0</Text>
+                    <Text style={{ fontSize: 16, fontWeight: '700', color: activeColors.text }}>{analytics.postImpressions}</Text>
                     <Text style={{ fontSize: 13, color: activeColors.muted }}>Post impressions</Text>
                   </View>
                 </View>
