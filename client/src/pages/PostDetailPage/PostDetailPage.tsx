@@ -31,11 +31,11 @@ const PostDetailPage: React.FC = () => {
                     comments: (p.comments || []).map((c: any) => ({
                         ...c,
                         id: c._id || c.id,
-                        author: { ...c.author, id: c.author?._id || c.author?.id },
+                        author: c.author ? { ...c.author, id: c.author._id || c.author.id } : null,
                         replies: (c.replies || []).map((r: any) => ({
                             ...r,
                             id: r._id || r.id,
-                            author: { ...r.author, id: r.author?._id || r.author?.id }
+                            author: r.author ? { ...r.author, id: r.author._id || r.author.id } : null
                         }))
                     })),
                     author: {
@@ -144,11 +144,11 @@ const PostDetailPage: React.FC = () => {
             const updatedComments = response.data.map((c: any) => ({
                 ...c,
                 id: c._id || c.id,
-                author: { ...c.author, id: c.author?._id || c.author?.id },
+                author: c.author ? { ...c.author, id: c.author._id || c.author.id } : null,
                 replies: (c.replies || []).map((r: any) => ({
                     ...r,
                     id: r._id || r.id,
-                    author: { ...r.author, id: r.author?._id || r.author?.id }
+                    author: r.author ? { ...r.author, id: r.author._id || r.author.id } : null
                 }))
             }));
 
@@ -171,11 +171,11 @@ const PostDetailPage: React.FC = () => {
                 const updatedComments = response.data.map((c: any) => ({
                     ...c,
                     id: c._id || c.id,
-                    author: { ...c.author, id: c.author?._id || c.author?.id },
+                    author: c.author ? { ...c.author, id: c.author._id || c.author.id } : null,
                     replies: (c.replies || []).map((r: any) => ({
                         ...r,
                         id: r._id || r.id,
-                        author: { ...r.author, id: r.author?._id || r.author?.id }
+                        author: r.author ? { ...r.author, id: r.author._id || r.author.id } : null
                     }))
                 }));
 

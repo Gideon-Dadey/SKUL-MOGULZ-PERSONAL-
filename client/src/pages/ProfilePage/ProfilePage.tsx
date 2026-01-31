@@ -74,7 +74,7 @@ const ProfilePage: React.FC = () => {
                         comments: (p.comments || []).map((c: any) => ({
                             ...c,
                             id: c._id || c.id,
-                            author: { ...c.author, id: c.author?._id || c.author?.id }
+                            author: c.author ? { ...c.author, id: c.author._id || c.author.id } : null
                         })),
                         author: {
                             ...p.author,
@@ -597,7 +597,7 @@ const ProfilePage: React.FC = () => {
                                             <div className="skill-item__meta">
                                                 <div className="skill-item__endorsements">
                                                     <div className="endorsement-avatars">
-                                                        {mockUsers.slice(index, index + 2).map((u, i) => (
+                                                        {mockUsers.slice(index % mockUsers.length, (index % mockUsers.length) + 2).map((u, i) => (
                                                             <img
                                                                 key={i}
                                                                 src={getImageUrl(u.avatar) || DEFAULT_AVATAR}
@@ -607,7 +607,7 @@ const ProfilePage: React.FC = () => {
                                                         ))}
                                                     </div>
                                                     <span className="endorsement-text">
-                                                        Endorsed by <strong>{mockUsers[index].firstName} {mockUsers[index].lastName}</strong> and {endorsementCount - 1} others
+                                                        Endorsed by <strong>{mockUsers[index % mockUsers.length].firstName} {mockUsers[index % mockUsers.length].lastName}</strong> and {endorsementCount - 1} others
                                                     </span>
                                                 </div>
 
