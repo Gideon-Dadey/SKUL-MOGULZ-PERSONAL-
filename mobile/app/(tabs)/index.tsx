@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator, Dimensions } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator, Dimensions, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import { Search, Plus, Bell, MessageCircle, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers, SlidersHorizontal } from 'lucide-react-native';
@@ -34,6 +34,11 @@ export default function FeedScreen() {
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedStage, setSelectedStage] = useState('all');
+
+  // Scroll tracking for sticky header
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const [showStickyHeader, setShowStickyHeader] = useState(false);
+  const STICKY_HEADER_HEIGHT = Platform.OS === 'ios' ? 110 : 90;
 
   const categories = [
     { id: 'all', label: 'All', icon: Layers },
@@ -136,6 +141,16 @@ export default function FeedScreen() {
     fetchPosts();
   };
 
+  const handleScroll = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    // Show sticky header when scrolled past the top bar area
+    if (offsetY > 80 && !showStickyHeader) {
+      setShowStickyHeader(true);
+    } else if (offsetY <= 80 && showStickyHeader) {
+      setShowStickyHeader(false);
+    }
+  };
+
   const handleLike = async (postId: string) => {
     try {
       const response = await api.put(`/projects/${postId}/like`);
@@ -231,6 +246,50 @@ export default function FeedScreen() {
     }
   };
 
+  const renderStickyHeader = () => (
+    <Animated.View
+      style={[
+        styles.stickyHeader,
+        {
+          backgroundColor: '#074B43',
+          opacity: showStickyHeader ? 1 : 0,
+          transform: [{ translateY: showStickyHeader ? 0 : -STICKY_HEADER_HEIGHT }],
+        }
+      ]}
+      pointerEvents={showStickyHeader ? 'auto' : 'none'}
+    >
+      <View style={styles.stickyTopBar}>
+        <TouchableOpacity
+          onPress={() => router.push('/profile/details')}
+          style={styles.profileButton}
+        >
+          {user?.avatar ? (
+            <Image
+              source={{ uri: getImageUrl(user.avatar) || '' }}
+              style={styles.profilePic}
+            />
+          ) : (
+            <CircleUser size={30} color="#fff" />
+          )}
+        </TouchableOpacity>
+
+        <View style={styles.searchBar}>
+          <Search size={18} color="#074B43" />
+          <Text style={styles.searchText}>Search ecosystem...</Text>
+        </View>
+
+        <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
+          <MessagesSquare size={28} color="#fff" strokeWidth={1.5} />
+          {unreadMessages > 0 && (
+            <View style={[styles.iOSBadge, { backgroundColor: '#FF3B30' }]}>
+              <Text style={styles.iOSBadgeText}>{unreadMessages}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
+    </Animated.View>
+  );
+
   const renderHeader = () => (
     <View style={[styles.header, { backgroundColor: '#074B43' }]}>
       <StatusBar style="light" />
@@ -305,6 +364,9 @@ export default function FeedScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: activeColors.background }]}>
+      {/* Sticky Header */}
+      {renderStickyHeader()}
+
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
@@ -320,6 +382,8 @@ export default function FeedScreen() {
         )}
         ListHeaderComponent={renderHeader}
         contentContainerStyle={styles.listContent}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={activeColors.tint} />
         }
@@ -497,6 +561,21 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 20,
+  },
+  stickyHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
+    paddingTop: Platform.OS === 'ios' ? 50 : 30,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+  },
+  stickyTopBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   header: {
     padding: 16,
