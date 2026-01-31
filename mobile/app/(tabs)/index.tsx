@@ -42,6 +42,13 @@ export default function FeedScreen() {
   const [showStickyHeader, setShowStickyHeader] = useState(false);
   const STICKY_HEADER_HEIGHT = Platform.OS === 'ios' ? 110 : 90;
 
+  // Reset accounts menu when side menu closes
+  useEffect(() => {
+    if (!menuVisible) {
+      setShowAccountsMenu(false);
+    }
+  }, [menuVisible]);
+
   const categories = [
     { id: 'all', label: 'All', icon: Layers },
     { id: 'technology', label: 'Technology', icon: Cpu },
