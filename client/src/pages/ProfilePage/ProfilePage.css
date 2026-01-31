@@ -55,7 +55,7 @@
 .profile-hero__avatar {
     width: 100%;
     height: 100%;
-    border-radius: 8px;
+    border-radius: 50%;
     /* Organic square-ish rounded look */
     border: 4px solid var(--bg-card);
     object-fit: cover;
@@ -65,7 +65,7 @@
 .profile-hero__avatar-overlay {
     position: absolute;
     inset: 4px;
-    border-radius: 4px;
+    border-radius: 50%;
     background: rgba(0, 0, 0, 0.4);
     display: flex;
     align-items: center;
@@ -351,7 +351,7 @@
 .sidebar-person__avatar {
     width: 48px;
     height: 48px;
-    border-radius: 8px;
+    border-radius: 50%;
     object-fit: cover;
 }
 
