@@ -145,12 +145,14 @@ export default function NotificationsScreen() {
                     <Text style={[styles.message, { color: activeColors.text }]}>
                         <Text style={styles.senderName}>{item.sender?.firstName} {item.sender?.lastName}</Text>
                         {' '}
-                        {item.type === 'like' ? 'liked your project' :
-                            item.type === 'comment' ? 'commented on your project' :
-                                item.type === 'funding' ? 'supported your project' :
-                                    item.type === 'follow' ? 'followed you' :
-                                        'sent you a notification'}
-                        {item.project && (
+                        {item.content ? item.content :
+                            (item.type === 'like' ? 'liked your project' :
+                                item.type === 'comment' ? 'commented on your project' :
+                                    item.type === 'funding' ? 'supported your project' :
+                                        item.type === 'follow' ? 'followed you' :
+                                            'sent you a notification')
+                        }
+                        {item.project && !item.content && (
                             <Text style={[styles.projectTitle, { color: activeColors.tint }]}>: "{item.project.title}"</Text>
                         )}
                     </Text>

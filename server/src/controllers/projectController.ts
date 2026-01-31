@@ -56,7 +56,8 @@ export const getProjectById = async (req: Request, res: Response) => {
     try {
         const project = await Project.findById(req.params.id)
             .populate('author', 'firstName lastName avatar headline role location impressions')
-            .populate('comments.author', 'firstName lastName avatar');
+            .populate('comments.author', 'firstName lastName avatar')
+            .populate('comments.replies.author', 'firstName lastName avatar');
 
         if (!project) {
             res.status(404).json({ message: 'Project not found' });
@@ -144,7 +145,10 @@ export const likeProject = async (req: any, res: Response) => {
                     project: project._id,
                 });
 
-                const fullNotification = await notification.populate('sender', 'firstName lastName avatar');
+                const fullNotification = await notification.populate([
+                    { path: 'sender', select: 'firstName lastName avatar' },
+                    { path: 'project', select: 'title' }
+                ]);
                 getIO().to(project.author.toString()).emit('notification', fullNotification);
             }
         }
@@ -189,7 +193,10 @@ export const commentProject = async (req: any, res: Response) => {
                 content: req.body.content.substring(0, 50) + (req.body.content.length > 50 ? '...' : '')
             });
 
-            const fullNotification = await notification.populate('sender', 'firstName lastName avatar');
+            const fullNotification = await notification.populate([
+                { path: 'sender', select: 'firstName lastName avatar' },
+                { path: 'project', select: 'title' }
+            ]);
             getIO().to(project.author.toString()).emit('notification', fullNotification);
         }
 
@@ -234,7 +241,10 @@ export const supportProject = async (req: any, res: Response) => {
                 content: `supported your project with $${donation.toLocaleString()}`
             });
 
-            const fullNotification = await notification.populate('sender', 'firstName lastName avatar');
+            const fullNotification = await notification.populate([
+                { path: 'sender', select: 'firstName lastName avatar' },
+                { path: 'project', select: 'title' }
+            ]);
             getIO().to(project.author.toString()).emit('notification', fullNotification);
         }
 
@@ -347,6 +357,24 @@ export const likeComment = async (req: any, res: Response) => {
         }
 
         await project.save();
+
+        // Create Notification for comment like
+        if (comment.author.toString() !== req.user.id) {
+            const notification = await Notification.create({
+                recipient: comment.author,
+                sender: req.user.id,
+                type: 'like',
+                project: project._id,
+                content: `liked your comment: "${comment.content.substring(0, 20)}${comment.content.length > 20 ? '...' : ''}"`
+            });
+
+            const fullNotification = await notification.populate([
+                { path: 'sender', select: 'firstName lastName avatar' },
+                { path: 'project', select: 'title' }
+            ]);
+            getIO().to(comment.author.toString()).emit('notification', fullNotification);
+        }
+
         res.status(200).json(comment.likes);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
@@ -381,6 +409,23 @@ export const replyComment = async (req: any, res: Response) => {
 
         comment.replies.push(newReply as any);
         await project.save();
+
+        // Create Notification for comment reply
+        if (comment.author.toString() !== req.user.id) {
+            const notification = await Notification.create({
+                recipient: comment.author,
+                sender: req.user.id,
+                type: 'comment',
+                project: project._id,
+                content: `replied to your comment: "${req.body.content.substring(0, 20)}${req.body.content.length > 20 ? '...' : ''}"`
+            });
+
+            const fullNotification = await notification.populate([
+                { path: 'sender', select: 'firstName lastName avatar' },
+                { path: 'project', select: 'title' }
+            ]);
+            getIO().to(comment.author.toString()).emit('notification', fullNotification);
+        }
 
         await project.populate([
             { path: 'comments.author', select: 'firstName lastName avatar' },
