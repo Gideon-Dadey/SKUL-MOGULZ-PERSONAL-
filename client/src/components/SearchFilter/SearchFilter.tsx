@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import {
+    Search, SlidersHorizontal, X, Layers,
+    Cpu, Activity, Landmark, GraduationCap, Leaf,
+    Film, ShoppingBag, Globe, Bot, Sparkles
+} from 'lucide-react';
 import { PROJECT_CATEGORIES, ProjectCategory } from '../../types';
 import './SearchFilter.css';
 
@@ -20,6 +24,20 @@ const STAGES = [
     { value: 'growth', label: 'Growth' },
     { value: 'scaling', label: 'Scaling' },
 ];
+
+const categoryIconMap: Record<string, any> = {
+    'Cpu': Cpu,
+    'Activity': Activity,
+    'Landmark': Landmark,
+    'GraduationCap': GraduationCap,
+    'Leaf': Leaf,
+    'Film': Film,
+    'ShoppingBag': ShoppingBag,
+    'Globe': Globe,
+    'Bot': Bot,
+    'Sparkles': Sparkles,
+    'Layers': Layers
+};
 
 const SearchFilter: React.FC<SearchFilterProps> = ({
     searchQuery,
@@ -78,17 +96,20 @@ const SearchFilter: React.FC<SearchFilterProps> = ({
                                 className={`search-filter__category ${selectedCategory === 'all' ? 'active' : ''}`}
                                 onClick={() => onCategoryChange('all')}
                             >
-                                All
+                                <Layers size={16} /> All
                             </button>
-                            {PROJECT_CATEGORIES.map(cat => (
-                                <button
-                                    key={cat.value}
-                                    className={`search-filter__category ${selectedCategory === cat.value ? 'active' : ''}`}
-                                    onClick={() => onCategoryChange(cat.value)}
-                                >
-                                    {cat.icon} {cat.label}
-                                </button>
-                            ))}
+                            {PROJECT_CATEGORIES.map(cat => {
+                                const IconComponent = categoryIconMap[cat.icon] || Sparkles;
+                                return (
+                                    <button
+                                        key={cat.value}
+                                        className={`search-filter__category ${selectedCategory === cat.value ? 'active' : ''}`}
+                                        onClick={() => onCategoryChange(cat.value)}
+                                    >
+                                        <IconComponent size={16} /> {cat.label}
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
 

@@ -58,16 +58,16 @@ export type ProjectCategory =
     | 'other';
 
 export const PROJECT_CATEGORIES: { value: ProjectCategory; label: string; icon: string }[] = [
-    { value: 'technology', label: 'Technology', icon: '💻' },
-    { value: 'healthcare', label: 'Healthcare', icon: '🏥' },
-    { value: 'fintech', label: 'FinTech', icon: '💰' },
-    { value: 'education', label: 'Education', icon: '📚' },
-    { value: 'sustainability', label: 'Sustainability', icon: '🌱' },
-    { value: 'entertainment', label: 'Entertainment', icon: '🎬' },
-    { value: 'ecommerce', label: 'E-Commerce', icon: '🛒' },
-    { value: 'social-impact', label: 'Social Impact', icon: '🤝' },
-    { value: 'ai-ml', label: 'AI & Machine Learning', icon: '🤖' },
-    { value: 'other', label: 'Other', icon: '✨' },
+    { value: 'technology', label: 'Technology', icon: 'Cpu' },
+    { value: 'healthcare', label: 'Healthcare', icon: 'Activity' },
+    { value: 'fintech', label: 'FinTech', icon: 'Landmark' },
+    { value: 'education', label: 'Education', icon: 'GraduationCap' },
+    { value: 'sustainability', label: 'Sustainability', icon: 'Leaf' },
+    { value: 'entertainment', label: 'Entertainment', icon: 'Film' },
+    { value: 'ecommerce', label: 'E-Commerce', icon: 'ShoppingBag' },
+    { value: 'social-impact', label: 'Social Impact', icon: 'Globe' },
+    { value: 'ai-ml', label: 'AI & Machine Learning', icon: 'Bot' },
+    { value: 'other', label: 'Other', icon: 'Sparkles' },
 ];
 
 
