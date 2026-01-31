@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Trash2, Edit } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Trash2, Edit, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Post } from '../../types';
 import { useAuth } from '../../context/AuthContext';
@@ -20,6 +20,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
     const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
 
     const isLiked = user && (post.likedBy || []).includes(user.id);
@@ -125,17 +126,26 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
                 </div>
             </div>
 
-            <Link to={`/post/${post.id}`} className="post-card__content-link">
-                <div className="post-card__content">
-                    <h3 className="post-card__title">{post.title}</h3>
-                    <p className="post-card__text">
-                        {compact ? post.content.slice(0, 200) + '...' : post.content.slice(0, 400) + (post.content.length > 400 ? '...' : '')}
-                    </p>
-                </div>
+            <div className="post-card__content-link">
+                <Link to={`/post/${post.id}`} className="post-card__title-link">
+                    <div className="post-card__content">
+                        <h3 className="post-card__title">{post.title}</h3>
+                        <p className="post-card__text">
+                            {compact ? post.content.slice(0, 200) + '...' : post.content.slice(0, 400) + (post.content.length > 400 ? '...' : '')}
+                        </p>
+                    </div>
+                </Link>
                 {post.media && post.media.length > 0 && (
-                    <div className="post-card__media">
+                    <div className={`post-card__media ${post.media.length > 1 ? 'post-card__media--multiple' : ''}`}>
                         {post.media.slice(0, 3).map((url: string, idx: number) => (
-                            <div key={idx} className="post-card__image-wrapper">
+                            <div
+                                key={idx}
+                                className="post-card__image-wrapper"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setSelectedImage(getImageUrl(url));
+                                }}
+                            >
                                 <img src={getImageUrl(url) || ''} alt="" className="post-card__image" />
                                 {idx === 2 && post.media.length > 3 && (
                                     <div className="post-card__media-overlay">+{post.media.length - 3}</div>
@@ -144,7 +154,16 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onDelete, compact = f
                         ))}
                     </div>
                 )}
-            </Link>
+            </div>
+
+            {selectedImage && (
+                <div className="image-lightbox" onClick={() => setSelectedImage(null)}>
+                    <button className="image-lightbox__close" onClick={() => setSelectedImage(null)}>
+                        <X size={24} />
+                    </button>
+                    <img src={selectedImage} alt="" className="image-lightbox__content" />
+                </div>
+            )}
 
             {
                 fundingProgress !== null && (
