@@ -62,14 +62,14 @@ export default function TabLayout() {
     : Math.max(insets.bottom, 10);
 
   const renderTabIcon = (Icon: any, focused: boolean) => {
-    const iconColor = focused ? activeColors.tint : activeColors.tabIconDefault;
+    const iconColor = focused ? activeColors.text : activeColors.tabIconDefault;
     return <Icon size={24} color={iconColor} fill={focused ? iconColor : 'transparent'} />;
   };
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#fff',
+        tabBarActiveTintColor: activeColors.text,
         tabBarInactiveTintColor: activeColors.tabIconDefault,
         tabBarShowLabel: false,
         tabBarStyle: {
@@ -98,7 +98,7 @@ export default function TabLayout() {
             <Ionicons
               name={focused ? "home" : "home-outline"}
               size={24}
-              color={focused ? activeColors.tint : activeColors.tabIconDefault}
+              color={focused ? activeColors.text : activeColors.tabIconDefault}
             />
           ),
         }}
