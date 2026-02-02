@@ -5,6 +5,8 @@ import { Link, useRouter } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import Logo from '../../components/Logo';
+import Svg, { Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
+import { StatusBar } from 'expo-status-bar';
 
 export default function RegisterScreen() {
     const { register } = useAuth();
@@ -47,8 +49,20 @@ export default function RegisterScreen() {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={[styles.container, { backgroundColor: '#ffffff' }]}
+            style={styles.container}
         >
+            <StatusBar style="dark" />
+            <View style={StyleSheet.absoluteFill}>
+                <Svg height="100%" width="100%">
+                    <Defs>
+                        <LinearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <Stop offset="0%" stopColor="#f8fff9" stopOpacity="1" />
+                            <Stop offset="100%" stopColor="#ffffff" stopOpacity="1" />
+                        </LinearGradient>
+                    </Defs>
+                    <Rect x="0" y="0" width="100%" height="100%" fill="url(#bgGrad)" />
+                </Svg>
+            </View>
             <View style={styles.header}>
                 <Logo size={30} />
                 <Link href="/(auth)/login" asChild>
@@ -204,9 +218,9 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
     },
     headerLink: {
-        color: '#A5D6B7',
+        color: '#2D5F3F', // Darker green for visibility
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: '700',
     },
     scrollContent: {
         flexGrow: 1,
@@ -272,7 +286,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     submitBtnText: {
-        color: '#000',
+        color: '#FFFFFF', // White text for better contrast
         fontSize: 18,
         fontWeight: 'bold',
     },
@@ -370,7 +384,7 @@ const styles = StyleSheet.create({
         width: 12,
         height: 12,
         borderRadius: 6,
-        backgroundColor: '#A5D6B7',
+        backgroundColor: '#2D5F3F', // Darker green for visibility
     },
     navButtons: {
         flexDirection: 'row',

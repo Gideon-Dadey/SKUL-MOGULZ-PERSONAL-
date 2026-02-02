@@ -1,355 +1,161 @@
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Platform, RefreshControl, Image, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, RefreshControl, Dimensions, Image, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Folder, TrendingUp, Rocket, Zap, Target, DollarSign, Filter, Grid, List, Search, Plus, BarChart3, Users, Calendar } from 'lucide-react-native';
+import { Search, Plus, TrendingUp, Sparkles, Users, LayoutGrid, ArrowUpRight } from 'lucide-react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import Colors from '../../constants/Colors';
-import api, { getImageUrl } from '../../services/api';
+import api from '../../services/api';
+import { TrendingTopicCard, ProjectCard, GroupCard } from '../../components/ProjectComponents';
+import { StatusBar } from 'expo-status-bar';
 
 const { width } = Dimensions.get('window');
 
-const STAGE_CONFIG = [
-    { id: 'all', label: 'All', icon: Grid, color: '#6366f1' },
-    { id: 'idea', label: 'Idea', icon: Zap, color: '#8b5cf6' },
-    { id: 'prototype', label: 'Prototype', icon: Target, color: '#3b82f6' },
-    { id: 'mvp', label: 'MVP', icon: Rocket, color: '#10b981' },
-    { id: 'growth', label: 'Growth', icon: TrendingUp, color: '#f59e0b' },
-    { id: 'scaling', label: 'Scaling', icon: DollarSign, color: '#ef4444' },
-];
+const TRENDING_TOPICS = ['AIInnovation', 'CampusStartups', 'FintechRevolution', 'GreenEnergy', 'EdTech2026'];
 
-const VIEW_MODES = {
-    GRID: 'grid',
-    LIST: 'list',
-};
+const SAMPLE_GROUPS = [
+    { id: '1', name: 'MIT Builders', members: 420, icon: 'https://images.unsplash.com/photo-1541339907198-e08756ebafe3?w=100&h=100&fit=crop' },
+    { id: '2', name: 'Female Founders', members: 1250, icon: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop' },
+    { id: '3', name: 'Venture Capital', members: 890, icon: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=100&h=100&fit=crop' },
+];
 
 export default function ProjectsScreen() {
     const { theme } = useTheme();
-    const { user, isAuthenticated } = useAuth();
+    const { user } = useAuth();
     const router = useRouter();
     const activeColors = Colors[theme];
 
-    const [projects, setProjects] = useState<any[]>([]);
-    const [filteredProjects, setFilteredProjects] = useState<any[]>([]);
-    const [selectedStage, setSelectedStage] = useState('all');
-    const [viewMode, setViewMode] = useState(VIEW_MODES.GRID);
+    const [trendingProjects, setTrendingProjects] = useState<any[]>([]);
+    const [activeTopic, setActiveTopic] = useState('AIInnovation');
     const [isLoading, setIsLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
-    const [stats, setStats] = useState({
-        total: 0,
-        active: 0,
-        completed: 0,
-        funding: 0,
-    });
 
     useEffect(() => {
-        if (isAuthenticated && user) {
-            fetchProjects();
-        }
-    }, [isAuthenticated, user]);
+        fetchTrendingContent();
+    }, []);
 
-    useEffect(() => {
-        filterProjects();
-    }, [projects, selectedStage]);
-
-    const fetchProjects = async () => {
-        if (!isAuthenticated || !user) {
-            setIsLoading(false);
-            return;
-        }
+    const fetchTrendingContent = async () => {
         try {
             const response = await api.get('/projects');
-            const userProjects = response.data.filter((p: any) => p.author._id === user?.id || p.author.id === user?.id);
-
-            setProjects(userProjects);
-            calculateStats(userProjects);
+            // Sort by likes or recent for "Trending" feel
+            const trending = response.data.sort((a: any, b: any) => (b.likes?.length || 0) - (a.likes?.length || 0)).slice(0, 5);
+            setTrendingProjects(trending);
         } catch (error) {
-            console.error('Failed to fetch projects', error);
+            console.error('Failed to fetch trending projects', error);
         } finally {
             setIsLoading(false);
             setRefreshing(false);
         }
     };
 
-    const calculateStats = (projectList: any[]) => {
-        const total = projectList.length;
-        const active = projectList.filter(p => ['idea', 'prototype', 'mvp'].includes(p.projectStage)).length;
-        const completed = projectList.filter(p => ['growth', 'scaling'].includes(p.projectStage)).length;
-        const funding = projectList.reduce((sum, p) => sum + (p.currentFunding || 0), 0);
-
-        setStats({ total, active, completed, funding });
-    };
-
-    const filterProjects = () => {
-        if (selectedStage === 'all') {
-            setFilteredProjects(projects);
-        } else {
-            setFilteredProjects(projects.filter(p => p.projectStage === selectedStage));
-        }
-    };
-
     const onRefresh = () => {
         setRefreshing(true);
-        fetchProjects();
+        fetchTrendingContent();
     };
 
-    const getStageColor = (stage: string) => {
-        return STAGE_CONFIG.find(s => s.id === stage)?.color || '#666';
-    };
-
-    const formatCurrency = (amount: number) => {
-        if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
-        if (amount >= 1000) return `$${(amount / 1000).toFixed(1)}K`;
-        return `$${amount}`;
-    };
-
-    const renderStatCard = (icon: any, label: string, value: string | number, color: string) => {
-        const Icon = icon;
+    if (isLoading) {
         return (
-            <View style={[styles.statCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
-                <View style={[styles.statIconContainer, { backgroundColor: `${color}15` }]}>
-                    <Icon size={20} color={color} />
-                </View>
-                <Text style={[styles.statValue, { color: activeColors.text }]}>{value}</Text>
-                <Text style={[styles.statLabel, { color: activeColors.muted }]}>{label}</Text>
+            <View style={[styles.container, styles.center, { backgroundColor: activeColors.background }]}>
+                <ActivityIndicator size="large" color={activeColors.tint} />
             </View>
         );
-    };
-
-    const renderProjectCard = (project: any) => {
-        const fundingProgress = project.fundingGoal ? (project.currentFunding / project.fundingGoal) * 100 : 0;
-
-        if (viewMode === VIEW_MODES.LIST) {
-            return (
-                <TouchableOpacity
-                    key={project.id || project._id}
-                    style={[styles.listCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}
-                    activeOpacity={0.7}
-                >
-                    <View style={styles.listCardContent}>
-                        <View style={styles.listCardLeft}>
-                            {project.media?.[0] ? (
-                                <Image source={{ uri: getImageUrl(project.media[0]) || '' }} style={styles.listCardImage} />
-                            ) : (
-                                <View style={[styles.listCardImagePlaceholder, { backgroundColor: `${getStageColor(project.projectStage)}20` }]}>
-                                    <Folder size={24} color={getStageColor(project.projectStage)} />
-                                </View>
-                            )}
-                            <View style={styles.listCardInfo}>
-                                <Text style={[styles.listCardTitle, { color: activeColors.text }]} numberOfLines={1}>
-                                    {project.title}
-                                </Text>
-                                <Text style={[styles.listCardCategory, { color: activeColors.muted }]} numberOfLines={1}>
-                                    {project.category}
-                                </Text>
-                                <View style={styles.listCardMeta}>
-                                    <View style={[styles.stagePill, { backgroundColor: `${getStageColor(project.projectStage)}20` }]}>
-                                        <Text style={[styles.stagePillText, { color: getStageColor(project.projectStage) }]}>
-                                            {project.projectStage}
-                                        </Text>
-                                    </View>
-                                </View>
-                            </View>
-                        </View>
-                        {project.fundingGoal > 0 && (
-                            <View style={styles.listCardRight}>
-                                <Text style={[styles.fundingAmount, { color: activeColors.tint }]}>
-                                    {formatCurrency(project.currentFunding)}
-                                </Text>
-                                <Text style={[styles.fundingGoal, { color: activeColors.muted }]}>
-                                    of {formatCurrency(project.fundingGoal)}
-                                </Text>
-                            </View>
-                        )}
-                    </View>
-                </TouchableOpacity>
-            );
-        }
-
-        // Grid view
-        return (
-            <TouchableOpacity
-                key={project.id || project._id}
-                style={[styles.gridCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}
-                activeOpacity={0.7}
-            >
-                {project.media?.[0] ? (
-                    <Image source={{ uri: getImageUrl(project.media[0]) || '' }} style={styles.gridCardImage} />
-                ) : (
-                    <View style={[styles.gridCardImagePlaceholder, { backgroundColor: `${getStageColor(project.projectStage)}20` }]}>
-                        <Folder size={32} color={getStageColor(project.projectStage)} />
-                    </View>
-                )}
-
-                <View style={styles.gridCardContent}>
-                    <View style={[styles.stageBadge, { backgroundColor: `${getStageColor(project.projectStage)}20` }]}>
-                        <Text style={[styles.stageBadgeText, { color: getStageColor(project.projectStage) }]}>
-                            {project.projectStage}
-                        </Text>
-                    </View>
-
-                    <Text style={[styles.gridCardTitle, { color: activeColors.text }]} numberOfLines={2}>
-                        {project.title}
-                    </Text>
-
-                    <Text style={[styles.gridCardCategory, { color: activeColors.muted }]} numberOfLines={1}>
-                        {project.category}
-                    </Text>
-
-                    {project.fundingGoal > 0 && (
-                        <View style={styles.fundingContainer}>
-                            <View style={styles.fundingInfo}>
-                                <Text style={[styles.fundingLabel, { color: activeColors.muted }]}>Raised</Text>
-                                <Text style={[styles.fundingValue, { color: activeColors.tint }]}>
-                                    {formatCurrency(project.currentFunding)}
-                                </Text>
-                            </View>
-                            <View style={[styles.progressBarBg, { backgroundColor: activeColors.border }]}>
-                                <View
-                                    style={[styles.progressBarFill, {
-                                        width: `${Math.min(fundingProgress, 100)}%`,
-                                        backgroundColor: getStageColor(project.projectStage)
-                                    }]}
-                                />
-                            </View>
-                        </View>
-                    )}
-
-                    <View style={styles.gridCardFooter}>
-                        <View style={styles.statsRow}>
-                            <Users size={14} color={activeColors.muted} />
-                            <Text style={[styles.statsText, { color: activeColors.muted }]}>
-                                {project.likes || 0}
-                            </Text>
-                        </View>
-                        <View style={styles.statsRow}>
-                            <Calendar size={14} color={activeColors.muted} />
-                            <Text style={[styles.statsText, { color: activeColors.muted }]}>
-                                {new Date(project.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                            </Text>
-                        </View>
-                    </View>
-                </View>
-            </TouchableOpacity>
-        );
-    };
+    }
 
     return (
         <View style={[styles.container, { backgroundColor: activeColors.background }]}>
-            {/* Header */}
-            <View style={[styles.header, { backgroundColor: activeColors.card, borderBottomColor: activeColors.border }]}>
-                <View style={styles.headerTop}>
-                    <View>
-                        <Text style={[styles.headerTitle, { color: activeColors.text }]}>My Projects</Text>
-                        <Text style={[styles.headerSubtitle, { color: activeColors.muted }]}>
-                            Building the future, one project at a time
-                        </Text>
-                    </View>
-                    <TouchableOpacity
-                        style={[styles.createBtn, { backgroundColor: activeColors.tint }]}
-                        onPress={() => router.push('/modal')}
-                    >
-                        <Plus size={20} color="#fff" />
-                    </TouchableOpacity>
-                </View>
+            <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
 
-                {/* Stats */}
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    style={styles.statsContainer}
-                    contentContainerStyle={styles.statsContent}
+            {/* Header Area */}
+            <View style={[styles.header, { borderBottomColor: activeColors.border }]}>
+                <View>
+                    <Text style={[styles.greeting, { color: activeColors.muted }]}>Explore the future</Text>
+                    <Text style={[styles.title, { color: activeColors.text }]}>Innovation Hub</Text>
+                </View>
+                <TouchableOpacity
+                    style={[styles.searchCircle, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}
+                    onPress={() => router.push('/search')}
                 >
-                    {renderStatCard(Folder, 'Total', stats.total, '#6366f1')}
-                    {renderStatCard(Rocket, 'Active', stats.active, '#10b981')}
-                    {renderStatCard(TrendingUp, 'Growing', stats.completed, '#f59e0b')}
-                    {renderStatCard(DollarSign, 'Raised', formatCurrency(stats.funding), '#ef4444')}
-                </ScrollView>
+                    <Search size={22} color={activeColors.text} />
+                </TouchableOpacity>
             </View>
 
-            {/* Filters */}
-            <View style={styles.filtersSection}>
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.filtersContent}
-                >
-                    {STAGE_CONFIG.map((stage) => {
-                        const Icon = stage.icon;
-                        const isActive = selectedStage === stage.id;
-                        return (
-                            <TouchableOpacity
-                                key={stage.id}
-                                style={[
-                                    styles.filterChip,
-                                    {
-                                        backgroundColor: isActive ? stage.color : activeColors.card,
-                                        borderColor: isActive ? stage.color : activeColors.border,
-                                    }
-                                ]}
-                                onPress={() => setSelectedStage(stage.id)}
-                            >
-                                <Icon size={16} color={isActive ? '#fff' : activeColors.muted} />
-                                <Text style={[
-                                    styles.filterChipText,
-                                    { color: isActive ? '#fff' : activeColors.text }
-                                ]}>
-                                    {stage.label}
-                                </Text>
-                            </TouchableOpacity>
-                        );
-                    })}
-                </ScrollView>
-
-                <View style={styles.viewToggle}>
-                    <TouchableOpacity
-                        style={[styles.viewBtn, viewMode === VIEW_MODES.GRID && { backgroundColor: `${activeColors.tint}20` }]}
-                        onPress={() => setViewMode(VIEW_MODES.GRID)}
-                    >
-                        <Grid size={18} color={viewMode === VIEW_MODES.GRID ? activeColors.tint : activeColors.muted} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.viewBtn, viewMode === VIEW_MODES.LIST && { backgroundColor: `${activeColors.tint}20` }]}
-                        onPress={() => setViewMode(VIEW_MODES.LIST)}
-                    >
-                        <List size={18} color={viewMode === VIEW_MODES.LIST ? activeColors.tint : activeColors.muted} />
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            {/* Projects List */}
             <ScrollView
-                style={styles.projectsList}
-                contentContainerStyle={[
-                    viewMode === VIEW_MODES.GRID ? styles.gridContainer : styles.listContainer
-                ]}
-                refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={activeColors.tint} />
-                }
+                showsVerticalScrollIndicator={false}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={activeColors.tint} />}
+                contentContainerStyle={styles.scrollContent}
             >
-                {filteredProjects.length === 0 ? (
-                    <View style={styles.emptyState}>
-                        <Folder size={64} color={activeColors.muted} />
-                        <Text style={[styles.emptyTitle, { color: activeColors.text }]}>
-                            {selectedStage === 'all' ? 'No Projects Yet' : `No ${selectedStage} Projects`}
-                        </Text>
-                        <Text style={[styles.emptySubtitle, { color: activeColors.muted }]}>
-                            Start building your empire by creating your first project
-                        </Text>
-                        <TouchableOpacity
-                            style={[styles.emptyBtn, { backgroundColor: activeColors.tint }]}
-                            onPress={() => router.push('/modal')}
-                        >
-                            <Plus size={20} color="#fff" />
-                            <Text style={styles.emptyBtnText}>Create Project</Text>
+
+                {/* Trending Topics Section */}
+                <View style={styles.section}>
+                    <View style={styles.sectionHeader}>
+                        <View style={styles.sectionTitleGroup}>
+                            <TrendingUp size={20} color={activeColors.tint} />
+                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Trending Topics</Text>
+                        </View>
+                    </View>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.topicsScroll}>
+                        {TRENDING_TOPICS.map(topic => (
+                            <TrendingTopicCard
+                                key={topic}
+                                topic={topic}
+                                isActive={activeTopic === topic}
+                                onPress={() => setActiveTopic(topic)}
+                            />
+                        ))}
+                    </ScrollView>
+                </View>
+
+                {/* Featured Projects Section */}
+                <View style={styles.section}>
+                    <View style={styles.sectionHeader}>
+                        <View style={styles.sectionTitleGroup}>
+                            <Sparkles size={20} color="#F59E0B" />
+                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Featured Breakthroughs</Text>
+                        </View>
+                        <TouchableOpacity style={styles.seeAllBtn}>
+                            <Text style={[styles.seeAllText, { color: activeColors.tint }]}>See all</Text>
+                            <ArrowUpRight size={14} color={activeColors.tint} />
                         </TouchableOpacity>
                     </View>
-                ) : (
-                    filteredProjects.map(renderProjectCard)
-                )}
-                <View style={{ height: 20 }} />
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.projectsScroll}>
+                        {trendingProjects.map(project => (
+                            <ProjectCard key={project._id || project.id} project={project} />
+                        ))}
+                        {trendingProjects.length === 0 && (
+                            <View style={[styles.emptyBox, { backgroundColor: activeColors.card }]}>
+                                <Text style={{ color: activeColors.muted }}>No breakthrough projects found. Be the first!</Text>
+                            </View>
+                        )}
+                    </ScrollView>
+                </View>
+
+                {/* Groups / Ecosystem Section */}
+                <View style={styles.section}>
+                    <View style={styles.sectionHeader}>
+                        <View style={styles.sectionTitleGroup}>
+                            <Users size={20} color="#3B82F6" />
+                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Power Ecosystems</Text>
+                        </View>
+                    </View>
+                    <View style={styles.groupsContainer}>
+                        {SAMPLE_GROUPS.map(group => (
+                            <GroupCard key={group.id} group={group} />
+                        ))}
+                    </View>
+                </View>
+
+                <View style={{ height: 100 }} />
             </ScrollView>
+
+            {/* Floating Create Button */}
+            <TouchableOpacity
+                style={[styles.floatingBtn, { backgroundColor: activeColors.tint }]}
+                onPress={() => router.push('/modal')}
+            >
+                <Plus size={28} color="#fff" />
+                <Text style={styles.floatingBtnText}>Launch</Text>
+            </TouchableOpacity>
         </View>
     );
 }
@@ -358,286 +164,109 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    center: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     header: {
-        paddingTop: Platform.OS === 'ios' ? 60 : 40,
-        paddingHorizontal: 16,
-        paddingBottom: 16,
+        paddingTop: 60,
+        paddingHorizontal: 24,
+        paddingBottom: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         borderBottomWidth: 1,
     },
-    headerTop: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        marginBottom: 20,
-    },
-    headerTitle: {
-        fontSize: 28,
-        fontWeight: '800',
-        marginBottom: 4,
-    },
-    headerSubtitle: {
+    greeting: {
         fontSize: 14,
-    },
-    createBtn: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    statsContainer: {
-        marginTop: 8,
-    },
-    statsContent: {
-        gap: 12,
-    },
-    statCard: {
-        borderRadius: 12,
-        borderWidth: 1,
-        padding: 16,
-        minWidth: 120,
-        alignItems: 'center',
-    },
-    statIconContainer: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 8,
-    },
-    statValue: {
-        fontSize: 24,
-        fontWeight: '800',
-        marginBottom: 2,
-    },
-    statLabel: {
-        fontSize: 12,
         fontWeight: '600',
-    },
-    filtersSection: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 12,
-        paddingLeft: 16,
-        gap: 12,
-    },
-    filtersContent: {
-        gap: 8,
-        paddingRight: 16,
-    },
-    filterChip: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 14,
-        paddingVertical: 8,
-        borderRadius: 20,
-        borderWidth: 1,
-        gap: 6,
-    },
-    filterChipText: {
-        fontSize: 13,
-        fontWeight: '700',
-    },
-    viewToggle: {
-        flexDirection: 'row',
-        gap: 4,
-        marginRight: 16,
-    },
-    viewBtn: {
-        width: 36,
-        height: 36,
-        borderRadius: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    projectsList: {
-        flex: 1,
-    },
-    gridContainer: {
-        padding: 16,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 16,
-    },
-    listContainer: {
-        padding: 16,
-    },
-    gridCard: {
-        width: (width - 48) / 2,
-        borderRadius: 16,
-        borderWidth: 1,
-        overflow: 'hidden',
-        marginBottom: 16,
-    },
-    gridCardImage: {
-        width: '100%',
-        height: 120,
-        resizeMode: 'cover',
-    },
-    gridCardImagePlaceholder: {
-        width: '100%',
-        height: 120,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    gridCardContent: {
-        padding: 12,
-    },
-    stageBadge: {
-        alignSelf: 'flex-start',
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 6,
-        marginBottom: 8,
-    },
-    stageBadgeText: {
-        fontSize: 10,
-        fontWeight: '800',
-        textTransform: 'uppercase',
-    },
-    gridCardTitle: {
-        fontSize: 15,
-        fontWeight: '700',
+        letterSpacing: 0.5,
         marginBottom: 4,
     },
-    gridCardCategory: {
-        fontSize: 12,
-        marginBottom: 12,
+    title: {
+        fontSize: 28,
+        fontWeight: '900',
+        letterSpacing: -0.5,
     },
-    fundingContainer: {
-        marginBottom: 12,
-    },
-    fundingInfo: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 6,
-    },
-    fundingLabel: {
-        fontSize: 11,
-        fontWeight: '600',
-    },
-    fundingValue: {
-        fontSize: 13,
-        fontWeight: '800',
-    },
-    progressBarBg: {
-        height: 4,
-        borderRadius: 2,
-        overflow: 'hidden',
-    },
-    progressBarFill: {
-        height: '100%',
-        borderRadius: 2,
-    },
-    gridCardFooter: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    statsRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-    },
-    statsText: {
-        fontSize: 11,
-        fontWeight: '600',
-    },
-    listCard: {
-        borderRadius: 16,
+    searchCircle: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
         borderWidth: 1,
-        padding: 12,
-        marginBottom: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    listCardContent: {
+    scrollContent: {
+        paddingTop: 20,
+    },
+    section: {
+        marginBottom: 32,
+    },
+    sectionHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    listCardLeft: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        flex: 1,
-        gap: 12,
-    },
-    listCardImage: {
-        width: 60,
-        height: 60,
-        borderRadius: 12,
-        resizeMode: 'cover',
-    },
-    listCardImagePlaceholder: {
-        width: 60,
-        height: 60,
-        borderRadius: 12,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    listCardInfo: {
-        flex: 1,
-    },
-    listCardTitle: {
-        fontSize: 16,
-        fontWeight: '700',
-        marginBottom: 4,
-    },
-    listCardCategory: {
-        fontSize: 13,
-        marginBottom: 6,
-    },
-    listCardMeta: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    stagePill: {
-        paddingHorizontal: 8,
-        paddingVertical: 3,
-        borderRadius: 6,
-    },
-    stagePillText: {
-        fontSize: 10,
-        fontWeight: '800',
-        textTransform: 'uppercase',
-    },
-    listCardRight: {
-        alignItems: 'flex-end',
-    },
-    fundingAmount: {
-        fontSize: 16,
-        fontWeight: '800',
-        marginBottom: 2,
-    },
-    fundingGoal: {
-        fontSize: 11,
-    },
-    emptyState: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 80,
-        paddingHorizontal: 32,
-    },
-    emptyTitle: {
-        fontSize: 22,
-        fontWeight: '800',
-        marginTop: 16,
-        marginBottom: 8,
-    },
-    emptySubtitle: {
-        fontSize: 15,
-        textAlign: 'center',
-        marginBottom: 24,
-    },
-    emptyBtn: {
-        flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 24,
-        paddingVertical: 14,
-        borderRadius: 12,
+        marginBottom: 16,
+    },
+    sectionTitleGroup: {
+        flexDirection: 'row',
+        alignItems: 'center',
         gap: 8,
     },
-    emptyBtnText: {
-        color: '#fff',
-        fontSize: 16,
+    sectionTitle: {
+        fontSize: 20,
+        fontWeight: '800',
+        letterSpacing: -0.5,
+    },
+    seeAllBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 2,
+    },
+    seeAllText: {
+        fontSize: 14,
         fontWeight: '700',
     },
+    topicsScroll: {
+        paddingLeft: 24,
+    },
+    projectsScroll: {
+        paddingLeft: 24,
+        paddingRight: 8,
+    },
+    groupsContainer: {
+        paddingHorizontal: 24,
+    },
+    floatingBtn: {
+        position: 'absolute',
+        bottom: 30,
+        right: 24,
+        paddingHorizontal: 24,
+        paddingVertical: 14,
+        borderRadius: 30,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.2,
+        shadowRadius: 15,
+        elevation: 10,
+    },
+    floatingBtnText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '800',
+        letterSpacing: 0.5,
+    },
+    emptyBox: {
+        width: width - 48,
+        height: 140,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+        marginLeft: 24,
+    }
 });

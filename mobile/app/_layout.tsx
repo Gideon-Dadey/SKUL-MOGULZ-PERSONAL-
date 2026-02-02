@@ -12,6 +12,8 @@ import { SocketProvider } from '../context/SocketContext';
 import { CallProvider } from '../context/CallContext';
 import { NotificationProvider } from '../context/NotificationContext';
 import Colors from '../constants/Colors';
+import CustomSplashScreen from '../components/CustomSplashScreen';
+import { useState } from 'react';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -34,6 +36,8 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
+  const [splashFinished, setSplashFinished] = useState(false);
+
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
@@ -41,12 +45,12 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded) {
-      SplashScreen.hideAsync();
+      SplashScreen.hideAsync().catch(() => { });
     }
   }, [loaded]);
 
-  if (!loaded) {
-    return null;
+  if (!loaded || !splashFinished) {
+    return <CustomSplashScreen onFinish={() => setSplashFinished(true)} />;
   }
 
   return (
