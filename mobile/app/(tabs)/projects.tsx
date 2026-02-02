@@ -115,7 +115,6 @@ export default function ProjectsScreen() {
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <View style={styles.sectionTitleGroup}>
-                            <Crown size={18} color="#FBBF24" />
                             <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Hall of Builders</Text>
                         </View>
                         <TouchableOpacity onPress={() => router.push('/leaderboard')}>
@@ -133,7 +132,6 @@ export default function ProjectsScreen() {
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <View style={styles.sectionTitleGroup}>
-                            <TrendingUp size={20} color={activeColors.tint} />
                             <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Viral Echoes</Text>
                         </View>
                     </View>
@@ -153,12 +151,10 @@ export default function ProjectsScreen() {
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <View style={styles.sectionTitleGroup}>
-                            <Sparkles size={20} color="#F59E0B" />
                             <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Breakthroughs</Text>
                         </View>
                         <TouchableOpacity style={styles.seeAllBtn}>
                             <Text style={[styles.seeAllText, { color: activeColors.tint }]}>Discover</Text>
-                            <ArrowUpRight size={14} color={activeColors.tint} />
                         </TouchableOpacity>
                     </View>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.projectsScroll}>
@@ -172,7 +168,6 @@ export default function ProjectsScreen() {
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <View style={styles.sectionTitleGroup}>
-                            <Swords size={20} color="#EF4444" />
                             <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Live Bounties</Text>
                         </View>
                     </View>
@@ -191,7 +186,6 @@ export default function ProjectsScreen() {
                 style={[styles.floatingBtn, { backgroundColor: activeColors.tint }]}
                 onPress={() => router.push('/modal')}
             >
-                <Plus size={28} color="#fff" />
                 <Text style={styles.floatingBtnText}>New Idea</Text>
             </TouchableOpacity>
         </View>
