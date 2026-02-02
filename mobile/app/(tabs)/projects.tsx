@@ -21,16 +21,9 @@ const { width } = Dimensions.get('window');
 
 const TRENDING_TOPICS = ['AIInnovation', 'CampusStartups', 'FintechRevolution', 'GreenEnergy', 'EdTech2026'];
 
-const SAMPLE_LEADERBOARD = [
-    { id: '1', name: 'Alex Rivera', handle: 'arivera', points: 12400, avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop' },
-    { id: '2', name: 'Sarah Chen', handle: 'schen_builds', points: 9800, avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop' },
-    { id: '3', name: 'Marcus Vane', handle: 'mvane', points: 8200, avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop' },
-];
 
-const SAMPLE_CHALLENGES = [
-    { id: '1', title: 'Carbon Zero Tracker', description: 'Build a mobile widget that calculates daily carbon offset from campus commutes.', bounty: '$500', timeLeft: '2d 4h' },
-    { id: '2', title: 'AR Campus Map', description: 'Create an AR layer for the campus library to find available study spots in real-time.', bounty: '$1,200', timeLeft: '5d 12h' },
-];
+
+
 
 export default function ProjectsScreen() {
     const { theme } = useTheme();
@@ -180,19 +173,7 @@ export default function ProjectsScreen() {
                     </ScrollView>
                 </View>
 
-                {/* Competition: Active Challenges */}
-                <View style={styles.section}>
-                    <View style={styles.sectionHeader}>
-                        <View style={styles.sectionTitleGroup}>
-                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Live Bounties</Text>
-                        </View>
-                    </View>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.projectsScroll}>
-                        {SAMPLE_CHALLENGES.map(challenge => (
-                            <ChallengeCard key={challenge.id} challenge={challenge} />
-                        ))}
-                    </ScrollView>
-                </View>
+
 
                 <View style={{ height: 100 }} />
             </ScrollView>

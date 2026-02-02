@@ -120,7 +120,7 @@ export const LeaderboardItem = ({ mogul, rank }: { mogul: any, rank: number }) =
                 <Text style={[styles.rankText, { color: rank === 1 ? '#FBBF24' : activeColors.muted }]}>{rank}</Text>
             </View>
             <Image
-                source={{ uri: mogul.avatar || `https://ui-avatars.com/api/?name=${mogul.name}&background=F3F4F6&color=374151` }}
+                source={mogul.avatar ? { uri: getImageUrl(mogul.avatar) || '' } : { uri: `https://ui-avatars.com/api/?name=${mogul.name}&background=F3F4F6&color=374151` }}
                 style={styles.leaderAvatar}
             />
             <View style={styles.leaderInfo}>
@@ -157,13 +157,7 @@ export const ChallengeCard = ({ challenge }: { challenge: any }) => {
     );
 };
 
-const SPARKS = [
-    "The best campus projects solve a problem you face every day.",
-    "What if your student ID could unlock local discounts automatically?",
-    "Build a marketplace exclusively for campus-verified textbooks.",
-    "Could an AR layer make the campus library easier to navigate?",
-    "Innovation starts with a 'Why not?'. Look around you."
-];
+
 
 export const BuildImpossibleHero = ({ onPress }: { onPress: () => void }) => {
     const { theme } = useTheme();
