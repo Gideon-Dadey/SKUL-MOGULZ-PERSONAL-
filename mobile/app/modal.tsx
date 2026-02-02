@@ -198,7 +198,6 @@ export default function ModalScreen() {
           />
 
           <View style={[styles.launchHero, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
-            <Sparkles size={20} color={activeColors.tint} />
             <Text style={[styles.launchHeroText, { color: activeColors.text }]}>You're about to share a breakthrough with the campus ecosystem.</Text>
           </View>
 
