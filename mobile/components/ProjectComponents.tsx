@@ -173,30 +173,42 @@ const SPARKS = [
     "Innovation starts with a 'Why not?'. Look around you."
 ];
 
-export const IdeaSparkCard = () => {
+export const BuildImpossibleHero = ({ onPress }: { onPress: () => void }) => {
     const { theme } = useTheme();
-    const activeColors = Colors[theme];
-    const [sparkIndex, setSparkIndex] = React.useState(0);
-
-    const handleRefresh = () => {
-        setSparkIndex((prev) => (prev + 1) % SPARKS.length);
-    };
 
     return (
-        <View style={[styles.sparkCard, { backgroundColor: theme === 'dark' ? '#0D1A12' : '#F0FDF4', borderColor: theme === 'dark' ? '#14532D' : '#DCFCE7', borderWidth: 1 }]}>
-            <View style={[styles.sparkIconBox, { backgroundColor: theme === 'dark' ? '#064E3B' : '#BBF7D0' }]}>
-                <Lightbulb size={22} color={activeColors.tint} />
+        <TouchableOpacity
+            activeOpacity={0.9}
+            style={styles.heroContainer}
+            onPress={onPress}
+        >
+            <View style={StyleSheet.absoluteFill}>
+                <Image
+                    source={{ uri: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&fit=crop' }}
+                    style={styles.heroBgImage}
+                />
+                <View style={[styles.heroOverlay, { backgroundColor: theme === 'dark' ? 'rgba(5, 5, 5, 0.75)' : 'rgba(255, 255, 255, 0.6)' }]} />
             </View>
-            <View style={styles.sparkContent}>
-                <Text style={[styles.sparkTitle, { color: activeColors.muted }]}>Today's Spark</Text>
-                <Text style={[styles.sparkDesc, { color: activeColors.text }]}>
-                    {SPARKS[sparkIndex]}
+
+            <View style={styles.heroContent}>
+                <View style={styles.heroBadge}>
+                    <Zap size={10} color="#fff" fill="#fff" />
+                    <Text style={styles.heroBadgeText}>NO LIMITS</Text>
+                </View>
+                <Text style={[styles.heroTitle, { color: theme === 'dark' ? '#fff' : '#050505' }]}>
+                    BUILD THE{"\n"}
+                    <Text style={{ color: '#A5D6B7' }}>IMPOSSIBLE</Text>
                 </Text>
+                <Text style={[styles.heroSubtitle, { color: theme === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)' }]}>
+                    Your next breakthrough starts here. Turn your wildest campus ideas into reality.
+                </Text>
+
+                <View style={styles.heroActionBtn}>
+                    <Text style={styles.heroActionText}>Ship Today</Text>
+                    <ArrowRight size={16} color="#050505" />
+                </View>
             </View>
-            <TouchableOpacity style={[styles.sparkAction, { backgroundColor: activeColors.tint }]} onPress={handleRefresh}>
-                <Zap size={16} color="#fff" fill="#fff" />
-            </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
     );
 };
 
@@ -457,5 +469,73 @@ const styles = StyleSheet.create({
         backgroundColor: '#A5D6B7',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    // Hero Styles
+    heroContainer: {
+        marginHorizontal: 24,
+        height: 220,
+        borderRadius: 32,
+        overflow: 'hidden',
+        marginBottom: 32,
+        justifyContent: 'flex-end',
+        elevation: 10,
+        shadowColor: '#A5D6B7',
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.2,
+        shadowRadius: 16,
+    },
+    heroBgImage: {
+        width: '100%',
+        height: '100%',
+    },
+    heroOverlay: {
+        ...StyleSheet.absoluteFillObject,
+    },
+    heroContent: {
+        padding: 24,
+    },
+    heroBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        backgroundColor: '#10B981',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 6,
+        alignSelf: 'flex-start',
+        marginBottom: 12,
+    },
+    heroBadgeText: {
+        color: '#fff',
+        fontSize: 9,
+        fontWeight: '900',
+        letterSpacing: 1,
+    },
+    heroTitle: {
+        fontSize: 32,
+        fontWeight: '900',
+        lineHeight: 34,
+        marginBottom: 8,
+    },
+    heroSubtitle: {
+        fontSize: 13,
+        fontWeight: '500',
+        lineHeight: 18,
+        marginBottom: 20,
+    },
+    heroActionBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        backgroundColor: '#A5D6B7',
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 14,
+        alignSelf: 'flex-start',
+    },
+    heroActionText: {
+        color: '#050505',
+        fontSize: 14,
+        fontWeight: '800',
     },
 });
