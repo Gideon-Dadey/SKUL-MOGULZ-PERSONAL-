@@ -49,17 +49,23 @@ export default function ProjectsScreen() {
             const response = await api.get('/projects', {
                 params: { search: activeTopic }
             });
-            if (response.data.length < 3) {
+
+            // Filter to only original projects (not reposts)
+            const originalProjects = response.data.filter((p: any) => !p.repostOf);
+
+            if (originalProjects.length < 3) {
                 const allResponse = await api.get('/projects');
-                setTrendingProjects(allResponse.data.slice(0, 10));
+                const allOriginals = allResponse.data.filter((p: any) => !p.repostOf);
+                setTrendingProjects(allOriginals.slice(0, 10));
             } else {
-                setTrendingProjects(response.data);
+                setTrendingProjects(originalProjects);
             }
         } catch (error) {
             console.error('Failed to fetch trending projects', error);
             try {
                 const fallback = await api.get('/projects');
-                setTrendingProjects(fallback.data.slice(0, 5));
+                const fallbackOriginals = fallback.data.filter((p: any) => !p.repostOf);
+                setTrendingProjects(fallbackOriginals.slice(0, 5));
             } catch (e) { }
         } finally {
             setIsLoading(false);
