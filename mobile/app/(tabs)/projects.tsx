@@ -13,7 +13,7 @@ import {
     GroupCard,
     LeaderboardItem,
     ChallengeCard,
-    IdeaSparkCard
+    BuildImpossibleHero
 } from '../../components/ProjectComponents';
 import { StatusBar } from 'expo-status-bar';
 
@@ -108,8 +108,8 @@ export default function ProjectsScreen() {
                 contentContainerStyle={styles.scrollContent}
             >
 
-                {/* The Human Element: Idea Spark */}
-                <IdeaSparkCard />
+                {/* The Ignition Phase: Build the Impossible */}
+                <BuildImpossibleHero onPress={() => router.push('/modal')} />
 
                 {/* Global Standings */}
                 <View style={styles.section}>
