@@ -465,8 +465,10 @@ export default function FeedScreen() {
   );
 
   const renderHeader = () => (
-    <View style={[styles.header, { backgroundColor: '#074B43' }]}>
+    <View style={[styles.header, { backgroundColor: '#074B43', paddingTop: insets.top + 10 }]}>
       <StatusBar style="light" />
+
+      {/* Top Bar with Search */}
       <View style={styles.topBar}>
         <TouchableOpacity
           onPress={() => toggleMenu(true)}
@@ -478,55 +480,71 @@ export default function FeedScreen() {
               style={styles.profilePic}
             />
           ) : (
-            <CircleUser size={30} color="#fff" />
+            <CircleUser size={24} color="#074B43" />
           )}
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.searchBar} onPress={() => router.push('/search')}>
-          <Search size={18} color="#074B43" />
+          <Search size={20} color="#6B7280" />
           <Text style={styles.searchText}>Search ecosystem...</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.push('/messages')} style={styles.iconBtn}>
-          <Ionicons name="chatbubbles-outline" size={28} color="#fff" />
+          <Ionicons name="chatbubbles-outline" size={26} color="#fff" />
           {unreadMessages > 0 && (
-            <View style={[styles.iOSBadge, { backgroundColor: '#FF3B30' }]}>
+            <View style={[styles.iOSBadge, { backgroundColor: '#F59E0B' }]}>
               <Text style={styles.iOSBadgeText}>{unreadMessages}</Text>
             </View>
           )}
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.createCard, { backgroundColor: '#FFFFFF', borderColor: 'rgba(0,0,0,0.05)' }]}>
-        <View style={styles.createTop}>
-          <Image
-            source={user?.avatar ? { uri: getImageUrl(user.avatar) } : require('../../assets/images/icon.png')}
-            style={styles.createAvatar}
-          />
-          <TouchableOpacity
-            style={[styles.createButtonTrigger, { backgroundColor: '#F3F4F6' }]}
-            onPress={() => router.push('/create-post')}
-          >
-            <Text style={[styles.createPlaceholder, { color: '#6B7280' }]}>What are you building today?</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={[styles.createDivider, { backgroundColor: '#F3F4F6' }]} />
-        <View style={styles.createActions}>
-          <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/create-post')}>
-            <ImageIcon size={18} color="#3B82F6" />
-            <Text style={[styles.createActionText, { color: '#4B5563' }]}>Quick Buzz</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
-            <Layers size={18} color="#8B5CF6" />
-            <Text style={[styles.createActionText, { color: '#4B5563', fontWeight: 'bold' }]}>Launch Project</Text>
-          </TouchableOpacity>
+      {/* Create / Action Card */}
+      <View style={styles.createCardWrapper}>
+        <View style={styles.createCard}>
+          <View style={styles.createTop}>
+            <Image
+              source={user?.avatar ? { uri: getImageUrl(user.avatar) } : require('../../assets/images/icon.png')}
+              style={styles.createAvatar}
+            />
+            <TouchableOpacity
+              style={styles.createButtonTrigger}
+              onPress={() => router.push('/create-post')}
+            >
+              <Text style={styles.createPlaceholder}>What are you building today?</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.createDivider} />
+
+          <View style={styles.createActions}>
+            <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/create-post')}>
+              <View style={[styles.actionIconContainer, { backgroundColor: '#EBF8FF' }]}>
+                <ImageIcon size={18} color="#3B82F6" />
+              </View>
+              <Text style={styles.createActionText}>Quick Buzz</Text>
+            </TouchableOpacity>
+
+            <View style={styles.verticalDivider} />
+
+            <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
+              <View style={[styles.actionIconContainer, { backgroundColor: '#F3E8FF' }]}>
+                <Layers size={18} color="#8B5CF6" />
+              </View>
+              <Text style={styles.createActionText}>Launch Project</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
+      {/* Section Header */}
       <View style={styles.sectionHeader}>
-        <Text style={[styles.sectionTitle, { color: '#FFFFFF' }]}>Explore Innovation</Text>
-        <TouchableOpacity onPress={() => setFilterModalVisible(true)}>
-          <SlidersHorizontal size={22} color="#FFFFFF" strokeWidth={2.5} />
+        <Text style={styles.sectionTitle}>Explore Innovation</Text>
+        <TouchableOpacity
+          onPress={() => setFilterModalVisible(true)}
+          style={styles.filterButton}
+        >
+          <SlidersHorizontal size={20} color="#fff" />
         </TouchableOpacity>
       </View>
     </View>
@@ -876,130 +894,163 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   header: {
-    padding: 16,
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: 30,
-    minHeight: SCREEN_HEIGHT * 0.42,
-    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingBottom: 24,
+    // Removed minHeight to let content dictate size
   },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    marginBottom: 24,
   },
   profileButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: '#E0F2F1', // Light mint bg
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.2)',
   },
   profilePic: {
     width: '100%',
     height: '100%',
+    borderRadius: 20,
   },
   searchBar: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    height: 40,
-    borderRadius: 20,
+    height: 44,
+    borderRadius: 22,
     paddingHorizontal: 16,
-    gap: 8,
+    gap: 10,
     backgroundColor: '#fff',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
   searchText: {
     fontSize: 14,
-    color: '#074B43',
-    fontWeight: '500',
+    color: '#6B7280',
+    fontWeight: '400',
   },
   iconBtn: {
-    padding: 4,
+    padding: 6,
     position: 'relative',
+    borderRadius: 12,
   },
   iOSBadge: {
     position: 'absolute',
     top: -2,
-    right: -4,
-    minWidth: 18,
-    height: 18,
-    borderRadius: 9,
+    right: -2,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: '#074B43',
-    paddingHorizontal: 2,
   },
   iOSBadgeText: {
     color: '#fff',
-    fontSize: 10,
-    fontWeight: '800',
+    fontSize: 9,
+    fontWeight: '700',
+  },
+  createCardWrapper: {
+    marginBottom: 24,
   },
   createCard: {
-    borderRadius: 16,
-    borderWidth: 1,
-    padding: 12,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    padding: 16,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
   createTop: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    marginBottom: 12,
+    marginBottom: 16,
   },
   createAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
   },
   createButtonTrigger: {
     flex: 1,
-    height: 38,
-    borderRadius: 19,
-    paddingHorizontal: 16,
+    height: 44,
+    borderRadius: 22,
+    paddingHorizontal: 18,
+    backgroundColor: '#F3F4F6',
     justifyContent: 'center',
   },
   createPlaceholder: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '400',
+    color: '#6B7280',
   },
   createDivider: {
     height: 1,
     width: '100%',
-    marginBottom: 8,
+    backgroundColor: '#F3F4F6',
+    marginBottom: 12,
+  },
+  verticalDivider: {
+    width: 1,
+    height: '60%',
+    backgroundColor: '#F3F4F6',
   },
   createActions: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 4,
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   createActionItem: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'center',
+    gap: 10,
     paddingVertical: 4,
-    paddingHorizontal: 8,
+  },
+  actionIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   createActionText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
+    color: '#374151',
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: 4,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '800',
+    color: '#fff',
+    letterSpacing: -0.5,
+  },
+  filterButton: {
+    padding: 8,
+    borderRadius: 12,
   },
   emptyContainer: {
     padding: 40,
