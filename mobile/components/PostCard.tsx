@@ -205,7 +205,10 @@ export default function PostCard({ post, onLike, onComment, onRepost, onBookmark
                     <TouchableOpacity
                         style={styles.contentArea}
                         activeOpacity={0.7}
-                        onPress={() => router.push(('/post/' + (originalPost._id || originalPost.id)) as any)}
+                        onPress={() => router.push({
+                            pathname: '/post/[id]',
+                            params: { id: (originalPost._id || originalPost.id), type: originalPost.type }
+                        } as any)}
                     >
                         {isProject && originalPost.title && (
                             <Text style={[styles.title, { color: activeColors.text }]}>{originalPost.title}</Text>
