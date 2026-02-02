@@ -109,7 +109,7 @@ export default function ProjectsScreen() {
             >
 
                 {/* The Human Element: Idea Spark */}
-                <IdeaSparkCard onRefresh={() => { fetchTrendingContent(); }} />
+                <IdeaSparkCard />
 
                 {/* Global Standings */}
                 <View style={styles.section}>
