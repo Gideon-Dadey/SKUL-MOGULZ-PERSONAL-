@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator, Dimensions, ScrollView, Animated as RNAnimated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { Search, Plus, Bell, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers, SlidersHorizontal, Bookmark, Ban, VolumeX, HelpCircle, Settings, LogOut, UserPlus, BarChart2, Target, Briefcase } from 'lucide-react-native';
+import { Search, Plus, Bell, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers, SlidersHorizontal, Bookmark, Ban, VolumeX, HelpCircle, Settings, LogOut, UserPlus, BarChart2, Target } from 'lucide-react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../../context/AuthContext';
@@ -506,7 +506,7 @@ export default function FeedScreen() {
             <Text style={[styles.createActionText, { color: '#4B5563' }]}>Quick Buzz</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
-            <Briefcase size={18} color="#8B5CF6" />
+            <Layers size={18} color="#8B5CF6" />
             <Text style={[styles.createActionText, { color: '#4B5563', fontWeight: 'bold' }]}>Launch Project</Text>
           </TouchableOpacity>
         </View>
