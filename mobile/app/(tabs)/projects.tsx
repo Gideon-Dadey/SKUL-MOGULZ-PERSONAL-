@@ -214,8 +214,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 28,
-        fontWeight: '900',
-        letterSpacing: -1,
+        fontWeight: 'bold',
     },
     searchCircle: {
         width: 48,
@@ -245,8 +244,7 @@ const styles = StyleSheet.create({
     },
     sectionTitle: {
         fontSize: 20,
-        fontWeight: '900',
-        letterSpacing: -0.5,
+        fontWeight: 'bold',
     },
     seeAllBtn: {
         flexDirection: 'row',
