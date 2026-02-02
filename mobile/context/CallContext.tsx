@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, Image, Alert, Linking, Platform } from 'react-native';
 import { Phone, Video, X, PhoneOff, Mic, MicOff, Camera, CameraOff } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 import { useSocket } from './SocketContext';
 import { useAuth } from './AuthContext';
 import { getImageUrl } from '../services/api';
@@ -131,18 +132,17 @@ export const CallProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setCallInfo(null);
     };
 
-    const openCall = (roomId: string, isVideo: boolean) => {
-        // Deep link configuration for Jitsi to feel like a 1:1 call
-        // config.prejoinPageEnabled=false: Jumps straight into the call
-        // config.disableInviteFunctions=true: Hides the "invite others" button
-        // config.startWithVideoMuted: Starts with video off for voice calls
-        let jitsiUrl = `https://meet.jit.si/${roomId}#config.prejoinPageEnabled=false&config.disableInviteFunctions=true&config.disableDeepLinking=true&config.enableWelcomePage=false`;
-
-        if (!isVideo) {
-            jitsiUrl += '&config.startWithVideoMuted=true';
-        }
-
-        Linking.openURL(jitsiUrl);
+    const openCall = (roomId: string, isVideo: boolean, partnerName?: string) => {
+        // Navigate to in-app call screen instead of opening external browser
+        const router = require('expo-router').router;
+        router.push({
+            pathname: '/call',
+            params: {
+                roomId,
+                partnerName: partnerName || callInfo?.partnerName || 'Unknown',
+                isVideo: String(isVideo)
+            }
+        });
     };
 
     return (
