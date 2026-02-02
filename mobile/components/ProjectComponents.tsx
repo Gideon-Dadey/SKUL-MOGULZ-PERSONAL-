@@ -165,9 +165,22 @@ export const ChallengeCard = ({ challenge }: { challenge: any }) => {
     );
 };
 
-export const IdeaSparkCard = ({ onRefresh }: { onRefresh?: () => void }) => {
+const SPARKS = [
+    "The best campus projects solve a problem you face every day.",
+    "What if your student ID could unlock local discounts automatically?",
+    "Build a marketplace exclusively for campus-verified textbooks.",
+    "Could an AR layer make the campus library easier to navigate?",
+    "Innovation starts with a 'Why not?'. Look around you."
+];
+
+export const IdeaSparkCard = () => {
     const { theme } = useTheme();
     const activeColors = Colors[theme];
+    const [sparkIndex, setSparkIndex] = React.useState(0);
+
+    const handleRefresh = () => {
+        setSparkIndex((prev) => (prev + 1) % SPARKS.length);
+    };
 
     return (
         <View style={[styles.sparkCard, { backgroundColor: theme === 'dark' ? '#0D1A12' : '#F0FDF4', borderColor: theme === 'dark' ? '#14532D' : '#DCFCE7', borderWidth: 1 }]}>
@@ -177,10 +190,10 @@ export const IdeaSparkCard = ({ onRefresh }: { onRefresh?: () => void }) => {
             <View style={styles.sparkContent}>
                 <Text style={[styles.sparkTitle, { color: activeColors.muted }]}>Today's Spark</Text>
                 <Text style={[styles.sparkDesc, { color: activeColors.text }]}>
-                    The best campus projects solve a problem you face every day. <Text style={{ color: activeColors.tint }}>Start there.</Text>
+                    {SPARKS[sparkIndex]}
                 </Text>
             </View>
-            <TouchableOpacity style={[styles.sparkAction, { backgroundColor: activeColors.tint }]} onPress={onRefresh}>
+            <TouchableOpacity style={[styles.sparkAction, { backgroundColor: activeColors.tint }]} onPress={handleRefresh}>
                 <Zap size={16} color="#fff" fill="#fff" />
             </TouchableOpacity>
         </View>

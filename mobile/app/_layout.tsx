@@ -130,6 +130,7 @@ function RootLayoutNav({
         <Stack.Screen name="profile" options={{ headerShown: false, animation: 'slide_from_right' }} />
         <Stack.Screen name="edit-profile" options={{ headerShown: false, animation: 'slide_from_bottom' }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', headerShown: false }} />
+        <Stack.Screen name="leaderboard" options={{ headerShown: false, animation: 'slide_from_right' }} />
       </Stack>
 
       {!splashFinished && (
