@@ -81,12 +81,11 @@ export default function BookmarksScreen() {
         <View style={[styles.container, { backgroundColor: activeColors.background }]}>
             <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
 
-            <View style={[styles.header, { paddingTop: insets.top + 10, borderBottomColor: activeColors.border, backgroundColor: activeColors.card }]}>
+            <View style={[styles.header, { paddingTop: insets.top + 8, borderBottomColor: activeColors.border, backgroundColor: activeColors.card }]}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <ChevronLeft size={28} color={activeColors.text} />
+                    <ChevronLeft size={24} color={activeColors.text} />
                 </TouchableOpacity>
                 <Text style={[styles.headerTitle, { color: activeColors.text }]}>Bookmarks</Text>
-                <View style={{ width: 28 }} />
             </View>
 
             {isLoading ? (
@@ -130,17 +129,23 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         paddingHorizontal: 16,
-        paddingBottom: 15,
-        borderBottomWidth: 1,
+        paddingBottom: 12,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        position: 'relative',
     },
     backButton: {
-        padding: 4,
+        position: 'absolute',
+        left: 10,
+        bottom: 8,
+        padding: 8,
+        zIndex: 10,
     },
     headerTitle: {
-        fontSize: 18,
+        fontSize: 17,
         fontWeight: '700',
+        letterSpacing: -0.4,
     },
     center: {
         flex: 1,
