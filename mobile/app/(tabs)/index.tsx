@@ -653,7 +653,7 @@ export default function FeedScreen() {
 
   return (
     <GestureDetector gesture={panGesture}>
-      <View style={[styles.container, { backgroundColor: activeColors.background }]}>
+      <View style={[styles.container, { backgroundColor: '#074B43' }]}>
         {/* Sticky Header */}
         {renderStickyHeader()}
 
@@ -672,15 +672,20 @@ export default function FeedScreen() {
             />
           )}
           ListHeaderComponent={renderHeader}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={[styles.listContent, { backgroundColor: activeColors.background }]}
           onScroll={handleScroll}
           scrollEventThrottle={16}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={activeColors.tint} />
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor="#fff"
+              progressBackgroundColor="#074B43"
+            />
           }
           ListEmptyComponent={
             isLoading ? null : (
-              <View style={styles.emptyContainer}>
+              <View style={[styles.emptyContainer, { backgroundColor: activeColors.background }]}>
                 <Text style={[styles.emptyText, { color: activeColors.muted }]}>No posts yet. Be the first to share!</Text>
               </View>
             )
