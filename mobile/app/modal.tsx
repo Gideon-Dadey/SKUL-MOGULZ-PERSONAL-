@@ -72,7 +72,7 @@ export default function ModalScreen() {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ['images', 'videos'],
       allowsMultipleSelection: true,
       selectionLimit: 4 - images.length,
       quality: 0.7,
