@@ -54,3 +54,18 @@ export const getAnalytics = async (req: any, res: Response) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// @desc    Get leaderboard
+// @route   GET /api/analytics/leaderboard
+export const getLeaderboard = async (req: any, res: Response) => {
+    try {
+        const topMoguls = await User.find({})
+            .sort({ points: -1 })
+            .limit(20)
+            .select('firstName lastName username avatar points headline');
+
+        res.status(200).json(topMoguls);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};

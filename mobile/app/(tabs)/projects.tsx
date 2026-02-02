@@ -39,6 +39,7 @@ export default function ProjectsScreen() {
     const activeColors = Colors[theme];
 
     const [trendingProjects, setTrendingProjects] = useState<any[]>([]);
+    const [leaderboard, setLeaderboard] = useState<any[]>([]);
     const [activeTopic, setActiveTopic] = useState('AIInnovation');
     const [isLoading, setIsLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -46,12 +47,13 @@ export default function ProjectsScreen() {
     const fetchTrendingContent = async () => {
         setIsLoading(true);
         try {
-            const response = await api.get('/projects', {
-                params: { search: activeTopic }
-            });
+            const [projRes, leadRes] = await Promise.all([
+                api.get('/projects', { params: { search: activeTopic } }),
+                api.get('/analytics/leaderboard')
+            ]);
 
             // Filter to only original projects (not reposts)
-            const originalProjects = response.data.filter((p: any) => !p.repostOf);
+            const originalProjects = projRes.data.filter((p: any) => !p.repostOf);
 
             if (originalProjects.length < 3) {
                 const allResponse = await api.get('/projects');
@@ -60,8 +62,10 @@ export default function ProjectsScreen() {
             } else {
                 setTrendingProjects(originalProjects);
             }
+
+            setLeaderboard(leadRes.data);
         } catch (error) {
-            console.error('Failed to fetch trending projects', error);
+            console.error('Failed to fetch arena content', error);
             try {
                 const fallback = await api.get('/projects');
                 const fallbackOriginals = fallback.data.filter((p: any) => !p.repostOf);
@@ -128,8 +132,14 @@ export default function ProjectsScreen() {
                         </TouchableOpacity>
                     </View>
                     <View style={[styles.leaderboardBox, { backgroundColor: theme === 'dark' ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)', borderColor: activeColors.border + '50', borderWidth: 1 }]}>
-                        {SAMPLE_LEADERBOARD.map((mogul, idx) => (
-                            <LeaderboardItem key={mogul.id} mogul={mogul} rank={idx + 1} />
+                        {leaderboard.slice(0, 5).map((mogul, idx) => (
+                            <LeaderboardItem key={mogul._id || mogul.id} mogul={{
+                                id: mogul._id || mogul.id,
+                                name: `${mogul.firstName} ${mogul.lastName}`,
+                                handle: mogul.username || mogul.firstName.toLowerCase(),
+                                points: mogul.points || 0,
+                                avatar: mogul.avatar
+                            }} rank={idx + 1} />
                         ))}
                     </View>
                 </View>
