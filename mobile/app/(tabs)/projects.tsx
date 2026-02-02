@@ -33,16 +33,29 @@ export default function ProjectsScreen() {
 
     useEffect(() => {
         fetchTrendingContent();
-    }, []);
+    }, [activeTopic]);
 
     const fetchTrendingContent = async () => {
+        setIsLoading(true);
         try {
-            const response = await api.get('/projects');
-            // Sort by likes or recent for "Trending" feel
-            const trending = response.data.sort((a: any, b: any) => (b.likes?.length || 0) - (a.likes?.length || 0)).slice(0, 5);
-            setTrendingProjects(trending);
+            const response = await api.get('/projects', {
+                params: {
+                    search: activeTopic,
+                }
+            });
+
+            if (response.data.length < 3) {
+                const allResponse = await api.get('/projects');
+                setTrendingProjects(allResponse.data.slice(0, 10));
+            } else {
+                setTrendingProjects(response.data);
+            }
         } catch (error) {
             console.error('Failed to fetch trending projects', error);
+            try {
+                const fallback = await api.get('/projects');
+                setTrendingProjects(fallback.data.slice(0, 5));
+            } catch (e) { }
         } finally {
             setIsLoading(false);
             setRefreshing(false);
