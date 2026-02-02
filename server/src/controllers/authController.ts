@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import User from '../models/User';
+import Project from '../models/Project';
+import Post from '../models/Post';
 import ConnectionRequest from '../models/ConnectionRequest';
 import jwt from 'jsonwebtoken';
 
@@ -548,6 +550,50 @@ export const toggleBlockUser = async (req: Request, res: Response) => {
             await user.save();
             res.json({ message: 'User blocked', blocked: true });
         }
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+// @desc    Get user bookmarks (merged projects and posts)
+// @route   GET /api/auth/bookmarks
+// @access  Private
+export const getUserBookmarks = async (req: any, res: Response) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        // Fetch both projects and posts that are in bookmarks
+        const projects = await Project.find({ _id: { $in: user.bookmarks } })
+            .populate('author', 'firstName lastName username avatar headline role')
+            .lean();
+
+        const posts = await Post.find({ _id: { $in: user.bookmarks } })
+            .populate('author', 'firstName lastName username avatar headline role')
+            .lean();
+
+        // Add type and normalize ID
+        const formattedProjects = projects.map(p => ({
+            ...p,
+            id: p._id.toString(),
+            type: 'project'
+        }));
+
+        const formattedPosts = posts.map(p => ({
+            ...p,
+            id: p._id.toString(),
+            type: 'post'
+        }));
+
+        const allBookmarks = [...formattedProjects, ...formattedPosts].sort((a: any, b: any) => {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+
+        res.status(200).json(allBookmarks);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }

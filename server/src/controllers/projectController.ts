@@ -42,15 +42,22 @@ export const getProjects = async (req: Request, res: Response) => {
                     select: 'firstName lastName username avatar headline role'
                 }
             })
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .lean();
+
+        const formattedProjects = projects.map(p => ({
+            ...p,
+            id: p._id.toString(),
+            type: 'project'
+        }));
 
         // Increment author impressions (Organic growth)
-        if (projects.length > 0) {
-            const authorIds = [...new Set(projects.map(p => p.author?._id || (p.author as any).id).filter(id => !!id))];
+        if (formattedProjects.length > 0) {
+            const authorIds = [...new Set(formattedProjects.map(p => p.author?._id || (p.author as any).id).filter(id => !!id))];
             await User.updateMany({ _id: { $in: authorIds } }, { $inc: { impressions: 1 } });
         }
 
-        res.status(200).json(projects);
+        res.status(200).json(formattedProjects);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
