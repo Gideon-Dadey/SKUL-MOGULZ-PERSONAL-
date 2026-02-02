@@ -131,6 +131,7 @@ function RootLayoutNav({
         <Stack.Screen name="modal" options={{ presentation: 'modal', headerShown: false }} />
         <Stack.Screen name="leaderboard" options={{ headerShown: false, animation: 'slide_from_right' }} />
         <Stack.Screen name="bookmarks" options={{ headerShown: false, animation: 'slide_from_right' }} />
+        <Stack.Screen name="call" options={{ headerShown: false, presentation: 'fullScreenModal', animation: 'fade' }} />
       </Stack>
 
       {/* Custom Splash Screen removed for faster loading */}
