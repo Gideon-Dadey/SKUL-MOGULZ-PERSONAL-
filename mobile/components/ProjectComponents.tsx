@@ -382,11 +382,11 @@ const styles = StyleSheet.create({
     bountyText: {
         color: '#fff',
         fontSize: 11,
-        fontWeight: '900',
+        fontWeight: 'bold',
     },
     challengeTitle: {
         fontSize: 19,
-        fontWeight: '900',
+        fontWeight: 'bold',
         marginBottom: 8,
     },
     challengeDesc: {
@@ -489,12 +489,12 @@ const styles = StyleSheet.create({
     heroBadgeText: {
         color: '#fff',
         fontSize: 9,
-        fontWeight: '900',
+        fontWeight: 'bold',
         letterSpacing: 1,
     },
     heroTitle: {
         fontSize: 32,
-        fontWeight: '900',
+        fontWeight: 'bold',
         lineHeight: 34,
         marginBottom: 8,
     },
