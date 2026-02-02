@@ -1,5 +1,6 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider as NavThemeProvider } from '@react-navigation/native';
+import { StyleSheet, View } from 'react-native';
 import { useFonts } from 'expo-font';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -49,10 +50,6 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  if (!loaded || !splashFinished) {
-    return <CustomSplashScreen onFinish={() => setSplashFinished(true)} />;
-  }
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider>
@@ -60,7 +57,11 @@ export default function RootLayout() {
           <SocketProvider>
             <NotificationProvider>
               <CallProvider>
-                <RootLayoutNav />
+                <RootLayoutNav
+                  fontsLoaded={!!loaded}
+                  splashFinished={splashFinished}
+                  setSplashFinished={setSplashFinished}
+                />
               </CallProvider>
             </NotificationProvider>
           </SocketProvider>
@@ -70,25 +71,31 @@ export default function RootLayout() {
   );
 }
 
-function RootLayoutNav() {
+function RootLayoutNav({
+  fontsLoaded,
+  splashFinished,
+  setSplashFinished
+}: {
+  fontsLoaded: boolean;
+  splashFinished: boolean;
+  setSplashFinished: (v: boolean) => void
+}) {
   const { theme } = useTheme();
   const { isAuthenticated, loading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
   useEffect(() => {
-    if (loading) return;
+    if (!fontsLoaded || !splashFinished || loading) return;
 
     const inAuthGroup = segments[0] === '(auth)';
 
     if (!isAuthenticated && !inAuthGroup) {
-      // Redirect to the login page if the user is not authenticated
       router.replace('/(auth)/login');
     } else if (isAuthenticated && inAuthGroup) {
-      // Redirect to the home page if the user is authenticated
       router.replace('/(tabs)');
     }
-  }, [isAuthenticated, loading, segments]);
+  }, [isAuthenticated, loading, segments, fontsLoaded, splashFinished]);
 
   const customLightTheme = {
     ...DefaultTheme,
@@ -124,6 +131,12 @@ function RootLayoutNav() {
         <Stack.Screen name="edit-profile" options={{ headerShown: false, animation: 'slide_from_bottom' }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', headerShown: false }} />
       </Stack>
+
+      {!splashFinished && (
+        <View style={StyleSheet.absoluteFill}>
+          <CustomSplashScreen onFinish={() => setSplashFinished(true)} />
+        </View>
+      )}
     </NavThemeProvider>
   );
 }
