@@ -1,28 +1,47 @@
 
-import React from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
-import { ArrowLeft, Crown, Zap, TrendingUp, Info } from 'lucide-react-native';
+import { ArrowLeft, Info } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import Colors from '../constants/Colors';
+import api from '../services/api';
 import { LeaderboardItem } from '../components/ProjectComponents';
 
-const SAMPLE_LEADERBOARD_EXTENDED = [
-    { id: '1', name: 'Alex Rivera', handle: 'arivera', points: 12400, avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop' },
-    { id: '2', name: 'Sarah Chen', handle: 'schen_builds', points: 9800, avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop' },
-    { id: '3', name: 'Marcus Vane', handle: 'mvane', points: 8200, avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop' },
-    { id: '4', name: 'Elena Rodriguez', handle: 'elena_r', points: 7500, avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop' },
-    { id: '5', name: 'David Kim', handle: 'dk_dev', points: 6900, avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop' },
-    { id: '6', name: 'Jordan Hayes', handle: 'jhayes', points: 5800, avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop' },
-    { id: '7', name: 'Lila Thorne', handle: 'lila_t', points: 4200, avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop' },
-];
+
 
 export default function LeaderboardScreen() {
     const { theme } = useTheme();
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const activeColors = Colors[theme];
+
+    const [leaderboard, setLeaderboard] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchLeaderboard = async () => {
+            try {
+                const response = await api.get('/analytics/leaderboard');
+                setLeaderboard(response.data);
+            } catch (error) {
+                console.error('Failed to fetch leaderboard', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchLeaderboard();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <View style={[styles.container, { backgroundColor: activeColors.background, justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator size="large" color={activeColors.tint} />
+            </View>
+        );
+    }
 
     return (
         <View style={[styles.container, { backgroundColor: activeColors.background }]}>
@@ -34,7 +53,6 @@ export default function LeaderboardScreen() {
                     <ArrowLeft size={24} color={activeColors.text} />
                 </TouchableOpacity>
                 <View style={styles.headerTitleGroup}>
-                    <Crown size={20} color="#FBBF24" />
                     <Text style={[styles.headerTitle, { color: activeColors.text }]}>Hall of Builders</Text>
                 </View>
                 <TouchableOpacity>
@@ -51,7 +69,6 @@ export default function LeaderboardScreen() {
                         <Text style={[styles.seasonTitle, { color: activeColors.text }]}>Winter Innovation '26</Text>
                     </View>
                     <View style={styles.timeGroup}>
-                        <TrendingUp size={16} color={activeColors.tint} />
                         <Text style={[styles.timeText, { color: activeColors.tint }]}>14 days remaining</Text>
                     </View>
                 </View>
@@ -59,8 +76,14 @@ export default function LeaderboardScreen() {
                 <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Global Rankings</Text>
 
                 <View style={[styles.leaderboardBox, { backgroundColor: activeColors.card, borderColor: activeColors.border + '30' }]}>
-                    {SAMPLE_LEADERBOARD_EXTENDED.map((mogul, idx) => (
-                        <LeaderboardItem key={mogul.id} mogul={mogul} rank={idx + 1} />
+                    {leaderboard.map((mogul: any, idx: number) => (
+                        <LeaderboardItem key={mogul._id || mogul.id} mogul={{
+                            id: mogul._id || mogul.id,
+                            name: `${mogul.firstName} ${mogul.lastName}`,
+                            handle: mogul.username || mogul.firstName.toLowerCase(),
+                            points: mogul.points || 0,
+                            avatar: mogul.avatar
+                        }} rank={idx + 1} />
                     ))}
                 </View>
 

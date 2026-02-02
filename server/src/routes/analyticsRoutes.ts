@@ -1,11 +1,10 @@
 import express from 'express';
-import { getAnalytics } from '../controllers/analyticsController';
+import { getAnalytics, getLeaderboard } from '../controllers/analyticsController';
 import { protect } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
-router.use(protect);
-
-router.get('/', getAnalytics);
+router.get('/leaderboard', protect, getLeaderboard);
+router.get('/', protect, getAnalytics);
 
 export default router;

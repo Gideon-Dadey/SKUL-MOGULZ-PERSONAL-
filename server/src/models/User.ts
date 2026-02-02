@@ -61,6 +61,7 @@ export interface IUser extends Document {
         discoverableByEmail: boolean;
         discoverableByPhone: boolean;
     };
+    points: number;
     createdAt: Date;
     updatedAt: Date;
     comparePassword(candidatePassword: string): Promise<boolean>;
@@ -129,7 +130,8 @@ const userSchema = new Schema<IUser>({
         uploadLargeMedia: { type: Boolean, default: true },
         discoverableByEmail: { type: Boolean, default: true },
         discoverableByPhone: { type: Boolean, default: true },
-    }
+    },
+    points: { type: Number, default: 0 }
 }, {
     timestamps: true
 });
