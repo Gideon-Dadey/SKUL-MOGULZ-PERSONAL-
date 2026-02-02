@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, getMe, getUserProfile, updateProfile, deleteAccount, changePassword, changeEmail, toggle2FA, getSessions, revokeSession, updateSettings, getMutedUsers, getBlockedUsers, toggleMuteUser, toggleBlockUser } from '../controllers/authController';
+import { register, login, getMe, getUserProfile, updateProfile, deleteAccount, changePassword, changeEmail, toggle2FA, getSessions, revokeSession, updateSettings, getMutedUsers, getBlockedUsers, toggleMuteUser, toggleBlockUser, getUserBookmarks } from '../controllers/authController';
 import { protect, optionalProtect } from '../middleware/authMiddleware';
 
 import { upload } from '../middleware/uploadMiddleware';
@@ -22,5 +22,6 @@ router.get('/muted', protect, getMutedUsers);
 router.post('/muted/:id', protect, toggleMuteUser);
 router.get('/blocked', protect, getBlockedUsers);
 router.post('/blocked/:id', protect, toggleBlockUser);
+router.get('/bookmarks', protect, getUserBookmarks);
 
 export default router;

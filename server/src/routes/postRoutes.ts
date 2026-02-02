@@ -1,5 +1,5 @@
 import express from 'express';
-import { createPost, getPosts, likePost, getPostById, updatePost, deletePost, commentPost } from '../controllers/postController';
+import { createPost, getPosts, likePost, getPostById, updatePost, deletePost, commentPost, toggleBookmark } from '../controllers/postController';
 import { protect } from '../middleware/authMiddleware';
 import multer from 'multer';
 import path from 'path';
@@ -28,6 +28,7 @@ router.route('/:id')
     .delete(protect, deletePost);
 
 router.put('/:id/like', protect, likePost);
+router.put('/:id/bookmark', protect, toggleBookmark);
 router.post('/:id/comment', protect, commentPost);
 
 export default router;

@@ -35,8 +35,16 @@ export const getPosts = async (req: Request, res: Response) => {
     try {
         const posts = await Post.find()
             .populate('author', 'firstName lastName avatar username')
-            .sort({ createdAt: -1 });
-        res.status(200).json(posts);
+            .sort({ createdAt: -1 })
+            .lean();
+
+        const formattedPosts = posts.map(post => ({
+            ...post,
+            id: post._id.toString(),
+            type: 'post'
+        }));
+
+        res.status(200).json(formattedPosts);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
@@ -46,14 +54,19 @@ export const getPosts = async (req: Request, res: Response) => {
 export const getPostById = async (req: Request, res: Response) => {
     try {
         const post = await Post.findById(req.params.id)
-            .populate('author', 'firstName lastName username avatar headline role location');
+            .populate('author', 'firstName lastName username avatar headline role location')
+            .lean();
 
         if (!post) {
             res.status(404).json({ message: 'Post not found' });
             return;
         }
 
-        res.status(200).json(post);
+        res.status(200).json({
+            ...post,
+            id: (post as any)._id.toString(),
+            type: 'post'
+        });
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }
@@ -147,6 +160,35 @@ export const likePost = async (req: any, res: Response) => {
 
         await post.save();
         res.status(200).json(post.likes);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+// @desc    Bookmark a post
+export const toggleBookmark = async (req: any, res: Response) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+
+        const post = await Post.findById(req.params.id);
+        if (!post) {
+            res.status(404).json({ message: 'Post not found' });
+            return;
+        }
+
+        const bookmarkIndex = user.bookmarks.indexOf(post._id as any);
+
+        if (bookmarkIndex !== -1) {
+            user.bookmarks.splice(bookmarkIndex, 1);
+        } else {
+            user.bookmarks.push(post._id as any);
+        }
+
+        await user.save();
+        res.status(200).json(user.bookmarks);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }

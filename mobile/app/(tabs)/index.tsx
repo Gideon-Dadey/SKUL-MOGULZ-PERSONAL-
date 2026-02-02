@@ -603,7 +603,7 @@ export default function FeedScreen() {
             <Sparkles size={22} color={activeColors.text} />
             <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Feeds</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sideMenuItem} onPress={() => toggleMenu(false)}>
+          <TouchableOpacity style={styles.sideMenuItem} onPress={() => { toggleMenu(false); router.push('/bookmarks'); }}>
             <Bookmark size={22} color={activeColors.text} />
             <Text style={[styles.sideMenuText, { color: activeColors.text }]}>Bookmarks</Text>
           </TouchableOpacity>
