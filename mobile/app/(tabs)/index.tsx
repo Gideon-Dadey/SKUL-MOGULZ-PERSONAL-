@@ -509,10 +509,6 @@ export default function FeedScreen() {
             <Sparkles size={18} color="#8B5CF6" />
             <Text style={[styles.createActionText, { color: '#4B5563', fontWeight: 'bold' }]}>Launch Project</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
-            <Target size={18} color="#F59E0B" />
-            <Text style={[styles.createActionText, { color: '#4B5563' }]}>Goal</Text>
-          </TouchableOpacity>
         </View>
       </View>
 
