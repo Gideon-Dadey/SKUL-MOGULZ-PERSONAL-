@@ -176,16 +176,20 @@ export default function PostCard({ post, onLike, onComment, onRepost, onBookmark
                             <Text style={[styles.authorName, { color: activeColors.text }]} numberOfLines={1}>
                                 {displayAuthor.firstName} {displayAuthor.lastName}
                             </Text>
-                            <Text style={[styles.metaText, { color: activeColors.muted }]} numberOfLines={1}>
-                                {formatDate(originalPost.createdAt)}
+                            <View style={styles.metaRow}>
+                                <Text style={[styles.metaText, { color: activeColors.muted }]}>
+                                    {formatDate(originalPost.createdAt)}
+                                </Text>
                                 {originalPost.location && (
-                                    <>
-                                        {' · '}
-                                        <MapPin size={12} color={activeColors.muted} />
-                                        {` ${originalPost.location}`}
-                                    </>
+                                    <View style={styles.locationContainer}>
+                                        <Text style={[styles.separator, { color: activeColors.muted }]}>·</Text>
+                                        <MapPin size={12} color={activeColors.tint} style={styles.metaIcon} />
+                                        <Text style={[styles.locationText, { color: activeColors.muted }]} numberOfLines={1}>
+                                            {originalPost.location}
+                                        </Text>
+                                    </View>
                                 )}
-                            </Text>
+                            </View>
                         </TouchableOpacity>
 
                         <View style={styles.headerRight}>
@@ -379,18 +383,42 @@ const styles = StyleSheet.create({
         marginBottom: 2,
     },
     authorTextInfo: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'center',
         flex: 1,
-        gap: 4,
+        gap: 1,
     },
     authorName: {
         fontSize: 15,
         fontWeight: '700',
+        textTransform: 'capitalize',
+    },
+    metaRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 1,
     },
     metaText: {
-        fontSize: 14,
-        flexShrink: 1,
+        fontSize: 12,
+        fontWeight: '500',
+        opacity: 0.7,
+    },
+    locationContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    separator: {
+        marginHorizontal: 6,
+        fontSize: 10,
+        opacity: 0.4,
+    },
+    metaIcon: {
+        marginRight: 3,
+    },
+    locationText: {
+        fontSize: 12,
+        fontWeight: '600',
+        opacity: 0.8,
     },
     headerRight: {
         flexDirection: 'row',
