@@ -2,22 +2,34 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, RefreshControl, Dimensions, Image, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Search, Plus, TrendingUp, Sparkles, Users, LayoutGrid, ArrowUpRight } from 'lucide-react-native';
+import { Search, Plus, TrendingUp, Sparkles, Users, LayoutGrid, ArrowUpRight, Crown, Swords, Lightbulb } from 'lucide-react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import Colors from '../../constants/Colors';
 import api from '../../services/api';
-import { TrendingTopicCard, ProjectCard, GroupCard } from '../../components/ProjectComponents';
+import {
+    TrendingTopicCard,
+    ProjectCard,
+    GroupCard,
+    LeaderboardItem,
+    ChallengeCard,
+    IdeaSparkCard
+} from '../../components/ProjectComponents';
 import { StatusBar } from 'expo-status-bar';
 
 const { width } = Dimensions.get('window');
 
 const TRENDING_TOPICS = ['AIInnovation', 'CampusStartups', 'FintechRevolution', 'GreenEnergy', 'EdTech2026'];
 
-const SAMPLE_GROUPS = [
-    { id: '1', name: 'MIT Builders', members: 420, icon: 'https://images.unsplash.com/photo-1541339907198-e08756ebafe3?w=100&h=100&fit=crop' },
-    { id: '2', name: 'Female Founders', members: 1250, icon: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop' },
-    { id: '3', name: 'Venture Capital', members: 890, icon: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=100&h=100&fit=crop' },
+const SAMPLE_LEADERBOARD = [
+    { id: '1', name: 'Alex Rivera', handle: 'arivera', points: 12400, avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop' },
+    { id: '2', name: 'Sarah Chen', handle: 'schen_builds', points: 9800, avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop' },
+    { id: '3', name: 'Marcus Vane', handle: 'mvane', points: 8200, avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop' },
+];
+
+const SAMPLE_CHALLENGES = [
+    { id: '1', title: 'Carbon Zero Tracker', description: 'Build a mobile widget that calculates daily carbon offset from campus commutes.', bounty: '$500', timeLeft: '2d 4h' },
+    { id: '2', title: 'AR Campus Map', description: 'Create an AR layer for the campus library to find available study spots in real-time.', bounty: '$1,200', timeLeft: '5d 12h' },
 ];
 
 export default function ProjectsScreen() {
@@ -31,19 +43,12 @@ export default function ProjectsScreen() {
     const [isLoading, setIsLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
 
-    useEffect(() => {
-        fetchTrendingContent();
-    }, [activeTopic]);
-
     const fetchTrendingContent = async () => {
         setIsLoading(true);
         try {
             const response = await api.get('/projects', {
-                params: {
-                    search: activeTopic,
-                }
+                params: { search: activeTopic }
             });
-
             if (response.data.length < 3) {
                 const allResponse = await api.get('/projects');
                 setTrendingProjects(allResponse.data.slice(0, 10));
@@ -62,6 +67,10 @@ export default function ProjectsScreen() {
         }
     };
 
+    useEffect(() => {
+        fetchTrendingContent();
+    }, [activeTopic]);
+
     const onRefresh = () => {
         setRefreshing(true);
         fetchTrendingContent();
@@ -79,11 +88,11 @@ export default function ProjectsScreen() {
         <View style={[styles.container, { backgroundColor: activeColors.background }]}>
             <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
 
-            {/* Header Area */}
+            {/* Dynamic Modern Header */}
             <View style={[styles.header, { borderBottomColor: activeColors.border }]}>
                 <View>
-                    <Text style={[styles.greeting, { color: activeColors.muted }]}>Explore the future</Text>
-                    <Text style={[styles.title, { color: activeColors.text }]}>Innovation Hub</Text>
+                    <Text style={[styles.greeting, { color: activeColors.muted }]}>Build the impossible</Text>
+                    <Text style={[styles.title, { color: activeColors.text }]}>The Arena</Text>
                 </View>
                 <TouchableOpacity
                     style={[styles.searchCircle, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}
@@ -99,12 +108,33 @@ export default function ProjectsScreen() {
                 contentContainerStyle={styles.scrollContent}
             >
 
-                {/* Trending Topics Section */}
+                {/* Daily Idea Spark - Creativity First */}
+                <IdeaSparkCard />
+
+                {/* Competition: The Leaderboard */}
+                <View style={styles.section}>
+                    <View style={styles.sectionHeader}>
+                        <View style={styles.sectionTitleGroup}>
+                            <Crown size={20} color="#F59E0B" fill="#F59E0B" />
+                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Top Innovators</Text>
+                        </View>
+                        <TouchableOpacity>
+                            <Text style={[styles.seeAllText, { color: activeColors.tint }]}>Season Stats</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.leaderboardBox}>
+                        {SAMPLE_LEADERBOARD.map((mogul, idx) => (
+                            <LeaderboardItem key={mogul.id} mogul={mogul} rank={idx + 1} />
+                        ))}
+                    </View>
+                </View>
+
+                {/* Trending Topics */}
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <View style={styles.sectionTitleGroup}>
                             <TrendingUp size={20} color={activeColors.tint} />
-                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Trending Topics</Text>
+                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Viral Echoes</Text>
                         </View>
                     </View>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.topicsScroll}>
@@ -124,10 +154,10 @@ export default function ProjectsScreen() {
                     <View style={styles.sectionHeader}>
                         <View style={styles.sectionTitleGroup}>
                             <Sparkles size={20} color="#F59E0B" />
-                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Featured Breakthroughs</Text>
+                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Breakthroughs</Text>
                         </View>
                         <TouchableOpacity style={styles.seeAllBtn}>
-                            <Text style={[styles.seeAllText, { color: activeColors.tint }]}>See all</Text>
+                            <Text style={[styles.seeAllText, { color: activeColors.tint }]}>Discover</Text>
                             <ArrowUpRight size={14} color={activeColors.tint} />
                         </TouchableOpacity>
                     </View>
@@ -135,39 +165,34 @@ export default function ProjectsScreen() {
                         {trendingProjects.map(project => (
                             <ProjectCard key={project._id || project.id} project={project} />
                         ))}
-                        {trendingProjects.length === 0 && (
-                            <View style={[styles.emptyBox, { backgroundColor: activeColors.card }]}>
-                                <Text style={{ color: activeColors.muted }}>No breakthrough projects found. Be the first!</Text>
-                            </View>
-                        )}
                     </ScrollView>
                 </View>
 
-                {/* Groups / Ecosystem Section */}
+                {/* Competition: Active Challenges */}
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <View style={styles.sectionTitleGroup}>
-                            <Users size={20} color="#3B82F6" />
-                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Power Ecosystems</Text>
+                            <Swords size={20} color="#EF4444" />
+                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Live Bounties</Text>
                         </View>
                     </View>
-                    <View style={styles.groupsContainer}>
-                        {SAMPLE_GROUPS.map(group => (
-                            <GroupCard key={group.id} group={group} />
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.projectsScroll}>
+                        {SAMPLE_CHALLENGES.map(challenge => (
+                            <ChallengeCard key={challenge.id} challenge={challenge} />
                         ))}
-                    </View>
+                    </ScrollView>
                 </View>
 
                 <View style={{ height: 100 }} />
             </ScrollView>
 
-            {/* Floating Create Button */}
+            {/* Floating Launch Button */}
             <TouchableOpacity
                 style={[styles.floatingBtn, { backgroundColor: activeColors.tint }]}
                 onPress={() => router.push('/modal')}
             >
                 <Plus size={28} color="#fff" />
-                <Text style={styles.floatingBtnText}>Launch</Text>
+                <Text style={styles.floatingBtnText}>New Idea</Text>
             </TouchableOpacity>
         </View>
     );
@@ -199,7 +224,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: '900',
-        letterSpacing: -0.5,
+        letterSpacing: -1,
     },
     searchCircle: {
         width: 48,
@@ -210,10 +235,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     scrollContent: {
-        paddingTop: 20,
+        paddingTop: 24,
     },
     section: {
-        marginBottom: 32,
+        marginBottom: 40,
     },
     sectionHeader: {
         flexDirection: 'row',
@@ -225,11 +250,11 @@ const styles = StyleSheet.create({
     sectionTitleGroup: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        gap: 10,
     },
     sectionTitle: {
         fontSize: 20,
-        fontWeight: '800',
+        fontWeight: '900',
         letterSpacing: -0.5,
     },
     seeAllBtn: {
@@ -248,8 +273,11 @@ const styles = StyleSheet.create({
         paddingLeft: 24,
         paddingRight: 8,
     },
-    groupsContainer: {
-        paddingHorizontal: 24,
+    leaderboardBox: {
+        marginHorizontal: 24,
+        padding: 20,
+        borderRadius: 24,
+        backgroundColor: 'rgba(150,150,150,0.05)',
     },
     floatingBtn: {
         position: 'absolute',
@@ -273,13 +301,4 @@ const styles = StyleSheet.create({
         fontWeight: '800',
         letterSpacing: 0.5,
     },
-    emptyBox: {
-        width: width - 48,
-        height: 140,
-        borderRadius: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
-        marginLeft: 24,
-    }
 });

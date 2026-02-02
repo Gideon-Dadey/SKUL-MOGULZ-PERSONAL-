@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
-import { ExternalLink, Users, TrendingUp } from 'lucide-react-native';
+import { ExternalLink, Users, TrendingUp, Crown, Zap, Target, ArrowRight, Lightbulb } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import Colors from '../constants/Colors';
 import { useTheme } from '../context/ThemeContext';
@@ -51,10 +51,7 @@ export const ProjectCard = ({ project }: { project: any }) => {
     return (
         <TouchableOpacity
             style={[styles.projectCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}
-            onPress={() => router.push({
-                pathname: '/post',
-                params: { id: project._id || project.id }
-            })}
+            onPress={() => router.push(`/post/${project._id || project.id}`)}
         >
             <Image
                 source={project.media?.[0] ? { uri: getImageUrl(project.media[0]) || '' } : require('../assets/images/icon.png')}
@@ -103,12 +100,89 @@ export const GroupCard = ({ group }: { group: any }) => {
                 <Text style={[styles.groupName, { color: activeColors.text }]} numberOfLines={1}>{group.name}</Text>
                 <Text style={[styles.groupMembers, { color: activeColors.muted }]}>{group.members} active moguls</Text>
             </View>
-            <TouchableOpacity style={[styles.joinBtn, { backgroundColor: activeColors.tint + '15' }]}>
+            <TouchableOpacity style={[styles.joinBtn, { backgroundColor: activeColors.tint + '20' }]}>
                 <Text style={[styles.joinText, { color: activeColors.tint }]}>Join</Text>
             </TouchableOpacity>
         </TouchableOpacity>
     );
 };
+
+export const LeaderboardItem = ({ mogul, rank }: { mogul: any, rank: number }) => {
+    const { theme } = useTheme();
+    const activeColors = Colors[theme];
+
+    return (
+        <View style={[styles.leaderboardItem, { borderBottomColor: activeColors.border }]}>
+            <View style={styles.rankContainer}>
+                {rank === 1 ? (
+                    <Crown size={20} color="#F59E0B" fill="#F59E0B" />
+                ) : (
+                    <Text style={[styles.rankText, { color: activeColors.muted }]}>{rank}</Text>
+                )}
+            </View>
+            <Image
+                source={{ uri: mogul.avatar || `https://ui-avatars.com/api/?name=${mogul.name}&background=A5D6B7&color=000` }}
+                style={styles.leaderAvatar}
+            />
+            <View style={styles.leaderInfo}>
+                <Text style={[styles.leaderName, { color: activeColors.text }]}>{mogul.name}</Text>
+                <Text style={[styles.leaderHandle, { color: activeColors.muted }]}>@{mogul.handle}</Text>
+            </View>
+            <View style={styles.pointsGroup}>
+                <Zap size={14} color={activeColors.tint} fill={activeColors.tint} />
+                <Text style={[styles.pointsText, { color: activeColors.tint }]}>{mogul.points} XP</Text>
+            </View>
+        </View>
+    );
+};
+
+export const ChallengeCard = ({ challenge }: { challenge: any }) => {
+    const { theme } = useTheme();
+    const activeColors = Colors[theme];
+
+    return (
+        <TouchableOpacity style={[styles.challengeCard, { backgroundColor: activeColors.card, borderColor: activeColors.tint + '40' }]}>
+            <View style={styles.challengeHeader}>
+                <View style={[styles.bountyBadge, { backgroundColor: activeColors.tint }]}>
+                    <Text style={styles.bountyText}>BOUNTY: {challenge.bounty}</Text>
+                </View>
+                <Target size={20} color={activeColors.tint} />
+            </View>
+            <Text style={[styles.challengeTitle, { color: activeColors.text }]}>{challenge.title}</Text>
+            <Text style={[styles.challengeDesc, { color: activeColors.muted }]} numberOfLines={2}>{challenge.description}</Text>
+            <View style={styles.challengeFooter}>
+                <Text style={[styles.timeLeft, { color: '#EF4444' }]}>{challenge.timeLeft} left</Text>
+                <View style={styles.participateBtn}>
+                    <Text style={[styles.participateText, { color: activeColors.tint }]}>Join Arena</Text>
+                    <ArrowRight size={14} color={activeColors.tint} />
+                </View>
+            </View>
+        </TouchableOpacity>
+    );
+};
+
+export const IdeaSparkCard = () => {
+    const { theme } = useTheme();
+    const activeColors = Colors[theme];
+
+    return (
+        <View style={[styles.sparkCard, { backgroundColor: theme === 'dark' ? '#1A3324' : '#E8F5E9' }]}>
+            <View style={styles.sparkIconBox}>
+                <Lightbulb size={24} color="#A5D6B7" fill="#A5D6B7" />
+            </View>
+            <View style={styles.sparkContent}>
+                <Text style={[styles.sparkTitle, { color: theme === 'dark' ? '#A5D6B7' : '#1B5E20' }]}>Daily Idea Spark</Text>
+                <Text style={[styles.sparkDesc, { color: theme === 'dark' ? 'rgba(165,214,183,0.8)' : '#2E7D32' }]}>
+                    What if you could tokenize campus loyalty? 🚀
+                </Text>
+            </View>
+            <TouchableOpacity style={styles.sparkAction}>
+                <Zap size={18} color="#fff" />
+            </TouchableOpacity>
+        </View>
+    );
+};
+
 
 const styles = StyleSheet.create({
     topicCard: {
@@ -231,5 +305,140 @@ const styles = StyleSheet.create({
     joinText: {
         fontWeight: '800',
         fontSize: 14,
+    },
+    // New Creative Styles
+    leaderboardItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        gap: 12,
+    },
+    rankContainer: {
+        width: 30,
+        alignItems: 'center',
+    },
+    rankText: {
+        fontWeight: '800',
+        fontSize: 16,
+    },
+    leaderAvatar: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+    },
+    leaderInfo: {
+        flex: 1,
+    },
+    leaderName: {
+        fontSize: 15,
+        fontWeight: '700',
+    },
+    leaderHandle: {
+        fontSize: 12,
+        fontWeight: '500',
+    },
+    pointsGroup: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 12,
+        backgroundColor: 'rgba(165,214,183,0.1)',
+    },
+    pointsText: {
+        fontSize: 13,
+        fontWeight: '800',
+    },
+    challengeCard: {
+        width: width * 0.8,
+        borderRadius: 20,
+        borderWidth: 1,
+        padding: 20,
+        marginRight: 16,
+    },
+    challengeHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    bountyBadge: {
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 8,
+    },
+    bountyText: {
+        color: '#fff',
+        fontSize: 11,
+        fontWeight: '900',
+    },
+    challengeTitle: {
+        fontSize: 19,
+        fontWeight: '900',
+        marginBottom: 8,
+    },
+    challengeDesc: {
+        fontSize: 14,
+        lineHeight: 20,
+        marginBottom: 20,
+    },
+    challengeFooter: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    timeLeft: {
+        fontSize: 12,
+        fontWeight: '700',
+    },
+    participateBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+    },
+    participateText: {
+        fontSize: 13,
+        fontWeight: '800',
+    },
+    sparkCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 20,
+        borderRadius: 24,
+        marginHorizontal: 24,
+        marginBottom: 32,
+        gap: 16,
+    },
+    sparkIconBox: {
+        width: 48,
+        height: 48,
+        borderRadius: 16,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    sparkContent: {
+        flex: 1,
+    },
+    sparkTitle: {
+        fontSize: 13,
+        fontWeight: '800',
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+        marginBottom: 4,
+    },
+    sparkDesc: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    sparkAction: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: '#A5D6B7',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
