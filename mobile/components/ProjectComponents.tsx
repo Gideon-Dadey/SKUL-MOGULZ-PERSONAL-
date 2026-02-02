@@ -75,8 +75,7 @@ export const ProjectCard = ({ project }: { project: any }) => {
                         <Text style={[styles.authorName, { color: activeColors.text }]}>{project.author?.firstName || 'Mogul'}</Text>
                     </View>
                     <View style={styles.statsGroup}>
-                        <Users size={14} color={activeColors.muted} />
-                        <Text style={[styles.statsText, { color: activeColors.muted }]}>{likesCount}</Text>
+                        <Text style={[styles.statsText, { color: activeColors.muted }]}>{likesCount} moguls</Text>
                     </View>
                 </View>
             </View>
@@ -118,11 +117,7 @@ export const LeaderboardItem = ({ mogul, rank }: { mogul: any, rank: number }) =
             onPress={() => router.push(`/profile/${mogul.id || mogul._id}`)}
         >
             <View style={styles.rankContainer}>
-                {rank === 1 ? (
-                    <Crown size={18} color="#FBBF24" fill="#FBBF24" />
-                ) : (
-                    <Text style={[styles.rankText, { color: activeColors.muted }]}>{rank}</Text>
-                )}
+                <Text style={[styles.rankText, { color: rank === 1 ? '#FBBF24' : activeColors.muted }]}>{rank}</Text>
             </View>
             <Image
                 source={{ uri: mogul.avatar || `https://ui-avatars.com/api/?name=${mogul.name}&background=F3F4F6&color=374151` }}
@@ -133,8 +128,7 @@ export const LeaderboardItem = ({ mogul, rank }: { mogul: any, rank: number }) =
                 <Text style={[styles.leaderHandle, { color: activeColors.muted }]}>@{mogul.handle}</Text>
             </View>
             <View style={[styles.pointsGroup, { backgroundColor: activeColors.tint + '10' }]}>
-                <Zap size={12} color={activeColors.tint} fill={activeColors.tint} />
-                <Text style={[styles.pointsText, { color: activeColors.tint }]}>{mogul.points.toLocaleString()}</Text>
+                <Text style={[styles.pointsText, { color: activeColors.tint }]}>{mogul.points.toLocaleString()} XP</Text>
             </View>
         </TouchableOpacity>
     );
@@ -150,7 +144,6 @@ export const ChallengeCard = ({ challenge }: { challenge: any }) => {
                 <View style={[styles.bountyBadge, { backgroundColor: activeColors.tint }]}>
                     <Text style={styles.bountyText}>BOUNTY: {challenge.bounty}</Text>
                 </View>
-                <Target size={20} color={activeColors.tint} />
             </View>
             <Text style={[styles.challengeTitle, { color: activeColors.text }]}>{challenge.title}</Text>
             <Text style={[styles.challengeDesc, { color: activeColors.muted }]} numberOfLines={2}>{challenge.description}</Text>
@@ -158,7 +151,6 @@ export const ChallengeCard = ({ challenge }: { challenge: any }) => {
                 <Text style={[styles.timeLeft, { color: '#EF4444' }]}>{challenge.timeLeft} left</Text>
                 <View style={styles.participateBtn}>
                     <Text style={[styles.participateText, { color: activeColors.tint }]}>Join Arena</Text>
-                    <ArrowRight size={14} color={activeColors.tint} />
                 </View>
             </View>
         </TouchableOpacity>
@@ -201,7 +193,6 @@ export const BuildImpossibleHero = ({ onPress }: { onPress: () => void }) => {
 
                 <View style={styles.heroActionBtn}>
                     <Text style={[styles.heroActionText, { color: theme === 'dark' ? '#fff' : '#050505' }]}>Ship Today</Text>
-                    <ArrowRight size={16} color={theme === 'dark' ? '#fff' : '#050505'} />
                 </View>
             </View>
         </TouchableOpacity>
