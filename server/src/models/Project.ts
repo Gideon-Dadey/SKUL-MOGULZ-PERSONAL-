@@ -29,6 +29,7 @@ export interface IProject extends Document {
     repostOf?: mongoose.Types.ObjectId | IProject;
     comments: IComment[];
     views: number;
+    community?: string; // Sub-Arena like 'ai-innovators'
 
     createdAt: Date;
     updatedAt: Date;
@@ -81,7 +82,8 @@ const projectSchema = new Schema<IProject>({
     reposts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     repostOf: { type: Schema.Types.ObjectId, ref: 'Project' },
     comments: [commentSchema],
-    views: { type: Number, default: 0 }
+    views: { type: Number, default: 0 },
+    community: { type: String, trim: true }
 }, {
     timestamps: true
 });

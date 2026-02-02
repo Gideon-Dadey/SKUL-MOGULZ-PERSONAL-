@@ -14,7 +14,9 @@ import {
     GroupCard,
     LeaderboardItem,
     ChallengeCard,
-    BuildImpossibleHero
+    BuildImpossibleHero,
+    HurdleCard,
+    MilestoneCard
 } from '../../components/ProjectComponents';
 import { StatusBar } from 'expo-status-bar';
 
@@ -35,6 +37,9 @@ export default function ProjectsScreen() {
 
     const [trendingProjects, setTrendingProjects] = useState<any[]>([]);
     const [leaderboard, setLeaderboard] = useState<any[]>([]);
+    const [hurdles, setHurdles] = useState<any[]>([]);
+    const [milestones, setMilestones] = useState<any[]>([]);
+    const [activeTab, setActiveTab] = useState<'projects' | 'hurdles' | 'milestones'>('projects');
     const [activeTopic, setActiveTopic] = useState('AIInnovation');
     const [isLoading, setIsLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -42,9 +47,11 @@ export default function ProjectsScreen() {
     const fetchTrendingContent = async () => {
         setIsLoading(true);
         try {
-            const [projRes, leadRes] = await Promise.all([
+            const [projRes, leadRes, hurdRes, mileRes] = await Promise.all([
                 api.get('/projects', { params: { search: activeTopic } }),
-                api.get('/analytics/leaderboard')
+                api.get('/analytics/leaderboard'),
+                api.get('/arena/hurdles'),
+                api.get('/arena/milestones')
             ]);
 
             // Filter to only original projects (not reposts)
@@ -59,13 +66,10 @@ export default function ProjectsScreen() {
             }
 
             setLeaderboard(leadRes.data);
+            setHurdles(hurdRes.data);
+            setMilestones(mileRes.data);
         } catch (error) {
             console.error('Failed to fetch arena content', error);
-            try {
-                const fallback = await api.get('/projects');
-                const fallbackOriginals = fallback.data.filter((p: any) => !p.repostOf);
-                setTrendingProjects(fallbackOriginals.slice(0, 5));
-            } catch (e) { }
         } finally {
             setIsLoading(false);
             setRefreshing(false);
@@ -99,10 +103,10 @@ export default function ProjectsScreen() {
                     <Text style={[styles.title, { color: activeColors.text }]}>The Arena</Text>
                 </View>
                 <TouchableOpacity
-                    style={[styles.searchCircle, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}
+                    style={styles.searchButton}
                     onPress={() => router.push('/search')}
                 >
-                    <Search size={22} color={activeColors.text} />
+                    <Search size={24} color={activeColors.text} />
                 </TouchableOpacity>
             </View>
 
@@ -111,11 +115,97 @@ export default function ProjectsScreen() {
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={activeColors.tint} />}
                 contentContainerStyle={styles.scrollContent}
             >
+                {/* Segmented Tab Bar */}
+                <View style={styles.tabContainer}>
+                    {(['projects', 'hurdles', 'milestones'] as const).map((tab) => (
+                        <TouchableOpacity
+                            key={tab}
+                            style={[styles.tab, activeTab === tab && { borderBottomColor: activeColors.tint, borderBottomWidth: 2 }]}
+                            onPress={() => setActiveTab(tab)}
+                        >
+                            <Text style={[styles.tabText, { color: activeTab === tab ? activeColors.text : activeColors.muted }]}>
+                                {tab.toUpperCase()}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
 
-                {/* The Ignition Phase: Build the Impossible */}
-                <BuildImpossibleHero onPress={() => router.push('/modal')} />
+                {activeTab === 'projects' && (
+                    <>
+                        {/* The Ignition Phase: Build the Impossible */}
+                        <BuildImpossibleHero onPress={() => router.push('/modal')} />
 
-                {/* Global Standings */}
+                        {/* Featured Projects Section */}
+                        <View style={styles.section}>
+                            <View style={styles.sectionHeader}>
+                                <View style={styles.sectionTitleGroup}>
+                                    <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Breakthroughs</Text>
+                                </View>
+                                <TouchableOpacity style={styles.seeAllBtn}>
+                                    <Text style={[styles.seeAllText, { color: activeColors.tint }]}>Discover</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.projectsScroll}>
+                                {trendingProjects.map(project => (
+                                    <ProjectCard key={project._id || project.id} project={project} />
+                                ))}
+                            </ScrollView>
+                        </View>
+
+                        {/* Sub-Arena / Niche Filter (Reddit Style) */}
+                        <View style={styles.section}>
+                            <View style={styles.sectionHeader}>
+                                <View style={styles.sectionTitleGroup}>
+                                    <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Active Communities</Text>
+                                </View>
+                            </View>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.topicsScroll}>
+                                {TRENDING_TOPICS.map(topic => (
+                                    <TrendingTopicCard
+                                        key={topic}
+                                        topic={topic}
+                                        isActive={activeTopic === topic}
+                                        onPress={() => setActiveTopic(topic)}
+                                    />
+                                ))}
+                            </ScrollView>
+                        </View>
+                    </>
+                )}
+
+                {activeTab === 'hurdles' && (
+                    <View style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Mogul Hurdles</Text>
+                        </View>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.projectsScroll}>
+                            {hurdles.length > 0 ? hurdles.map(hurdle => (
+                                <HurdleCard key={hurdle._id} hurdle={hurdle} />
+                            )) : (
+                                <View style={{ padding: 24 }}>
+                                    <Text style={{ color: activeColors.muted }}>No active hurdles. Be the first to ask!</Text>
+                                </View>
+                            )}
+                        </ScrollView>
+                    </View>
+                )}
+
+                {activeTab === 'milestones' && (
+                    <View style={styles.section}>
+                        <View style={styles.sectionHeader}>
+                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Shipment Log</Text>
+                        </View>
+                        <View style={{ paddingHorizontal: 24 }}>
+                            {milestones.length > 0 ? milestones.map(milestone => (
+                                <MilestoneCard key={milestone._id} milestone={milestone} />
+                            )) : (
+                                <Text style={{ color: activeColors.muted }}>No recent shipments. Start building!</Text>
+                            )}
+                        </View>
+                    </View>
+                )}
+
+                {/* Shared Global Standings */}
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <View style={styles.sectionTitleGroup}>
@@ -136,42 +226,6 @@ export default function ProjectsScreen() {
                             }} rank={idx + 1} />
                         ))}
                     </View>
-                </View>
-
-                {/* Trending Topics */}
-                <View style={styles.section}>
-                    <View style={styles.sectionHeader}>
-                        <View style={styles.sectionTitleGroup}>
-                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Viral Echoes</Text>
-                        </View>
-                    </View>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.topicsScroll}>
-                        {TRENDING_TOPICS.map(topic => (
-                            <TrendingTopicCard
-                                key={topic}
-                                topic={topic}
-                                isActive={activeTopic === topic}
-                                onPress={() => setActiveTopic(topic)}
-                            />
-                        ))}
-                    </ScrollView>
-                </View>
-
-                {/* Featured Projects Section */}
-                <View style={styles.section}>
-                    <View style={styles.sectionHeader}>
-                        <View style={styles.sectionTitleGroup}>
-                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Breakthroughs</Text>
-                        </View>
-                        <TouchableOpacity style={styles.seeAllBtn}>
-                            <Text style={[styles.seeAllText, { color: activeColors.tint }]}>Discover</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.projectsScroll}>
-                        {trendingProjects.map(project => (
-                            <ProjectCard key={project._id || project.id} project={project} />
-                        ))}
-                    </ScrollView>
                 </View>
 
 
@@ -223,16 +277,26 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
     },
-    searchCircle: {
-        width: 48,
-        height: 48,
-        borderRadius: 10,
-        borderWidth: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+    searchButton: {
+        padding: 8,
+        marginRight: -8,
     },
     scrollContent: {
-        paddingTop: 24,
+        paddingTop: 16,
+    },
+    tabContainer: {
+        flexDirection: 'row',
+        paddingHorizontal: 24,
+        marginBottom: 24,
+        gap: 20,
+    },
+    tab: {
+        paddingVertical: 8,
+    },
+    tabText: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        letterSpacing: 0.5,
     },
     section: {
         marginBottom: 40,

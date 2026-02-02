@@ -9,6 +9,7 @@ import notificationRoutes from './routes/notificationRoutes';
 import messageRoutes from './routes/messageRoutes';
 import networkRoutes from './routes/networkRoutes';
 import analyticsRoutes from './routes/analyticsRoutes';
+import arenaRoutes from './routes/arenaRoutes';
 
 import path from 'path';
 
@@ -24,7 +25,7 @@ app.use(helmet({
             defaultSrc: ["'self'"],
             scriptSrc: ["'self'", "'unsafe-inline'"],
             styleSrc: ["'self'", "'unsafe-inline'"],
-            imgSrc: ["'self'", "data:", "http://localhost:5000", "https://ui-avatars.com"],
+            imgSrc: ["'self'", "data:", "http://localhost:5000", "https://ui-avatars.com", "https://images.unsplash.com"],
             connectSrc: ["'self'", "http://localhost:5000", "ws://localhost:5000"],
             fontSrc: ["'self'", "https:", "data:"],
             objectSrc: ["'none'"],
@@ -52,6 +53,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/network', networkRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/arena', arenaRoutes);
 
 // Root Route
 app.get('/', (req: Request, res: Response) => {

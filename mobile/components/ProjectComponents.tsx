@@ -193,6 +193,87 @@ export const BuildImpossibleHero = ({ onPress }: { onPress: () => void }) => {
     );
 };
 
+export const HurdleCard = ({ hurdle }: { hurdle: any }) => {
+    const { theme } = useTheme();
+    const activeColors = Colors[theme];
+
+    return (
+        <TouchableOpacity style={[styles.hurdleCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
+            <View style={styles.hurdleHeader}>
+                <Image
+                    source={hurdle.author?.avatar ? { uri: getImageUrl(hurdle.author.avatar) || '' } : { uri: `https://ui-avatars.com/api/?name=${hurdle.author?.firstName || 'M'}&background=D1FAE5&color=065F46` }}
+                    style={styles.authorAvatar}
+                />
+                <View style={styles.hurdleAuthorInfo}>
+                    <Text style={[styles.authorName, { color: activeColors.text }]}>{hurdle.author?.firstName} {hurdle.author?.lastName}</Text>
+                    <Text style={[styles.timeAgo, { color: activeColors.muted }]}>{new Date(hurdle.createdAt).toLocaleDateString()}</Text>
+                </View>
+                <View style={[styles.statusBadge, { backgroundColor: hurdle.status === 'solved' ? '#10B981' : '#F59E0B' }]}>
+                    <Text style={styles.statusText}>{hurdle.status.toUpperCase()}</Text>
+                </View>
+            </View>
+            <Text style={[styles.hurdleTitle, { color: activeColors.text }]} numberOfLines={2}>{hurdle.title}</Text>
+            <View style={styles.hurdleFooter}>
+                <View style={styles.tagsRow}>
+                    {hurdle.tags?.map((tag: string) => (
+                        <View key={tag} style={[styles.tagBadge, { backgroundColor: activeColors.background }]}>
+                            <Text style={[styles.tagText, { color: activeColors.muted }]}>#{tag}</Text>
+                        </View>
+                    ))}
+                </View>
+                <Text style={[styles.answerCount, { color: activeColors.tint }]}>{hurdle.answers?.length || 0} answers</Text>
+            </View>
+        </TouchableOpacity>
+    );
+};
+
+export const MilestoneCard = ({ milestone }: { milestone: any }) => {
+    const { theme } = useTheme();
+    const activeColors = Colors[theme];
+
+    return (
+        <View style={[styles.milestoneCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
+            <View style={styles.milestoneHeader}>
+                <Image
+                    source={milestone.author?.avatar ? { uri: getImageUrl(milestone.author.avatar) || '' } : { uri: `https://ui-avatars.com/api/?name=${milestone.author?.firstName || 'M'}&background=D1FAE5&color=065F46` }}
+                    style={styles.authorAvatar}
+                />
+                <View style={styles.milestoneInfo}>
+                    <Text style={[styles.authorName, { color: activeColors.text }]}>
+                        {milestone.author?.firstName} <Text style={{ fontWeight: '400' }}>built a</Text> {milestone.type}
+                    </Text>
+                    <Text style={[styles.projectRef, { color: activeColors.tint }]}>for {milestone.project?.title}</Text>
+                </View>
+            </View>
+            <Text style={[styles.milestoneTitle, { color: activeColors.text }]}>{milestone.title}</Text>
+            <Text style={[styles.milestoneContent, { color: activeColors.muted }]} numberOfLines={3}>{milestone.content}</Text>
+            <View style={styles.milestoneFooter}>
+                <Text style={[styles.timeAgo, { color: activeColors.muted }]}>{new Date(milestone.createdAt).toLocaleDateString()}</Text>
+                <TouchableOpacity style={styles.likeBtn}>
+                    <Text style={[styles.likeText, { color: activeColors.tint }]}>Celebrate</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+};
+
+export const SkillBadge = ({ skill, endorsedBy, onEndorse }: { skill: string, endorsedBy: string[], onEndorse?: () => void }) => {
+    const { theme } = useTheme();
+    const activeColors = Colors[theme];
+
+    return (
+        <TouchableOpacity
+            style={[styles.skillBadge, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}
+            onPress={onEndorse}
+            disabled={!onEndorse}
+        >
+            <Text style={[styles.skillName, { color: activeColors.text }]}>{skill}</Text>
+            <View style={[styles.endorseCount, { backgroundColor: activeColors.tint + '20' }]}>
+                <Text style={[styles.endorseText, { color: activeColors.tint }]}>{endorsedBy.length}</Text>
+            </View>
+        </TouchableOpacity>
+    );
+};
 
 const styles = StyleSheet.create({
     topicCard: {
@@ -398,6 +479,140 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+    },
+    // Hurdle Styles
+    hurdleCard: {
+        width: width * 0.85,
+        borderRadius: 10,
+        borderWidth: 1,
+        padding: 16,
+        marginRight: 16,
+    },
+    hurdleHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    hurdleAuthorInfo: {
+        flex: 1,
+        marginLeft: 8,
+    },
+    timeAgo: {
+        fontSize: 10,
+        fontWeight: '500',
+    },
+    statusBadge: {
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 4,
+    },
+    statusText: {
+        color: '#fff',
+        fontSize: 9,
+        fontWeight: 'bold',
+    },
+    hurdleTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 12,
+        lineHeight: 22,
+    },
+    hurdleFooter: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    tagsRow: {
+        flexDirection: 'row',
+        gap: 6,
+    },
+    tagBadge: {
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 4,
+    },
+    tagText: {
+        fontSize: 10,
+        fontWeight: '600',
+    },
+    answerCount: {
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+    // Milestone Styles
+    milestoneCard: {
+        width: width * 0.9,
+        borderRadius: 10,
+        borderWidth: 1,
+        padding: 20,
+        marginBottom: 16,
+    },
+    milestoneHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    milestoneInfo: {
+        flex: 1,
+        marginLeft: 10,
+    },
+    projectRef: {
+        fontSize: 12,
+        fontWeight: '600',
+        marginTop: 2,
+    },
+    milestoneTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 8,
+    },
+    milestoneContent: {
+        fontSize: 14,
+        lineHeight: 20,
+        marginBottom: 16,
+    },
+    milestoneFooter: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderTopWidth: 1,
+        borderTopColor: 'rgba(0,0,0,0.05)',
+        paddingTop: 12,
+    },
+    likeBtn: {
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 6,
+    },
+    likeText: {
+        fontSize: 13,
+        fontWeight: 'bold',
+    },
+    // Skill Badge Styles
+    skillBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingLeft: 12,
+        paddingRight: 6,
+        paddingVertical: 6,
+        borderRadius: 20,
+        borderWidth: 1,
+        marginRight: 8,
+        marginBottom: 8,
+    },
+    skillName: {
+        fontSize: 13,
+        fontWeight: '600',
+        marginRight: 8,
+    },
+    endorseCount: {
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 12,
+    },
+    endorseText: {
+        fontSize: 11,
+        fontWeight: 'bold',
     },
     timeLeft: {
         fontSize: 12,
