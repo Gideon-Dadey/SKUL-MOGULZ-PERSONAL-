@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     },
     seasonCard: {
         padding: 20,
-        borderRadius: 5,
+        borderRadius: 10,
         borderWidth: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(165,214,183,0.1)',
         paddingHorizontal: 12,
         paddingVertical: 6,
-        borderRadius: 5,
+        borderRadius: 10,
     },
     timeText: {
         fontSize: 12,
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
         letterSpacing: -0.5,
     },
     leaderboardBox: {
-        borderRadius: 5,
+        borderRadius: 10,
         borderWidth: 1,
         paddingHorizontal: 16,
         paddingVertical: 8,

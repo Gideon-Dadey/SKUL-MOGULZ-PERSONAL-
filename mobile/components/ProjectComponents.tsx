@@ -191,10 +191,6 @@ export const BuildImpossibleHero = ({ onPress }: { onPress: () => void }) => {
             </View>
 
             <View style={styles.heroContent}>
-                <View style={styles.heroBadge}>
-                    <Zap size={10} color="#fff" fill="#fff" />
-                    <Text style={styles.heroBadgeText}>NO LIMITS</Text>
-                </View>
                 <Text style={[styles.heroTitle, { color: theme === 'dark' ? '#fff' : '#050505' }]}>
                     BUILD THE{"\n"}
                     <Text style={{ color: '#A5D6B7' }}>IMPOSSIBLE</Text>
@@ -204,8 +200,8 @@ export const BuildImpossibleHero = ({ onPress }: { onPress: () => void }) => {
                 </Text>
 
                 <View style={styles.heroActionBtn}>
-                    <Text style={styles.heroActionText}>Ship Today</Text>
-                    <ArrowRight size={16} color="#050505" />
+                    <Text style={[styles.heroActionText, { color: theme === 'dark' ? '#fff' : '#050505' }]}>Ship Today</Text>
+                    <ArrowRight size={16} color={theme === 'dark' ? '#fff' : '#050505'} />
                 </View>
             </View>
         </TouchableOpacity>
@@ -217,7 +213,7 @@ const styles = StyleSheet.create({
     topicCard: {
         paddingHorizontal: 16,
         paddingVertical: 10,
-        borderRadius: 5,
+        borderRadius: 10,
         borderWidth: 1,
         marginRight: 8,
     },
@@ -227,7 +223,7 @@ const styles = StyleSheet.create({
     },
     projectCard: {
         width: width * 0.7,
-        borderRadius: 5,
+        borderRadius: 10,
         borderWidth: 1,
         marginRight: 16,
         overflow: 'hidden',
@@ -254,7 +250,7 @@ const styles = StyleSheet.create({
     stageBadge: {
         paddingHorizontal: 8,
         paddingVertical: 4,
-        borderRadius: 5,
+        borderRadius: 10,
     },
     stageText: {
         fontSize: 10,
@@ -279,7 +275,7 @@ const styles = StyleSheet.create({
     authorAvatar: {
         width: 24,
         height: 24,
-        borderRadius: 5,
+        borderRadius: 10,
     },
     authorName: {
         fontSize: 12,
@@ -298,14 +294,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 16,
-        borderRadius: 5,
+        borderRadius: 10,
         borderWidth: 1,
         marginBottom: 12,
     },
     groupIconContainer: {
         width: 48,
         height: 48,
-        borderRadius: 5,
+        borderRadius: 10,
         backgroundColor: '#f0f0f0',
         overflow: 'hidden',
     },
@@ -329,7 +325,7 @@ const styles = StyleSheet.create({
     joinBtn: {
         paddingHorizontal: 16,
         paddingVertical: 8,
-        borderRadius: 5,
+        borderRadius: 10,
     },
     joinText: {
         fontWeight: '800',
@@ -354,7 +350,7 @@ const styles = StyleSheet.create({
     leaderAvatar: {
         width: 40,
         height: 40,
-        borderRadius: 5,
+        borderRadius: 10,
     },
     leaderInfo: {
         flex: 1,
@@ -373,7 +369,7 @@ const styles = StyleSheet.create({
         gap: 4,
         paddingHorizontal: 10,
         paddingVertical: 6,
-        borderRadius: 5,
+        borderRadius: 10,
         backgroundColor: 'rgba(165,214,183,0.1)',
     },
     pointsText: {
@@ -382,7 +378,7 @@ const styles = StyleSheet.create({
     },
     challengeCard: {
         width: width * 0.8,
-        borderRadius: 5,
+        borderRadius: 10,
         borderWidth: 1,
         padding: 20,
         marginRight: 16,
@@ -396,7 +392,7 @@ const styles = StyleSheet.create({
     bountyBadge: {
         paddingHorizontal: 10,
         paddingVertical: 4,
-        borderRadius: 5,
+        borderRadius: 10,
     },
     bountyText: {
         color: '#fff',
@@ -435,7 +431,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 20,
-        borderRadius: 5,
+        borderRadius: 10,
         marginHorizontal: 24,
         marginBottom: 32,
         gap: 16,
@@ -443,7 +439,7 @@ const styles = StyleSheet.create({
     sparkIconBox: {
         width: 48,
         height: 48,
-        borderRadius: 5,
+        borderRadius: 10,
         backgroundColor: 'rgba(255,255,255,0.2)',
         justifyContent: 'center',
         alignItems: 'center',
@@ -465,7 +461,7 @@ const styles = StyleSheet.create({
     sparkAction: {
         width: 36,
         height: 36,
-        borderRadius: 5,
+        borderRadius: 10,
         backgroundColor: '#A5D6B7',
         justifyContent: 'center',
         alignItems: 'center',
@@ -474,7 +470,7 @@ const styles = StyleSheet.create({
     heroContainer: {
         marginHorizontal: 24,
         height: 220,
-        borderRadius: 5,
+        borderRadius: 10,
         overflow: 'hidden',
         marginBottom: 32,
         justifyContent: 'flex-end',
@@ -501,7 +497,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#10B981',
         paddingHorizontal: 8,
         paddingVertical: 4,
-        borderRadius: 5,
+        borderRadius: 10,
         alignSelf: 'flex-start',
         marginBottom: 12,
     },
@@ -526,15 +522,10 @@ const styles = StyleSheet.create({
     heroActionBtn: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
-        backgroundColor: '#A5D6B7',
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-        borderRadius: 5,
+        gap: 6,
         alignSelf: 'flex-start',
     },
     heroActionText: {
-        color: '#050505',
         fontSize: 14,
         fontWeight: '800',
     },

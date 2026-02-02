@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     searchCircle: {
         width: 48,
         height: 48,
-        borderRadius: 5,
+        borderRadius: 10,
         borderWidth: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     leaderboardBox: {
         marginHorizontal: 24,
         padding: 20,
-        borderRadius: 5,
+        borderRadius: 10,
         backgroundColor: 'rgba(150,150,150,0.05)',
     },
     floatingBtn: {
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
         right: 24,
         paddingHorizontal: 24,
         paddingVertical: 14,
-        borderRadius: 5,
+        borderRadius: 10,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
