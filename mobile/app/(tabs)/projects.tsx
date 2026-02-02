@@ -92,7 +92,7 @@ export default function ProjectsScreen() {
             <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
 
             {/* Dynamic Modern Header */}
-            <View style={[styles.header, { borderBottomColor: activeColors.border }]}>
+            <View style={[styles.header, { borderBottomColor: activeColors.border, backgroundColor: activeColors.card }]}>
                 <View>
                     <Text style={[styles.greeting, { color: activeColors.muted }]}>Build the impossible</Text>
                     <Text style={[styles.title, { color: activeColors.text }]}>The Arena</Text>

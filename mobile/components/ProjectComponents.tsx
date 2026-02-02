@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     authorAvatar: {
         width: 24,
         height: 24,
-        borderRadius: 10,
+        borderRadius: 12,
     },
     authorName: {
         fontSize: 12,
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
     groupIconContainer: {
         width: 48,
         height: 48,
-        borderRadius: 10,
+        borderRadius: 24,
         backgroundColor: '#f0f0f0',
         overflow: 'hidden',
     },
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
     leaderAvatar: {
         width: 40,
         height: 40,
-        borderRadius: 10,
+        borderRadius: 20,
     },
     leaderInfo: {
         flex: 1,
