@@ -13,7 +13,6 @@ import { SocketProvider } from '../context/SocketContext';
 import { CallProvider } from '../context/CallContext';
 import { NotificationProvider } from '../context/NotificationContext';
 import Colors from '../constants/Colors';
-import CustomSplashScreen from '../components/CustomSplashScreen';
 import { useState } from 'react';
 
 export {
@@ -37,7 +36,7 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  const [splashFinished, setSplashFinished] = useState(false);
+  const [splashFinished, setSplashFinished] = useState(true);
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -133,11 +132,7 @@ function RootLayoutNav({
         <Stack.Screen name="leaderboard" options={{ headerShown: false, animation: 'slide_from_right' }} />
       </Stack>
 
-      {!splashFinished && (
-        <View style={StyleSheet.absoluteFill}>
-          <CustomSplashScreen onFinish={() => setSplashFinished(true)} />
-        </View>
-      )}
+      {/* Custom Splash Screen removed for faster loading */}
     </NavThemeProvider>
   );
 }
