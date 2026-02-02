@@ -503,7 +503,7 @@ export default function FeedScreen() {
         <View style={styles.createActions}>
           <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/create-post')}>
             <ImageIcon size={18} color="#3B82F6" />
-            <Text style={[styles.createActionText, { color: '#4B5563' }]}>Media</Text>
+            <Text style={[styles.createActionText, { color: '#4B5563' }]}>Quick Buzz</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
             <Sparkles size={18} color="#8B5CF6" />
