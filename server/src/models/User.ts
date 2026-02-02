@@ -62,6 +62,11 @@ export interface IUser extends Document {
         discoverableByPhone: boolean;
     };
     points: number;
+    karma: number;
+    endorsedSkills: {
+        skill: string;
+        endorsedBy: mongoose.Types.ObjectId[];
+    }[];
     createdAt: Date;
     updatedAt: Date;
     comparePassword(candidatePassword: string): Promise<boolean>;
@@ -131,7 +136,12 @@ const userSchema = new Schema<IUser>({
         discoverableByEmail: { type: Boolean, default: true },
         discoverableByPhone: { type: Boolean, default: true },
     },
-    points: { type: Number, default: 0 }
+    points: { type: Number, default: 0 },
+    karma: { type: Number, default: 0 },
+    endorsedSkills: [{
+        skill: { type: String, required: true },
+        endorsedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+    }]
 }, {
     timestamps: true
 });
