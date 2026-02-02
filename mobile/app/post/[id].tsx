@@ -11,7 +11,7 @@ import api, { getImageUrl } from '../../services/api';
 import { useSocket } from '../../context/SocketContext';
 
 export default function PostDetailScreen() {
-    const { id } = useLocalSearchParams();
+    const { id, type } = useLocalSearchParams();
     const router = useRouter();
     const { theme } = useTheme();
     const { user } = useAuth();
@@ -29,7 +29,7 @@ export default function PostDetailScreen() {
 
     useEffect(() => {
         if (id) fetchPostDetails();
-    }, [id]);
+    }, [id, type]);
 
     useEffect(() => {
         if (!socket || !id) return;
@@ -49,7 +49,8 @@ export default function PostDetailScreen() {
 
     const fetchPostDetails = async () => {
         try {
-            const response = await api.get(`/projects/${id}`);
+            const apiEndpoint = (type === 'post' || post?.type === 'post') ? `/posts/${id}` : `/projects/${id}`;
+            const response = await api.get(apiEndpoint);
             const data = response.data;
             const adaptedPost = {
                 ...data,
@@ -72,7 +73,8 @@ export default function PostDetailScreen() {
 
     const handleLike = async () => {
         try {
-            const response = await api.put(`/projects/${post.id}/like`);
+            const apiEndpoint = (type === 'post' || post?.type === 'post') ? `/posts/${post.id}/like` : `/projects/${post.id}/like`;
+            const response = await api.put(apiEndpoint);
             const updatedLikes = response.data;
             setPost((prev: any) => ({
                 ...prev,
@@ -86,7 +88,8 @@ export default function PostDetailScreen() {
 
     const handleLikeComment = async (commentId: string) => {
         try {
-            const response = await api.put(`/projects/${post.id}/comment/${commentId}/like`);
+            const apiEndpoint = (type === 'post' || post?.type === 'post') ? `/posts/${post.id}/comment/${commentId}/like` : `/projects/${post.id}/comment/${commentId}/like`;
+            const response = await api.put(apiEndpoint);
             const updatedLikes = response.data;
             setPost((prev: any) => ({
                 ...prev,
@@ -105,7 +108,8 @@ export default function PostDetailScreen() {
         try {
             setSubmitting(true);
             Keyboard.dismiss();
-            await api.post(`/projects/${post.id}/comment/${replyingTo.id}/reply`, {
+            const apiEndpoint = (type === 'post' || post?.type === 'post') ? `/posts/${post.id}/comment/${replyingTo.id}/reply` : `/projects/${post.id}/comment/${replyingTo.id}/reply`;
+            await api.post(apiEndpoint, {
                 content: replyText
             });
             setReplyText('');
@@ -124,7 +128,8 @@ export default function PostDetailScreen() {
         try {
             setSubmitting(true);
             Keyboard.dismiss();
-            await api.post(`/projects/${post.id}/comment`, {
+            const apiEndpoint = (type === 'post' || post?.type === 'post') ? `/posts/${post.id}/comment` : `/projects/${post.id}/comment`;
+            await api.post(apiEndpoint, {
                 content: commentText
             });
             setCommentText('');

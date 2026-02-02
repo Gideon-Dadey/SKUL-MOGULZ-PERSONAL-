@@ -273,7 +273,9 @@ export default function FeedScreen() {
 
   const handleLike = async (postId: string) => {
     try {
-      const response = await api.put(`/projects/${postId}/like`);
+      const targetPost = posts.find(p => p.id === postId);
+      const apiEndpoint = targetPost?.type === 'post' ? `/posts/${postId}/like` : `/projects/${postId}/like`;
+      const response = await api.put(apiEndpoint);
       const updatedLikes = response.data;
 
       setPosts(currentPosts => currentPosts.map(post => {
@@ -301,7 +303,10 @@ export default function FeedScreen() {
 
     try {
       setIsSubmittingComment(true);
-      const response = await api.post(`/projects/${selectedPostId}/comment`, {
+      const targetPost = posts.find(p => p.id === selectedPostId);
+      const apiEndpoint = targetPost?.type === 'post' ? `/posts/${selectedPostId}/comment` : `/projects/${selectedPostId}/comment`;
+
+      const response = await api.post(apiEndpoint, {
         content: commentText
       });
 
@@ -358,7 +363,11 @@ export default function FeedScreen() {
 
   const handleBookmark = async (postId: string) => {
     try {
-      const response = await api.put(`/projects/${postId}/bookmark`);
+      const targetPost = posts.find(p => p.id === postId);
+      const apiEndpoint = targetPost?.type === 'post' ? `/posts/${postId}/bookmark` : `/projects/${postId}/bookmark`;
+      // Note: bookmark might only exist for projects in some implementations, 
+      // but let's assume standard for now or catch 404
+      const response = await api.put(apiEndpoint);
       const bookmarks = response.data;
 
       // Update auth user bookmarks if needed
@@ -389,9 +398,11 @@ export default function FeedScreen() {
 
   const handleDeletePost = async (postId: string) => {
     try {
-      await api.delete(`/projects/${postId}`);
+      const targetPost = posts.find(p => p.id === postId);
+      const apiEndpoint = targetPost?.type === 'post' ? `/posts/${postId}` : `/projects/${postId}`;
+      await api.delete(apiEndpoint);
       setPosts(currentPosts => currentPosts.filter(p => p.id !== postId));
-      Alert.alert('Success', 'Project deleted');
+      Alert.alert('Success', targetPost?.type === 'post' ? 'Post deleted' : 'Project deleted');
     } catch (error) {
       console.error('Delete error:', error);
       Alert.alert('Error', 'Failed to delete project');

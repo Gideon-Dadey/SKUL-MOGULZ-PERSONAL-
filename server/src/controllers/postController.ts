@@ -42,6 +42,96 @@ export const getPosts = async (req: Request, res: Response) => {
     }
 };
 
+// @desc    Get single post
+export const getPostById = async (req: Request, res: Response) => {
+    try {
+        const post = await Post.findById(req.params.id)
+            .populate('author', 'firstName lastName username avatar headline role location');
+
+        if (!post) {
+            res.status(404).json({ message: 'Post not found' });
+            return;
+        }
+
+        res.status(200).json(post);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Update a post
+export const updatePost = async (req: any, res: Response) => {
+    try {
+        const post = await Post.findById(req.params.id);
+
+        if (!post) {
+            res.status(404).json({ message: 'Post not found' });
+            return;
+        }
+
+        if (post.author.toString() !== req.user.id) {
+            res.status(401).json({ message: 'Not authorized' });
+            return;
+        }
+
+        const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true })
+            .populate('author', 'firstName lastName username avatar headline role location');
+
+        res.status(200).json(updatedPost);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Delete a post
+export const deletePost = async (req: any, res: Response) => {
+    try {
+        const post = await Post.findById(req.params.id);
+
+        if (!post) {
+            res.status(404).json({ message: 'Post not found' });
+            return;
+        }
+
+        if (post.author.toString() !== req.user.id) {
+            res.status(401).json({ message: 'Not authorized' });
+            return;
+        }
+
+        await post.deleteOne();
+        res.status(200).json({ message: 'Post removed' });
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Comment on a post
+export const commentPost = async (req: any, res: Response) => {
+    try {
+        const post = await Post.findById(req.params.id);
+
+        if (!post) {
+            res.status(404).json({ message: 'Post not found' });
+            return;
+        }
+
+        const newComment = {
+            content: req.body.content,
+            author: req.user.id,
+            createdAt: new Date()
+        };
+
+        (post.comments as any).unshift(newComment);
+        await post.save();
+
+        await post.populate('comments.author', 'firstName lastName username avatar');
+
+        res.status(200).json(post.comments);
+    } catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // @desc    Like/Unlike a post
 export const likePost = async (req: any, res: Response) => {
     try {
