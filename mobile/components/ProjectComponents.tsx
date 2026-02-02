@@ -2,6 +2,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { ExternalLink, Users, TrendingUp } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 import Colors from '../constants/Colors';
 import { useTheme } from '../context/ThemeContext';
 import { getImageUrl } from '../services/api';
@@ -43,16 +44,25 @@ export const TrendingTopicCard = ({ topic, isActive, onPress }: { topic: string,
 export const ProjectCard = ({ project }: { project: any }) => {
     const { theme } = useTheme();
     const activeColors = Colors[theme];
+    const router = useRouter();
+
+    const likesCount = Array.isArray(project.likes) ? project.likes.length : (project.likes || 0);
 
     return (
-        <TouchableOpacity style={[styles.projectCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
+        <TouchableOpacity
+            style={[styles.projectCard, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}
+            onPress={() => router.push({
+                pathname: '/post',
+                params: { id: project._id || project.id }
+            })}
+        >
             <Image
-                source={project.media?.[0] ? { uri: getImageUrl(project.media[0]) } : require('../assets/images/icon.png')}
+                source={project.media?.[0] ? { uri: getImageUrl(project.media[0]) || '' } : require('../assets/images/icon.png')}
                 style={styles.projectImage}
             />
             <View style={styles.projectContent}>
                 <View style={styles.projectHeader}>
-                    <Text style={[styles.projectCategory, { color: activeColors.tint }]}>{project.category.toUpperCase()}</Text>
+                    <Text style={[styles.projectCategory, { color: activeColors.tint }]}>{project.category?.toUpperCase() || 'GENERAL'}</Text>
                     <View style={[styles.stageBadge, { backgroundColor: activeColors.background }]}>
                         <Text style={[styles.stageText, { color: activeColors.muted }]}>{project.projectStage}</Text>
                     </View>
@@ -62,14 +72,14 @@ export const ProjectCard = ({ project }: { project: any }) => {
                 <View style={styles.projectFooter}>
                     <View style={styles.authorGroup}>
                         <Image
-                            source={project.author?.avatar ? { uri: getImageUrl(project.author.avatar) } : { uri: `https://ui-avatars.com/api/?name=${project.author?.firstName}&background=A5D6B7&color=000` }}
+                            source={project.author?.avatar ? { uri: getImageUrl(project.author.avatar) || '' } : { uri: `https://ui-avatars.com/api/?name=${project.author?.firstName || 'M'}&background=A5D6B7&color=000` }}
                             style={styles.authorAvatar}
                         />
-                        <Text style={[styles.authorName, { color: activeColors.muted }]}>{project.author?.firstName}</Text>
+                        <Text style={[styles.authorName, { color: activeColors.muted }]}>{project.author?.firstName || 'Mogul'}</Text>
                     </View>
                     <View style={styles.statsGroup}>
                         <Users size={14} color={activeColors.muted} />
-                        <Text style={[styles.statsText, { color: activeColors.muted }]}>{project.likes || 0}</Text>
+                        <Text style={[styles.statsText, { color: activeColors.muted }]}>{likesCount}</Text>
                     </View>
                 </View>
             </View>
