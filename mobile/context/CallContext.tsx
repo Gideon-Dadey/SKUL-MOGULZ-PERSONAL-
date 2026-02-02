@@ -38,7 +38,15 @@ export const CallProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
         // Listen for Incoming Calls
         socket.on('incoming_call', (data: any) => {
-            if (callState !== 'idle') return; // Busy
+            if (callState !== 'idle') {
+                // Return 'busy' status
+                socket.emit('call_response', {
+                    callerId: data.senderId,
+                    accepted: false,
+                    reason: 'busy'
+                });
+                return;
+            }
 
             setCallInfo({
                 partnerId: data.senderId, // The person calling ME
@@ -50,16 +58,17 @@ export const CallProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setCallState('incoming');
         });
 
-        // Listen for Call Response (Answered/Rejected)
+        // Listen for Call Response (Answered/Rejected/Busy)
         socket.on('call_status', (data: any) => {
             if (callState === 'calling') {
                 if (data.accepted) {
                     setCallState('connected');
-                    openMeeting(data.roomId);
+                    openCall(data.roomId, callInfo?.isVideo || false);
                     setCallState('idle'); // End in-app state, handoff to browser
                 } else {
                     setCallState('idle');
-                    Alert.alert('Call Declined', 'The user is busy or declined the call.');
+                    const reason = data.reason === 'busy' ? 'User is on another call.' : 'The user declined the call.';
+                    Alert.alert('Call Failed', reason);
                 }
             }
         });
@@ -68,12 +77,16 @@ export const CallProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             socket.off('incoming_call');
             socket.off('call_status');
         };
-    }, [socket, user, callState]);
+    }, [socket, user, callState, callInfo]);
 
     const startCall = (recipientId: string, recipientName: string, recipientAvatar: string, isVideo: boolean) => {
         if (!socket || !user) return;
 
-        const roomId = `SkulMogulz-${Math.floor(Math.random() * 1000000)}`;
+        // Create a highly unique Room ID for 1:1 privacy
+        const timestamp = Date.now();
+        const random = Math.floor(Math.random() * 1000000);
+        const roomId = `MogulCall-${user.id || user._id}-${recipientId}-${timestamp}-${random}`.replace(/[^a-zA-Z0-9-]/g, '');
+
         setCallInfo({
             partnerId: recipientId,
             partnerName: recipientName,
@@ -104,23 +117,32 @@ export const CallProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             roomId: callInfo.roomId
         });
 
-        openMeeting(callInfo.roomId);
+        openCall(callInfo.roomId, callInfo.isVideo);
         setCallState('idle');
     };
 
     const rejectCall = () => {
         if (!socket || !callInfo) return;
         socket.emit('call_response', {
-            callerId: 'unknown', // Placeholder
+            callerId: callInfo.partnerId,
             accepted: false
         });
         setCallState('idle');
         setCallInfo(null);
     };
 
-    const openMeeting = (roomId: string) => {
-        const url = `https://meet.jit.si/${roomId}`;
-        Linking.openURL(url);
+    const openCall = (roomId: string, isVideo: boolean) => {
+        // Deep link configuration for Jitsi to feel like a 1:1 call
+        // config.prejoinPageEnabled=false: Jumps straight into the call
+        // config.disableInviteFunctions=true: Hides the "invite others" button
+        // config.startWithVideoMuted: Starts with video off for voice calls
+        let jitsiUrl = `https://meet.jit.si/${roomId}#config.prejoinPageEnabled=false&config.disableInviteFunctions=true&config.disableDeepLinking=true&config.enableWelcomePage=false`;
+
+        if (!isVideo) {
+            jitsiUrl += '&config.startWithVideoMuted=true';
+        }
+
+        Linking.openURL(jitsiUrl);
     };
 
     return (
