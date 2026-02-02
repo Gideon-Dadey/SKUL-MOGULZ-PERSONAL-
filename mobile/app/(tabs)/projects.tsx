@@ -108,21 +108,21 @@ export default function ProjectsScreen() {
                 contentContainerStyle={styles.scrollContent}
             >
 
-                {/* Daily Idea Spark - Creativity First */}
-                <IdeaSparkCard />
+                {/* The Human Element: Idea Spark */}
+                <IdeaSparkCard onRefresh={() => { fetchTrendingContent(); }} />
 
-                {/* Competition: The Leaderboard */}
+                {/* Global Standings */}
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <View style={styles.sectionTitleGroup}>
-                            <Crown size={20} color="#F59E0B" fill="#F59E0B" />
-                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Top Innovators</Text>
+                            <Crown size={18} color="#FBBF24" />
+                            <Text style={[styles.sectionTitle, { color: activeColors.text }]}>Hall of Builders</Text>
                         </View>
-                        <TouchableOpacity>
-                            <Text style={[styles.seeAllText, { color: activeColors.tint }]}>Season Stats</Text>
+                        <TouchableOpacity onPress={() => router.push('/leaderboard')}>
+                            <Text style={[styles.seeAllText, { color: activeColors.muted }]}>Full Rankings</Text>
                         </TouchableOpacity>
                     </View>
-                    <View style={styles.leaderboardBox}>
+                    <View style={[styles.leaderboardBox, { backgroundColor: theme === 'dark' ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)', borderColor: activeColors.border + '50', borderWidth: 1 }]}>
                         {SAMPLE_LEADERBOARD.map((mogul, idx) => (
                             <LeaderboardItem key={mogul.id} mogul={mogul} rank={idx + 1} />
                         ))}

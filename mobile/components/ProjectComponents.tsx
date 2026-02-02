@@ -69,10 +69,10 @@ export const ProjectCard = ({ project }: { project: any }) => {
                 <View style={styles.projectFooter}>
                     <View style={styles.authorGroup}>
                         <Image
-                            source={project.author?.avatar ? { uri: getImageUrl(project.author.avatar) || '' } : { uri: `https://ui-avatars.com/api/?name=${project.author?.firstName || 'M'}&background=A5D6B7&color=000` }}
+                            source={project.author?.avatar ? { uri: getImageUrl(project.author.avatar) || '' } : { uri: `https://ui-avatars.com/api/?name=${project.author?.firstName || 'M'}&background=D1FAE5&color=065F46` }}
                             style={styles.authorAvatar}
                         />
-                        <Text style={[styles.authorName, { color: activeColors.muted }]}>{project.author?.firstName || 'Mogul'}</Text>
+                        <Text style={[styles.authorName, { color: activeColors.text }]}>{project.author?.firstName || 'Mogul'}</Text>
                     </View>
                     <View style={styles.statsGroup}>
                         <Users size={14} color={activeColors.muted} />
@@ -110,29 +110,33 @@ export const GroupCard = ({ group }: { group: any }) => {
 export const LeaderboardItem = ({ mogul, rank }: { mogul: any, rank: number }) => {
     const { theme } = useTheme();
     const activeColors = Colors[theme];
+    const router = useRouter();
 
     return (
-        <View style={[styles.leaderboardItem, { borderBottomColor: activeColors.border }]}>
+        <TouchableOpacity
+            style={[styles.leaderboardItem, { borderBottomColor: activeColors.border + '50' }]}
+            onPress={() => router.push(`/profile/${mogul.id || mogul._id}`)}
+        >
             <View style={styles.rankContainer}>
                 {rank === 1 ? (
-                    <Crown size={20} color="#F59E0B" fill="#F59E0B" />
+                    <Crown size={18} color="#FBBF24" fill="#FBBF24" />
                 ) : (
                     <Text style={[styles.rankText, { color: activeColors.muted }]}>{rank}</Text>
                 )}
             </View>
             <Image
-                source={{ uri: mogul.avatar || `https://ui-avatars.com/api/?name=${mogul.name}&background=A5D6B7&color=000` }}
+                source={{ uri: mogul.avatar || `https://ui-avatars.com/api/?name=${mogul.name}&background=F3F4F6&color=374151` }}
                 style={styles.leaderAvatar}
             />
             <View style={styles.leaderInfo}>
                 <Text style={[styles.leaderName, { color: activeColors.text }]}>{mogul.name}</Text>
                 <Text style={[styles.leaderHandle, { color: activeColors.muted }]}>@{mogul.handle}</Text>
             </View>
-            <View style={styles.pointsGroup}>
-                <Zap size={14} color={activeColors.tint} fill={activeColors.tint} />
-                <Text style={[styles.pointsText, { color: activeColors.tint }]}>{mogul.points} XP</Text>
+            <View style={[styles.pointsGroup, { backgroundColor: activeColors.tint + '10' }]}>
+                <Zap size={12} color={activeColors.tint} fill={activeColors.tint} />
+                <Text style={[styles.pointsText, { color: activeColors.tint }]}>{mogul.points.toLocaleString()}</Text>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 
@@ -161,23 +165,23 @@ export const ChallengeCard = ({ challenge }: { challenge: any }) => {
     );
 };
 
-export const IdeaSparkCard = () => {
+export const IdeaSparkCard = ({ onRefresh }: { onRefresh?: () => void }) => {
     const { theme } = useTheme();
     const activeColors = Colors[theme];
 
     return (
-        <View style={[styles.sparkCard, { backgroundColor: theme === 'dark' ? '#1A3324' : '#E8F5E9' }]}>
-            <View style={styles.sparkIconBox}>
-                <Lightbulb size={24} color="#A5D6B7" fill="#A5D6B7" />
+        <View style={[styles.sparkCard, { backgroundColor: theme === 'dark' ? '#0D1A12' : '#F0FDF4', borderColor: theme === 'dark' ? '#14532D' : '#DCFCE7', borderWidth: 1 }]}>
+            <View style={[styles.sparkIconBox, { backgroundColor: theme === 'dark' ? '#064E3B' : '#BBF7D0' }]}>
+                <Lightbulb size={22} color={activeColors.tint} />
             </View>
             <View style={styles.sparkContent}>
-                <Text style={[styles.sparkTitle, { color: theme === 'dark' ? '#A5D6B7' : '#1B5E20' }]}>Daily Idea Spark</Text>
-                <Text style={[styles.sparkDesc, { color: theme === 'dark' ? 'rgba(165,214,183,0.8)' : '#2E7D32' }]}>
-                    What if you could tokenize campus loyalty? 🚀
+                <Text style={[styles.sparkTitle, { color: activeColors.muted }]}>Today's Spark</Text>
+                <Text style={[styles.sparkDesc, { color: activeColors.text }]}>
+                    The best campus projects solve a problem you face every day. <Text style={{ color: activeColors.tint }}>Start there.</Text>
                 </Text>
             </View>
-            <TouchableOpacity style={styles.sparkAction}>
-                <Zap size={18} color="#fff" />
+            <TouchableOpacity style={[styles.sparkAction, { backgroundColor: activeColors.tint }]} onPress={onRefresh}>
+                <Zap size={16} color="#fff" fill="#fff" />
             </TouchableOpacity>
         </View>
     );
