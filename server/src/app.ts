@@ -10,6 +10,7 @@ import messageRoutes from './routes/messageRoutes';
 import networkRoutes from './routes/networkRoutes';
 import analyticsRoutes from './routes/analyticsRoutes';
 import arenaRoutes from './routes/arenaRoutes';
+import postRoutes from './routes/postRoutes';
 
 import path from 'path';
 
@@ -54,6 +55,7 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/network', networkRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/arena', arenaRoutes);
+app.use('/api/posts', postRoutes);
 
 // Root Route
 app.get('/', (req: Request, res: Response) => {

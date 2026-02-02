@@ -38,7 +38,8 @@ api.interceptors.request.use(
 export const getImageUrl = (path: string | null | undefined) => {
     if (!path) return null;
     if (path.startsWith('http')) return path;
-    return `${BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
+    const normalizedPath = path.replace(/\\/g, '/');
+    return `${BASE_URL}${normalizedPath.startsWith('/') ? '' : '/'}${normalizedPath}`;
 };
 
 export { BASE_URL, API_URL };

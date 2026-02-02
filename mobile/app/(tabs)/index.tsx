@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Image, RefreshControl, Platform, Modal, TextInput, KeyboardAvoidingView, Alert, ActivityIndicator, Dimensions, ScrollView, Animated as RNAnimated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { Search, Plus, Bell, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers, SlidersHorizontal, Bookmark, Ban, VolumeX, HelpCircle, Settings, LogOut, UserPlus, BarChart2 } from 'lucide-react-native';
+import { Search, Plus, Bell, Menu, CircleUser, Image as ImageIcon, Video, Calendar, FileText, Send, X, MapPin, ChevronDown, MessagesSquare, Cpu, Activity, Landmark, GraduationCap, Leaf, Film, ShoppingBag, Globe, Bot, Sparkles, Layers, SlidersHorizontal, Bookmark, Ban, VolumeX, HelpCircle, Settings, LogOut, UserPlus, BarChart2, Target } from 'lucide-react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../../context/AuthContext';
@@ -150,26 +150,41 @@ export default function FeedScreen() {
       return;
     }
     try {
-      const response = await api.get('/projects', {
-        params: {
-          category: selectedCategory === 'all' ? undefined : selectedCategory,
-          stage: selectedStage === 'all' ? undefined : selectedStage
-        }
-      });
-      // Adapt posts like in web app
-      const adaptedPosts = response.data.map((p: any) => ({
+      const [projectsRes, postsRes] = await Promise.all([
+        api.get('/projects', {
+          params: {
+            category: selectedCategory === 'all' ? undefined : selectedCategory,
+            stage: selectedStage === 'all' ? undefined : selectedStage
+          }
+        }),
+        api.get('/posts')
+      ]);
+
+      const projects = projectsRes.data.map((p: any) => ({
         ...p,
         id: p._id || p.id,
+        type: 'project',
         likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
         likedBy: Array.isArray(p.likes) ? p.likes : [],
         comments: p.comments || [],
-        bookmarkedBy: p.bookmarkedBy || [],
-        author: {
-          ...p.author,
-          id: p.author?._id || p.author?.id
-        }
+        author: { ...p.author, id: p.author?._id || p.author?.id }
       }));
-      setPosts(adaptedPosts.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+
+      const normalPosts = postsRes.data.map((p: any) => ({
+        ...p,
+        id: p._id || p.id,
+        type: 'post',
+        likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
+        likedBy: Array.isArray(p.likes) ? p.likes : [],
+        comments: p.comments || [],
+        author: { ...p.author, id: p.author?._id || p.author?.id }
+      }));
+
+      const merged = [...projects, ...normalPosts].sort(
+        (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      setPosts(merged);
     } catch (error) {
       console.error("Failed to fetch posts", error);
     } finally {
@@ -479,24 +494,24 @@ export default function FeedScreen() {
           />
           <TouchableOpacity
             style={[styles.createButtonTrigger, { backgroundColor: '#F3F4F6' }]}
-            onPress={() => router.push('/modal')}
+            onPress={() => router.push('/create-post')}
           >
-            <Text style={[styles.createPlaceholder, { color: '#6B7280' }]}>Share your next breakthrough...</Text>
+            <Text style={[styles.createPlaceholder, { color: '#6B7280' }]}>What are you building today?</Text>
           </TouchableOpacity>
         </View>
         <View style={[styles.createDivider, { backgroundColor: '#F3F4F6' }]} />
         <View style={styles.createActions}>
-          <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
+          <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/create-post')}>
             <ImageIcon size={18} color="#3B82F6" />
             <Text style={[styles.createActionText, { color: '#4B5563' }]}>Media</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
-            <Calendar size={18} color="#F59E0B" />
-            <Text style={[styles.createActionText, { color: '#4B5563' }]}>Event</Text>
+            <Sparkles size={18} color="#8B5CF6" />
+            <Text style={[styles.createActionText, { color: '#4B5563', fontWeight: 'bold' }]}>Launch Project</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.createActionItem} onPress={() => router.push('/modal')}>
-            <FileText size={18} color="#10B981" />
-            <Text style={[styles.createActionText, { color: '#4B5563' }]}>Article</Text>
+            <Target size={18} color="#F59E0B" />
+            <Text style={[styles.createActionText, { color: '#4B5563' }]}>Goal</Text>
           </TouchableOpacity>
         </View>
       </View>
