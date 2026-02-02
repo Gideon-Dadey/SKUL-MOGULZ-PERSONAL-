@@ -172,7 +172,7 @@ export default function ModalScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.closeBtn}>
           <X size={24} color={activeColors.text} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: activeColors.text }]}>{isEditMode ? 'Edit Project' : 'New Project'}</Text>
+        <Text style={[styles.headerTitle, { color: activeColors.text }]}>{isEditMode ? 'Refine Launch' : 'Mogul Launchpad'}</Text>
         <TouchableOpacity
           onPress={handleSubmit}
           disabled={isSubmitting}
@@ -181,7 +181,7 @@ export default function ModalScreen() {
           {isSubmitting ? (
             <ActivityIndicator color="#fff" size="small" />
           ) : (
-            <Text style={styles.postBtnText}>Post</Text>
+            <Text style={styles.postBtnText}>{isEditMode ? 'Update' : 'Launch'}</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -190,15 +190,21 @@ export default function ModalScreen() {
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Main Input Area */}
           <TextInput
-            placeholder="Project Title"
+            placeholder="Project Name"
             placeholderTextColor={activeColors.light}
             style={[styles.titleInput, { color: activeColors.text }]}
             value={title}
             onChangeText={setTitle}
           />
 
+          <View style={[styles.launchHero, { backgroundColor: activeColors.card, borderColor: activeColors.border }]}>
+            <Sparkles size={20} color={activeColors.tint} />
+            <Text style={[styles.launchHeroText, { color: activeColors.text }]}>You're about to share a breakthrough with the campus ecosystem.</Text>
+          </View>
+
+          <Text style={[styles.sectionLabel, { color: activeColors.muted, marginTop: 20 }]}>The Pitch</Text>
           <TextInput
-            placeholder="Share your progress, seek feedback, or find collaborators..."
+            placeholder="What problem are you solving? How does it work? What's your vision?"
             placeholderTextColor={activeColors.light}
             style={[styles.contentInput, { color: activeColors.text }]}
             multiline
@@ -208,16 +214,12 @@ export default function ModalScreen() {
           />
 
           {/* Add Media Button */}
+          <Text style={[styles.sectionLabel, { color: activeColors.muted, marginTop: 24 }]}>Launch Assets (Photos/Videos)</Text>
           <TouchableOpacity onPress={pickImage} style={[styles.addMediaBtn, { borderColor: activeColors.border }]}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <ImageIcon size={20} color={activeColors.tint} />
-                <Text style={[styles.addMediaText, { color: activeColors.tint }]}>Photos</Text>
-              </View>
-              <View style={{ width: 1, height: 16, backgroundColor: activeColors.border }} />
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                <Video size={20} color={activeColors.tint} />
-                <Text style={[styles.addMediaText, { color: activeColors.tint }]}>Videos</Text>
+                <Text style={[styles.addMediaText, { color: activeColors.tint }]}>Add Media</Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -435,6 +437,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     borderRadius: 10,
     padding: 4,
+  },
+  launchHero: {
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 10,
+    borderStyle: 'dashed',
+  },
+  launchHeroText: {
+    fontSize: 14,
+    fontWeight: '600',
+    flex: 1,
   },
   divider: {
     height: 1,

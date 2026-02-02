@@ -33,6 +33,7 @@ export default function PostCard({ post, onLike, onComment, onRepost, onBookmark
     const isRepost = !!post.repostOf;
     const originalPost = isRepost ? post.repostOf : post;
     const displayAuthor = isRepost ? (post.author || originalPost.author) : originalPost.author;
+    const isProject = originalPost.type === 'project' || (!!originalPost.title && !!originalPost.projectStage);
 
     const imageUrl = originalPost.media && originalPost.media.length > 0 ? getImageUrl(originalPost.media[0]) : null;
 
@@ -120,18 +121,18 @@ export default function PostCard({ post, onLike, onComment, onRepost, onBookmark
         }
 
         Alert.alert(
-            'Project Options',
+            isProject ? 'Project Options' : 'Post Options',
             'What would you like to do?',
             [
                 { text: 'Cancel', style: 'cancel' },
-                { text: 'Edit Project', onPress: () => onEdit?.(post) },
+                { text: isProject ? 'Edit Project' : 'Edit Post', onPress: () => onEdit?.(post) },
                 {
-                    text: 'Delete Project',
+                    text: isProject ? 'Delete Project' : 'Delete Post',
                     style: 'destructive',
                     onPress: () => {
                         Alert.alert(
-                            'Delete Project',
-                            'Are you sure you want to delete this project? This action cannot be undone.',
+                            isProject ? 'Delete Project' : 'Delete Post',
+                            `Are you sure you want to delete this ${isProject ? 'project' : 'post'}? This action cannot be undone.`,
                             [
                                 { text: 'Cancel', style: 'cancel' },
                                 { text: 'Delete', style: 'destructive', onPress: () => onDelete?.(post.id) }
@@ -176,30 +177,33 @@ export default function PostCard({ post, onLike, onComment, onRepost, onBookmark
                                 {displayAuthor.firstName} {displayAuthor.lastName}
                             </Text>
                             <Text style={[styles.metaText, { color: activeColors.muted }]} numberOfLines={1}>
-                                @{displayAuthor.username} · {formatDate(originalPost.createdAt)}
+                                {formatDate(originalPost.createdAt)}
                             </Text>
                         </TouchableOpacity>
 
                         <View style={styles.headerRight}>
-                            <View style={[styles.stageBadge, { backgroundColor: `${getStageColor(originalPost.projectStage)}15` }]}>
-                                <Text style={[styles.stageText, { color: getStageColor(originalPost.projectStage) }]}>
-                                    {originalPost.projectStage}
-                                </Text>
-                            </View>
+                            {isProject && (
+                                <View style={[styles.stageBadge, { backgroundColor: `${getStageColor(originalPost.projectStage)}15` }]}>
+                                    <Text style={[styles.stageText, { color: getStageColor(originalPost.projectStage) }]}>
+                                        {originalPost.projectStage}
+                                    </Text>
+                                </View>
+                            )}
                             <TouchableOpacity onPress={handleMorePress} style={styles.moreBtn}>
                                 <MoreHorizontal size={16} color={activeColors.muted} />
                             </TouchableOpacity>
                         </View>
                     </View>
 
-                    {/* Content: Title & Body */}
                     <TouchableOpacity
                         style={styles.contentArea}
                         activeOpacity={0.7}
                         onPress={() => router.push(('/post/' + (originalPost._id || originalPost.id)) as any)}
                     >
-                        <Text style={[styles.title, { color: activeColors.text }]}>{originalPost.title}</Text>
-                        <Text style={[styles.body, { color: activeColors.text }]} numberOfLines={4}>
+                        {isProject && originalPost.title && (
+                            <Text style={[styles.title, { color: activeColors.text }]}>{originalPost.title}</Text>
+                        )}
+                        <Text style={[styles.body, { color: activeColors.text, fontSize: isProject ? 15 : 17, lineHeight: isProject ? 20 : 24 }]} numberOfLines={isProject ? 4 : 8}>
                             {originalPost.content}
                         </Text>
                     </TouchableOpacity>
@@ -271,13 +275,15 @@ export default function PostCard({ post, onLike, onComment, onRepost, onBookmark
                         </View>
                     )}
 
-                    {/* Tags */}
-                    <View style={styles.tagsRow}>
-                        <Text style={[styles.category, { color: activeColors.tint }]}>{originalPost.category}</Text>
-                        {originalPost.tags?.slice(0, 2).map((tag: string) => (
-                            <Text key={tag} style={[styles.tag, { color: activeColors.muted }]}>#{tag}</Text>
-                        ))}
-                    </View>
+                    {/* Tags & Meta (Projects Only) */}
+                    {isProject && (
+                        <View style={styles.tagsRow}>
+                            <Text style={[styles.category, { color: activeColors.tint }]}>{originalPost.category}</Text>
+                            {originalPost.tags?.slice(0, 2).map((tag: string) => (
+                                <Text key={tag} style={[styles.tag, { color: activeColors.muted }]}>#{tag}</Text>
+                            ))}
+                        </View>
+                    )}
 
                     {/* Footer Actions */}
                     <View style={styles.footer}>
