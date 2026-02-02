@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, RefreshControl, Dimensions, Image, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Search, Plus, TrendingUp, Sparkles, Users, LayoutGrid, ArrowUpRight, Crown, Swords, Lightbulb } from 'lucide-react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
@@ -29,6 +30,7 @@ export default function ProjectsScreen() {
     const { theme } = useTheme();
     const { user } = useAuth();
     const router = useRouter();
+    const insets = useSafeAreaInsets();
     const activeColors = Colors[theme];
 
     const [trendingProjects, setTrendingProjects] = useState<any[]>([]);
@@ -92,7 +94,7 @@ export default function ProjectsScreen() {
             <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
 
             {/* Dynamic Modern Header */}
-            <View style={[styles.header, { borderBottomColor: activeColors.border, backgroundColor: activeColors.card }]}>
+            <View style={[styles.header, { borderBottomColor: activeColors.border, backgroundColor: activeColors.card, paddingTop: insets.top + 10 }]}>
                 <View>
                     <Text style={[styles.title, { color: activeColors.text }]}>The Arena</Text>
                 </View>
@@ -197,13 +199,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     header: {
-        paddingTop: 60,
-        paddingHorizontal: 24,
-        paddingBottom: 20,
+        paddingHorizontal: 20,
+        paddingBottom: 15,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         borderBottomWidth: 1,
+        borderBottomColor: 'rgba(0,0,0,0.05)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 10,
+        zIndex: 10,
     },
     greeting: {
         fontSize: 14,
