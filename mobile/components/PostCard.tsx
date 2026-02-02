@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, Share, Alert, Modal, Dimensions } from 'react-native';
-import { Heart, MessageSquareText, Share2, Bookmark, MoreHorizontal, Play, Repeat } from 'lucide-react-native';
+import { Heart, MessageSquareText, Share2, Bookmark, MoreHorizontal, Play, Repeat, MapPin } from 'lucide-react-native';
 import { Video, ResizeMode } from 'expo-av';
 import { useRouter } from 'expo-router';
 import { Post } from '../types';
@@ -178,6 +178,13 @@ export default function PostCard({ post, onLike, onComment, onRepost, onBookmark
                             </Text>
                             <Text style={[styles.metaText, { color: activeColors.muted }]} numberOfLines={1}>
                                 {formatDate(originalPost.createdAt)}
+                                {originalPost.location && (
+                                    <>
+                                        {' · '}
+                                        <MapPin size={12} color={activeColors.muted} />
+                                        {` ${originalPost.location}`}
+                                    </>
+                                )}
                             </Text>
                         </TouchableOpacity>
 

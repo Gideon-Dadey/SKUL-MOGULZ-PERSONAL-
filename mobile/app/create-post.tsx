@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { X, Image as ImageIcon, MapPin, Send } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 import { useTheme } from '../context/ThemeContext';
 import Colors from '../constants/Colors';
 import api from '../services/api';
@@ -17,6 +18,8 @@ export default function CreatePostScreen() {
 
     const [content, setContent] = useState('');
     const [images, setImages] = useState<ImagePicker.ImagePickerAsset[]>([]);
+    const [location, setLocation] = useState<string | null>(null);
+    const [isFetchingLocation, setIsFetchingLocation] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const pickImage = async () => {
@@ -27,7 +30,7 @@ export default function CreatePostScreen() {
         }
 
         const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ['images'],
             allowsMultipleSelection: true,
             selectionLimit: 4,
             quality: 0.7,
@@ -35,6 +38,35 @@ export default function CreatePostScreen() {
 
         if (!result.canceled) {
             setImages([...images, ...result.assets]);
+        }
+    };
+
+    const handleLocationPress = async () => {
+        try {
+            setIsFetchingLocation(true);
+            const { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission Denied', 'Allow location access to tag your buzz.');
+                setIsFetchingLocation(false);
+                return;
+            }
+
+            const currentPos = await Location.getCurrentPositionAsync({});
+            const reverseGeocode = await Location.reverseGeocodeAsync({
+                latitude: currentPos.coords.latitude,
+                longitude: currentPos.coords.longitude,
+            });
+
+            if (reverseGeocode.length > 0) {
+                const item = reverseGeocode[0];
+                const locString = `${item.city || item.region || 'Unknown Location'}${item.district ? `, ${item.district}` : ''}`;
+                setLocation(locString);
+            }
+        } catch (error) {
+            console.error('Location Error:', error);
+            // Alert.alert('Error', 'Could not fetch your location.');
+        } finally {
+            setIsFetchingLocation(false);
         }
     };
 
@@ -54,6 +86,7 @@ export default function CreatePostScreen() {
             setIsSubmitting(true);
             const formData = new FormData();
             formData.append('content', content);
+            if (location) formData.append('location', location);
 
             images.forEach((mediaItem, index) => {
                 const filename = mediaItem.uri.split('/').pop() || `media_${index}.jpg`;
@@ -109,6 +142,16 @@ export default function CreatePostScreen() {
                         onChangeText={setContent}
                     />
 
+                    {location && (
+                        <View style={[styles.locationBadge, { backgroundColor: activeColors.tint + '15' }]}>
+                            <MapPin size={14} color={activeColors.tint} />
+                            <Text style={[styles.locationText, { color: activeColors.tint }]}>{location}</Text>
+                            <TouchableOpacity onPress={() => setLocation(null)}>
+                                <X size={14} color={activeColors.tint} />
+                            </TouchableOpacity>
+                        </View>
+                    )}
+
                     {images.length > 0 && (
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.mediaPreviewScroll}>
                             {images.map((img, index) => (
@@ -128,9 +171,17 @@ export default function CreatePostScreen() {
                         <ImageIcon size={24} color={activeColors.tint} />
                         <Text style={[styles.toolbarText, { color: activeColors.muted }]}>Photo</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.toolbarBtn}>
-                        <MapPin size={24} color={activeColors.muted} />
-                        <Text style={[styles.toolbarText, { color: activeColors.muted }]}>Location</Text>
+                    <TouchableOpacity onPress={handleLocationPress} style={styles.toolbarBtn} disabled={isFetchingLocation}>
+                        {isFetchingLocation ? (
+                            <ActivityIndicator size="small" color={activeColors.tint} />
+                        ) : (
+                            <>
+                                <MapPin size={24} color={location ? activeColors.tint : activeColors.muted} />
+                                <Text style={[styles.toolbarText, { color: location ? activeColors.tint : activeColors.muted }]}>
+                                    {location ? 'Tagged' : 'Location'}
+                                </Text>
+                            </>
+                        )}
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
@@ -161,4 +212,18 @@ const styles = StyleSheet.create({
     toolbar: { flexDirection: 'row', padding: 15, paddingBottom: Platform.OS === 'ios' ? 30 : 15, gap: 24 },
     toolbarBtn: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     toolbarText: { fontSize: 14, fontWeight: '600' },
+    locationBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 16,
+        gap: 6,
+        alignSelf: 'flex-start',
+        marginTop: 10,
+    },
+    locationText: {
+        fontSize: 13,
+        fontWeight: '600',
+    },
 });
