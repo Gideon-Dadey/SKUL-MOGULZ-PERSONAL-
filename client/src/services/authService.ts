@@ -65,7 +65,7 @@ const updateProfile = async (userData: any) => {
 };
 
 const toggleBookmark = async (projectId: string) => {
-    const response = await api.put(`/projects/${projectId}/bookmark`);
+    const response = await api.put(`/posts/${projectId}/bookmark`);
     if (response.data) {
         const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
         const updatedUser = { ...savedUser, bookmarks: response.data };

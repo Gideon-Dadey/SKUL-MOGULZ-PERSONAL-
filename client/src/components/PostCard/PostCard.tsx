@@ -55,7 +55,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onRepost, onDelete, c
 
         try {
             setIsDeleting(true);
-            await api.delete(`/projects/${post.id}`);
+            await api.delete(`/posts/${post.id}`);
             if (onDelete) onDelete(post.id);
         } catch (error) {
             console.error("Failed to delete post", error);
@@ -184,9 +184,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onRepost, onDelete, c
             <div className="post-card__content-link">
                 <Link to={`/post/${originalPost.id || originalPost._id}`} className="post-card__title-link">
                     <div className="post-card__content">
-                        <h3 className="post-card__title">{originalPost.title}</h3>
+                        {originalPost.title ? <h3 className="post-card__title">{originalPost.title}</h3> : null}
                         <p className="post-card__text">
-                            {compact ? originalPost.content.slice(0, 200) + '...' : originalPost.content.slice(0, 400) + (originalPost.content.length > 400 ? '...' : '')}
+                            {compact
+                                ? `${(originalPost.content || '').slice(0, 200)}${(originalPost.content || '').length > 200 ? '...' : ''}`
+                                : `${(originalPost.content || '').slice(0, 400)}${(originalPost.content || '').length > 400 ? '...' : ''}`}
                         </p>
                     </div>
                 </Link>

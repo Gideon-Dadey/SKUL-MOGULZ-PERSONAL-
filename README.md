@@ -1,285 +1,108 @@
-# SKUL MOGULZ 💀🚀
-> **The Operating System for Student Titans.**
+# SKUL MOGULZ
 
-![Status](https://img.shields.io/badge/Status-Stealth_Mode-black?style=for-the-badge&logo=github)
-![Vibe](https://img.shields.io/badge/Vibe-Hardcore-A5D6B7?style=for-the-badge)
+A networking platform for student founders and the people who want to back them.
 
-## 🧠 The Vision
-We are not building a social network. We are building a utility network for the next generation of Elon Musks and Mark Zuckerbergs.
+Most campus builders ship in silence. Their projects live in group chats, Google Docs, and half-finished Notion pages. Investors and mentors never see the work until it's too late. SKUL MOGULZ gives those builders a place to show progress, find collaborators, and stay visible while they build.
 
-*   **See the Master Plan:** [`docs/vision/MASTER_PLAN.md`](./docs/vision/MASTER_PLAN.md)
-*   **See the Roadmap:** [`docs/vision/PRODUCT_ROADMAP.md`](./docs/vision/PRODUCT_ROADMAP.md)
+This repo holds the web app, API, and Expo mobile client.
 
----
+## Glimpse
 
-## 🚀 Quick Start
+<p>
+  <img src="docs/screenshots/login.png" alt="Login" width="48%" />
+  <img src="docs/screenshots/signup.png" alt="Sign up" width="48%" />
+</p>
 
-### Prerequisites
+<p>
+  <img src="docs/screenshots/feed.png" alt="Feed" width="48%" />
+  <img src="docs/screenshots/feed-media.png" alt="Feed with media" width="48%" />
+</p>
 
-- **Node.js** v18 or higher
-- **npm** v9 or higher
-- **Git**
+<p>
+  <img src="docs/screenshots/profile-connected.png" alt="Profile" width="48%" />
+  <img src="docs/screenshots/network.png" alt="Network" width="48%" />
+</p>
 
-### Installation
+More screenshots live in [`docs/screenshots`](./docs/screenshots).
+
+## What works today
+
+- Account creation and login (student or investor)
+- Feed for updates, with optional images and video
+- Profiles, connections, and invitations
+- Project discovery and filters
+- Direct messages over Socket.io
+- Calls through Jitsi
+- Companion Expo app for iOS and Android
+
+## Stack
+
+| Layer | Tools |
+| --- | --- |
+| Web | React, TypeScript, Vite |
+| API | Node.js, Express, MongoDB, JWT |
+| Realtime | Socket.io |
+| Mobile | React Native, Expo Router |
+
+## Quick start
+
+You need Node.js 18+ and npm 9+.
 
 ```bash
-# Clone the repository
 git clone https://github.com/Gideon-Dadey/SKUL-MOGULZ-PERSONAL-.git
 cd SKUL-MOGULZ-PERSONAL-
 
-# Install root dependencies
 npm install
+npm install --prefix client
+npm install --prefix server
+npm install --prefix mobile
+```
 
-# Install client dependencies
-cd client
-npm install
+Create `server/.env` from the example:
 
-# Start the web development server
+```bash
+cp server/.env.example server/.env
+```
+
+Then fill in your MongoDB URI and JWT secret.
+
+Run web + API together from the repo root:
+
+```bash
 npm run dev
+```
 
-# --- MOBILE SETUP ---
-# Navigate to mobile directory
-cd ../mobile
-npm install
+- Web: http://localhost:5173
+- API: http://localhost:5000
 
-# Start the Expo development server
+Mobile:
+
+```bash
+cd mobile
 npx expo start
 ```
 
-The application will be available at `http://localhost:5173`
+Point the mobile API base URL in `mobile/services/api.ts` at your machine's LAN IP if you're testing on a physical device.
 
----
-
-## 📁 Project Structure
+## Repo layout
 
 ```
-SKUL MOGULZ/
-├── client/                      # Frontend React application
-│   ├── src/
-│   │   ├── assets/              # Static assets (images, icons)
-│   │   ├── components/          # Reusable UI components
-│   │   │   ├── Navbar/          # Navigation component
-│   │   │   └── PostCard/        # Shared post/project card
-│   │   ├── context/             # React Context providers
-│   │   │   ├── AuthContext.tsx  # Authentication state
-│   │   │   └── ThemeContext.tsx # Theme management
-│   │   ├── data/                # Mock data for development
-│   │   │   └── mockData.ts      # Sample users, posts, notifications
-│   │   ├── hooks/               # Custom React hooks
-│   │   ├── pages/               # Page components
-│   │   │   ├── FeedPage/        # Main feed (LinkedIn style)
-│   │   │   ├── CreatePostPage/  # Modern post editor
-│   │   │   ├── PostDetailPage/  # Article view for posts
-│   │   │   ├── ProfilePage/     # Professional user profile
-│   │   │   ├── NetworkPage/     # Connection management
-│   │   │   ├── ProjectsPage/    # Project discovery grid
-│   │   │   └── MessagesPage/    # Real-time chat interface
-│   │   ├── services/            # API service functions
-│   │   ├── styles/              # Global CSS styles
-│   │   │   └── index.css        # Main stylesheet
-│   │   ├── types/               # TypeScript type definitions
-│   │   ├── utils/               # Utility functions
-│   │   ├── App.tsx              # Main application component with routing
-│   │   └── main.tsx             # Application entry point
-│   ├── index.html               # HTML template
-│   ├── package.json             # Client dependencies
-│   ├── tsconfig.json            # TypeScript configuration
-│   └── vite.config.ts           # Vite configuration
-├── server/                      # Backend Node.js application (Express/Socket.io)
-├── mobile/                      # Mobile application (Expo/React Native)
-│   ├── app/                     # Expo Router navigation
-│   ├── assets/                  # Brand assets & images
-│   └── components/              # Mobile-specific UI components
-├── docs/                        # Project documentation & vision
-├── implementation_plan.md       # MVP implementation plan
-├── package.json                 # Root package.json
-└── README.md                    # This file
+client/    React web app
+server/    Express API and Socket.io
+mobile/    Expo app
+docs/      Notes, API reference, screenshots
 ```
 
----
+## Docs
 
-## ✨ Features
+- [Architecture](./docs/ARCHITECTURE.md)
+- [API](./docs/API.md)
+- [Components](./docs/COMPONENTS.md)
+- [Style guide](./docs/STYLE_GUIDE.md)
+- [Contributing](./docs/CONTRIBUTING.md)
+- [Product direction](./docs/vision/MASTER_PLAN.md)
+- [Roadmap](./docs/vision/PRODUCT_ROADMAP.md)
 
-### MVP Features (Current)
+## License
 
-| Feature | Description | Status |
-|---------|-------------|--------|
-| **User Registration** | Email-based signup with role selection (Student/Investor) | ✅ |
-| **User Authentication** | Login/logout with JWT persistence | ✅ |
-| **Professional Feed** | LinkedIn-style feed with sidebars, news, and suggestions | ✅ |
-| **Create Posts** | Modern editor with formatting, category, stage, and funding goals | ✅ |
-| **Network Management** | Manage connections, handle invitations, and find new people | ✅ |
-| **Project Discovery** | Dedicated grid view for discovering student startups with filters | ✅ |
-| **Direct Messaging** | Real-time chat interface with Socket.io integration | ✅ |
-| **Video/Audio Calls** | Professional calling system powered by Jitsi Meet | ✅ |
-| **User Profiles** | Detailed profiles with banners, stats, activity, and about sections | ✅ |
-| **Search & Filter** | Find posts, people, and projects by keyword or category | ✅ |
-| **Like & Comment** | Rich interactions on posts and projects | ✅ |
-| **Theme Toggle** | Switch between light and dark mode | ✅ |
-| **Mobile App** | fully functional Expo/React Native companion app | ✅ |
-| **Responsive Design** | Fully responsive layout for all devices | ✅ |
-
-### Future Enhancements (Planned)
-
-- [ ] Advanced Analytics Dashboard
-- [ ] Payment gateway for funding projects
-- [ ] Community groups for specific niches
-- [ ] Email notifications
-
----
-
-## 🛠 Technology Stack
-
-### Frontend
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **React** | 18.x | UI framework |
-| **TypeScript** | 5.x | Type safety |
-| **Vite** | 6.x | Build tool & dev server |
-| **React Router** | 7.x | Client-side routing |
-| **Lucide React** | Latest | Icon library |
-| **Axios** | 1.x | HTTP client |
-| **CSS Variables** | N/A | Theming & Design System |
-
-### Backend
-| Technology | Status | Purpose |
-|------------|---------|---------|
-| **Node.js** | ✅ Active | Runtime environment |
-| **Express** | ✅ Active | Web framework |
-| **MongoDB Atlas** | ✅ Active | Database persistence |
-| **Socket.io** | ✅ Active | Real-time communication |
-| **JWT** | ✅ Active | Secure authentication |
-| **Jitsi Meet** | ✅ Active | Video/Audio conferencing |
-
-### Mobile
-| Technology | Status | Purpose |
-|------------|---------|---------|
-| **React Native** | ✅ Active | Cross-platform mobile framework |
-| **Expo** | ✅ Active | Development workflow & SDK |
-| **Expo Router** | ✅ Active | File-based routing for mobile |
-| **Lucide Native** | ✅ Active | Mobile-optimized icon set |
-
-### Design
-| Aspect | Choice |
-|--------|--------|
-| **Typography** | Plus Jakarta Sans |
-| **Primary Color** | Coral/Salmon (#A5D6B7) |
-| **Theme** | Light (default) & Dark |
-| **CSS** | Custom CSS Modules & Variables |
-
----
-
-## 📖 Documentation
-
-- [Architecture Guide](./docs/ARCHITECTURE.md) - System architecture and design patterns
-- [Component Library](./docs/COMPONENTS.md) - Reusable components documentation
-- [API Reference](./docs/API.md) - API endpoints (for backend)
-- [Contributing Guide](./docs/CONTRIBUTING.md) - How to contribute
-- [Style Guide](./docs/STYLE_GUIDE.md) - CSS and design conventions
-
----
-
-## 🎨 Design System
-
-### Colors
-
-```css
-/* Light Theme */
---primary: #A5D6B7;        /* Mint Green */
---primary-hover: #89C29D;
---bg-main: #ffffff;
---bg-card: #f8f9fb;
---text-main: #1a1a2e;
---text-muted: #64748b;
-
-/* Dark Theme */
---bg-main: #0c0c14;
---bg-card: #141422;
---text-main: #f4f4f5;
---text-muted: #a1a1aa;
-```
-
-### Typography
-
-```css
---font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-```
-
-### Spacing & Radius
-
-```css
---radius-sm: 8px;
---radius-md: 12px;
---radius-lg: 16px;
---radius-xl: 24px;
-```
-
----
-
-## 🧪 Running Tests
-
-```bash
-# Run unit tests (future)
-npm run test
-
-# Run e2e tests (future)
-npm run test:e2e
-```
-
----
-
-## 📦 Building for Production
-
-```bash
-cd client
-npm run build
-```
-
-The production build will be generated in `client/dist/`.
-
----
-
-## 🚢 Deployment
-
-### Recommended Platforms
-- **Vercel** - Frontend hosting
-- **Railway** - Backend hosting
-- **MongoDB Atlas** - Database
-
-### Environment Variables
-
-Create a `.env` file in the client directory:
-
-```env
-VITE_API_URL=http://localhost:3000/api
-VITE_APP_NAME=SKUL MOGULZ
-```
-
----
-
-## 👥 Team
-
-| Role | Responsibility |
-|------|----------------|
-| Project Manager | Timelines & deliverables |
-| Lead Engineer | System architecture |
-| Frontend Developer | React/TypeScript UI |
-| Backend Developer | APIs & database |
-| UI/UX Designer | Wireframes & design |
-| QA Tester | Testing & bug reports |
-
----
-
-## 📄 License
-
-This project is proprietary and confidential.
-
----
-
-## 📞 Support
-
-For questions or support, please contact the development team.
-
----
-
-**Built with ❤️ by the SKUL MOGULZ Team**
+Private / proprietary for now. Reach out if you want to collaborate.

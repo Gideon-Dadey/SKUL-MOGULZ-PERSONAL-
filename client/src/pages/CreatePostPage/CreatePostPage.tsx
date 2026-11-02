@@ -107,13 +107,13 @@ const CreatePostPage: React.FC = () => {
             });
 
             if (editingPost) {
-                await api.put(`/projects/${editingPost.id || editingPost._id}`, formData, {
+                await api.put(`/posts/${editingPost.id || editingPost._id}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 });
             } else {
-                await api.post('/projects', formData, {
+                await api.post('/posts', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }

@@ -1,203 +1,106 @@
-# SKUL MOGULZ API Reference
+# API notes
 
-This document describes the API endpoints for the SKUL MOGULZ backend.
-
-> **Note:** The backend is currently in development. This document serves as the API specification.
-
----
-
-## Base URL
+Base URL in local development:
 
 ```
-Development: http://localhost:5000/api
-Production:  https://api.skulmogulz.com/api
+http://localhost:5000/api
 ```
 
----
-
-## Authentication
-
-All protected endpoints require a Bearer token in the Authorization header:
+Protected routes expect:
 
 ```
-Authorization: Bearer <jwt_token>
+Authorization: Bearer <jwt>
 ```
 
----
+## Auth
 
-## Endpoints
-
-### Authentication
-
-#### Register
-
-Create a new user account.
+### Register
 
 ```http
 POST /api/auth/register
 ```
 
-**Request Body:**
 ```json
 {
-    "email": "user@example.com",
-    "password": "securePassword123",
-    "firstName": "John",
-    "lastName": "Doe",
-    "role": "student"
+  "firstName": "Gideon",
+  "lastName": "Dadey",
+  "email": "you@school.edu",
+  "password": "your-password",
+  "username": "gideondadey",
+  "role": "student"
 }
 ```
 
-**Response (201):**
-```json
-{
-    "_id": "usr_123abc",
-    "firstName": "John",
-    "lastName": "Doe",
-    "email": "user@example.com",
-    "role": "student",
-    "token": "eyJhbGciOiJIUzI1NiIs..."
-}
-```
+`role` can be `student`, `investor`, or `admin`. Defaults to `student`.
 
-#### Login
-
-Authenticate and receive a JWT token.
+### Login
 
 ```http
 POST /api/auth/login
 ```
 
-**Request Body:**
-```json
-{
-    "email": "user@example.com",
-    "password": "securePassword123"
-}
-```
+Body accepts email or username in the `email` field, plus `password`.
 
-**Response (200):**
-```json
-{
-    "_id": "usr_123abc",
-    "firstName": "John",
-    "lastName": "Doe",
-    "email": "user@example.com",
-    "role": "student",
-    "token": "eyJhbGciOiJIUzI1NiIs..."
-}
-```
-
-#### Get Current User
-
-Get the authenticated user's profile.
+### Current user
 
 ```http
 GET /api/auth/me
 ```
 
-**Headers:**
-```
-Authorization: Bearer <token>
-```
-
----
-
-### Projects (Feed/Posts)
-
-#### List Projects / Feed
-
-Get a list of projects/posts with optional filters.
+### Profile
 
 ```http
-GET /api/projects
+GET /api/auth/profile/:username
+PUT /api/auth/profile
 ```
 
-**Query Parameters:**
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `category` | string | Filter by category |
-| `stage` | string | Filter by project stage |
-| `search` | string | Search in title/content |
+Profile updates cover name, headline, bio, location, skills, and related fields.
 
-**Response (200):**
-```json
-[
-    {
-        "_id": "pst_456def",
-        "author": {
-            "_id": "usr_123abc",
-            "firstName": "John",
-            "lastName": "Doe",
-            "role": "student",
-            "headline": "Student Founder"
-        },
-        "title": "Introducing My New Project",
-        "content": "...",
-        "category": "Technology",
-        "projectStage": "mvp",
-        "likes": [],
-        "comments": [],
-        "createdAt": "2026-01-20T10:00:00Z"
-    }
-]
-```
+## Posts
 
-#### Create Project Post
-
-Create a new project update/post.
+These power the main feed.
 
 ```http
-POST /api/projects
+GET    /api/posts
+POST   /api/posts
+GET    /api/posts/:id
+PUT    /api/posts/:id
+DELETE /api/posts/:id
+PUT    /api/posts/:id/like
+PUT    /api/posts/:id/bookmark
+POST   /api/posts/:id/comment
 ```
 
-**Headers:**
-```
-Authorization: Bearer <token>
-```
+Create posts as `multipart/form-data` when attaching media. Field name for files is `media` (up to 4). Text-only posts can be JSON with `content` and optional `location`.
 
-**Request Body:**
-```json
-{
-    "title": "Introducing My New Project",
-    "content": "Detailed description...",
-    "category": "Technology",
-    "tags": ["startup", "ai"],
-    "projectStage": "mvp",
-    "fundingGoal": 100000,
-    "currentFunding": 0
-}
-```
+## Projects
 
-#### Like Project
+Project discovery still lives under `/api/projects` for listing, create, like, comment, and related actions. Useful when you want startup cards with stage, category, and funding fields.
 
-Toggle like on a project.
+## Network
 
 ```http
-PUT /api/projects/:id/like
+GET  /api/network/suggestions
+GET  /api/network/invitations
+POST /api/network/request/:userId
 ```
 
-#### Comment on Project
-
-Add a comment.
+## Messages
 
 ```http
-POST /api/projects/:id/comment
+GET  /api/messages/conversations
+GET  /api/messages/:userId
+POST /api/messages
 ```
 
-**Request Body:**
-```json
-{
-    "content": "Great work!"
-}
-```
+Realtime delivery also goes through Socket.io on the same server.
 
----
+## Errors
 
-## Error Response Format
+Most failures return:
 
 ```json
 {
-    "message": "Error description"
+  "message": "Short explanation"
 }
 ```

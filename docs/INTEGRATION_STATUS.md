@@ -1,90 +1,37 @@
-# SKUL MOGULZ Integration Status Report
+# Integration status
 
-## Overview
-The integration between the React frontend, Node.js/Express backend, and the mobile application is now **complete** for the core MVP features. The application no longer relies on mock data for the main flows.
+Short status of the main product loops.
 
-## Completed Integrations
+## Auth
 
-### 1. Authentication (User System)
-- **Status**: ✅ Active
-- **Details**:
-  - Registration creates real users in MongoDB.
-  - Login issues persistent JWT tokens.
-  - `User` model updated to include `username` (generated from email) to support profile links.
+Working. Registration and login write real users to MongoDB and return JWT tokens used by web and mobile.
 
-### 2. Feed & Projects
-- **Status**: ✅ Active
-- **Details**:
-  - `FeedPage.tsx` fetches real posts from `/api/projects`.
-  - `ProjectsPage.tsx` fetches real posts from `/api/projects`.
-  - Data is mapped correctly (handling `_id` vs `id` and lowercase category enums).
+## Feed
 
-### 3. Creating Posts
-- **Status**: ✅ Active
-- **Details**:
-  - `CreatePostPage.tsx` submits data to `/api/projects`.
-  - Supports Title, Content, Category, Stage, and Funding Goals.
-  - **Fixed**: Validation errors related to `content` field and `category` casing are resolved.
+Working against `/api/posts`. Text and media posts both show in the home feed.
 
-### 4. Interactions (Likes & Comments)
-- **Status**: ✅ Active
-- **Details**:
-  - **Likes**: Functional on `FeedPage` and `PostDetailPage`.
-  - **Comments**: Functional on `PostDetailPage`.
-  - Comments display author avatars and timestamps correctly.
+## Projects
 
-## Changes Made to Codebase
-- **Backend Models**:
-  - `User.ts`: Added `username`.
-  - `Project.ts`: Lowercased category enums.
-- **Backend Controllers**:
-  - `authController.ts`: Auto-generate username.
-- **Frontend Pages**:
-  - `FeedPage.tsx`: Replaced mock data with API calls.
-  - `ProjectsPage.tsx`: Replaced mock data with API calls.
-  - `CreatePostPage.tsx`: Wired up form submission.
-  - `PostDetailPage.tsx`: Full API integration for fetch, like, and comment.
+Working against `/api/projects` for discovery-style views and project records.
 
-### 5. Real-time Communication
-- **Status**: ✅ Active
-- **Details**:
-  - **Socket.io**: Persistent connection established for real-time events.
-  - **Messaging**: Instant message delivery between users.
-  - **Calling**: Integrated video/audio calls with Jitsi Meet.
-  - **Signaling**: Custom signal handlers for call lifecycle management.
+## Create / edit content
 
-## Changes Made to Codebase
-- **Backend Models**:
-  - `User.ts`: Added `username`.
-  - `Project.ts`: Lowercased category enums.
-- **Backend Controllers**:
-  - `authController.ts`: Auto-generate username.
-- **Backend Sockets**:
-  - `socket.ts`: Added signaling logic for `call_start` and `call_status`.
-- **Frontend Pages**:
-  - `FeedPage.tsx`: Replaced mock data with API calls.
-  - `ProjectsPage.tsx`: Replaced mock data with API calls.
-  - `CreatePostPage.tsx`: Wired up form submission.
-  - `MessagesPage.tsx`: Fully functional real-time chat.
-- **Frontend Context**:
-  - `SocketContext.tsx`: Management of the socket instance.
-  - `CallContext.tsx`: Global call state and overlay management.
+Working. The create flow submits to the posts API and supports file uploads.
 
-### 6. Mobile Synchronization & Branding
-- **Status**: ✅ Active
-- **Details**:
-  - **Unified Branding**: Single brand icon (`icon.png`) used across web and mobile.
-  - **Fallback Avatars**: Automatic fallback to brand icon for users without avatars on both platforms.
-  - **Feature Sync**: Synchronized the "Create Post" action items (Media, Event, Article) with consistent icons and colors across Web and Mobile.
-  - **Expo Integration**: Mobile app leverages the same backend API and socket structure as the web client.
+## Social actions
 
-## Next Steps / Known Limitations
-- **Image Uploads**: Currently not implemented. The UI has buttons, but they don't upload files yet.
-- **Advanced Search**: Filtering by university or funding range.
-- **Email Notifications**: For offline users.
+Likes, comments, and bookmarks are wired for posts. Network invitations and suggestions are live.
 
-## How to Test
-1. **Login**: Go to `/login` and sign in.
-2. **Chat**: Navigate to `/messages` and start a conversation.
-3. **Call**: Click the call icon in a chat room to initiate a Jitsi meeting.
-4. **Feed**: Verify interactions are persistent across refreshes.
+## Messaging
+
+Conversations load from the API and realtime updates go through Socket.io.
+
+## Mobile
+
+Expo app is connected to the same backend. Confirm the device can reach the API host before testing login on a phone.
+
+## Still rough
+
+- Some older screens still mix project and post assumptions
+- Analytics and deeper funding flows are incomplete
+- Suggestion quality is basic until there are more users in the graph

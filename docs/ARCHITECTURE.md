@@ -1,327 +1,67 @@
-# SKUL MOGULZ Architecture
+# Architecture
 
-## Overview
+SKUL MOGULZ is a straightforward three-part setup:
 
-SKUL MOGULZ follows a modern client-server architecture designed for scalability, maintainability, and performance.
+1. `client` — React web app (Vite)
+2. `server` — Express API + Socket.io
+3. `mobile` — Expo / React Native app
 
----
+They talk over HTTP for most things, and websockets for chat and presence.
 
-## High-Level Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         CLIENT (React)                          │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐  │
-│  │   Pages     │  │  Components │  │      Context/State      │  │
-│  │  - Landing  │  │  - PostCard │  │  - AuthContext          │  │
-│  │  - Feed     │  │  - Search   │  │  - ThemeContext         │  │
-│  │  - Profile  │  │  - Navbar   │  │                         │  │
-│  │  - Create   │  │  - Footer   │  │                         │  │
-│  └─────────────┘  └─────────────┘  └─────────────────────────┘  │
-│                              │                                   │
-│                    ┌─────────▼─────────┐                        │
-│                    │  Services (API)   │                        │
-│                    │  - axios client   │                        │
-│                    └─────────┬─────────┘                        │
-└──────────────────────────────┼──────────────────────────────────┘
-                               │ HTTP/REST
-                               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                        SERVER (Node.js)                         │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐  │
-│  │   Routes    │  │ Controllers │  │       Services          │  │
-│  │  /api/auth  │  │  - Auth     │  │  - User Service         │  │
-│  │  /api/posts │  │  - Posts    │  │  - Post Service         │  │
-│  │  /api/users │  │  - Users    │  │  - Notification Service │  │
-│  └─────────────┘  └─────────────┘  └─────────────────────────┘  │
-│                              │                                   │
-│                    ┌─────────▼─────────┐                        │
-│                    │  Data Access      │                        │
-│                    │  - Mongoose ODM   │                        │
-│                    └─────────┬─────────┘                        │
-└──────────────────────────────┼──────────────────────────────────┘
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      DATABASE (MongoDB)                         │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐  │
-│  │   Users     │  │    Posts    │  │     Notifications       │  │
-│  └─────────────┘  └─────────────┘  └─────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Frontend Architecture
-
-### Directory Structure
+## How the pieces fit
 
 ```
-client/src/
-├── assets/              # Static files (images, fonts)
-├── components/          # Reusable UI components
-├── context/             # React Context providers
-├── data/                # Mock data (development)
-├── hooks/               # Custom React hooks
-├── pages/               # Route-level components
-├── services/            # API service layer
-├── styles/              # Global styles
-├── types/               # TypeScript definitions
-├── utils/               # Helper functions
-├── App.tsx              # Root component
-└── main.tsx             # Entry point
+Web / Mobile
+    |
+    |  REST + JWT
+    v
+Express API
+    |
+    |  Mongoose
+    v
+MongoDB
+
+Socket.io sits beside the HTTP server for messaging and live events.
 ```
 
-### Component Architecture
+## Web app
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        App.tsx                              │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │                   ThemeProvider                      │   │
-│  │  ┌───────────────────────────────────────────────┐  │   │
-│  │  │                 AuthProvider                   │  │   │
-│  │  │  ┌─────────────────────────────────────────┐  │  │   │
-│  │  │  │              Router                      │  │  │   │
-│  │  │  │  ┌─────────────────────────────────┐    │  │  │   │
-│  │  │  │  │         Navbar                   │    │  │  │   │
-│  │  │  │  └─────────────────────────────────┘    │  │  │   │
-│  │  │  │  ┌─────────────────────────────────┐    │  │  │   │
-│  │  │  │  │      Routes (Pages)              │    │  │  │   │
-│  │  │  │  └─────────────────────────────────┘    │  │  │   │
-│  │  │  └─────────────────────────────────────────┘  │  │   │
-│  │  └───────────────────────────────────────────────┘  │   │
-│  └─────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
-```
+`client/src` is organized by job, not by framework fashion:
 
-### State Management
+- `pages/` — screens
+- `components/` — shared UI
+- `context/` — auth, theme, socket, calls
+- `services/` — axios wrappers
+- `styles/` — global CSS variables and layout
 
-We use React Context for global state:
+Routing lives in `App.tsx`. Auth state is kept in `AuthContext` and mirrored in `localStorage` so refresh does not boot people out.
 
-| Context | Purpose | Data |
-|---------|---------|------|
-| **ThemeContext** | Theme management | `theme`, `toggleTheme()` |
-| **AuthContext** | Authentication | `user`, `isAuthenticated`, `login()`, `logout()`, `register()` |
-| **SocketContext** | Real-time connection | `socket`, `isConnected` |
-| **CallContext** | Call state machine | `call`, `initiateCall()`, `acceptCall()`, `endCall()` |
+## API
 
-### Routing
+`server/src` follows a familiar Express shape:
 
-| Route | Component | Description |
-|-------|-----------|-------------|
-| `/` | LandingPage | Public homepage |
-| `/feed` | FeedPage | Main post feed |
-| `/post/:id` | PostDetailPage | Single post view |
-| `/create-post` | CreatePostPage | Create new post |
-| `/profile` | ProfilePage | Current user profile |
-| `/profile/:username` | ProfilePage | Other user profile |
-| `/messages` | MessagesPage | Real-time chat interface |
-| `/notifications`| NotificationsPage| Platform updates |
-| `/analytics` | AnalyticsPage | Performance dashboard |
-| `/login` | LoginPage | Authentication |
-| `/register` | RegisterPage | User registration |
+- `routes/` — path definitions
+- `controllers/` — request handlers
+- `models/` — Mongoose schemas
+- `middleware/` — auth and uploads
+- `socket.ts` — realtime wiring
 
----
+Uploads land in `server/uploads` and are served statically at `/uploads`.
 
-## Data Models
+## Mobile
 
-### User
+The Expo app mirrors the web product closely: same auth flows, feed, network, and messaging. API base URL is configured in `mobile/services/api.ts`. On a physical phone, that should be your computer's LAN address, not `localhost`.
 
-```typescript
-interface User {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    username: string;
-    avatar?: string;
-    bio?: string;
-    role: 'student' | 'investor';
-    interests: string[];
-    createdAt: string;
-}
-```
+## Data that matters most
 
-### Post
+- **Users** — profiles, roles, connections, bookmarks
+- **Posts** — feed updates and media
+- **Projects** — longer-lived startup records
+- **Messages / notifications** — conversation and alert state
 
-```typescript
-interface Post {
-    id: string;
-    author: User;
-    title: string;
-    content: string;
-    category: ProjectCategory;
-    tags: string[];
-    images?: string[];
-    likes: number;
-    likedBy: string[];
-    comments: Comment[];
-    projectStage: 'idea' | 'prototype' | 'mvp' | 'growth' | 'scaling';
-    fundingGoal?: number;
-    currentFunding?: number;
-    createdAt: string;
-    updatedAt: string;
-}
-```
+## Design choices worth knowing
 
-### Comment
-
-```typescript
-interface Comment {
-    id: string;
-    author: User;
-    content: string;
-    likes: number;
-    createdAt: string;
-}
-```
-
-### Notification
-
-```typescript
-interface Notification {
-    id: string;
-    type: 'like' | 'comment' | 'follow' | 'new_post';
-    message: string;
-    read: boolean;
-    relatedPostId?: string;
-    fromUser?: User;
-    createdAt: string;
-}
-```
-
----
-
-## Project Categories
-
-| Category | Label | Icon |
-|----------|-------|------|
-| `technology` | Technology | 💻 |
-| `healthcare` | Healthcare | 🏥 |
-| `fintech` | FinTech | 💰 |
-| `education` | Education | 📚 |
-| `sustainability` | Sustainability | 🌱 |
-| `entertainment` | Entertainment | 🎬 |
-| `ecommerce` | E-Commerce | 🛒 |
-| `social-impact` | Social Impact | 🤝 |
-| `ai-ml` | AI & Machine Learning | 🤖 |
-| `other` | Other | ✨ |
-
----
-
-## API Design (Future Backend)
-
-### Authentication
-
-```
-POST   /api/auth/register     # Create new account
-POST   /api/auth/login        # Login and get token
-POST   /api/auth/logout       # Invalidate token
-GET    /api/auth/me           # Get current user
-```
-
-### Users
-
-```
-GET    /api/users             # List users
-GET    /api/users/:id         # Get user by ID
-PUT    /api/users/:id         # Update user
-DELETE /api/users/:id         # Delete user
-GET    /api/users/:id/posts   # Get user's posts
-```
-
-### Posts
-
-```
-GET    /api/posts             # List posts (with filters)
-POST   /api/posts             # Create post
-GET    /api/posts/:id         # Get post by ID
-PUT    /api/posts/:id         # Update post
-DELETE /api/posts/:id         # Delete post
-POST   /api/posts/:id/like    # Like post
-DELETE /api/posts/:id/like    # Unlike post
-POST   /api/posts/:id/comments # Add comment
-```
-
-### Notifications
-
-```
-GET    /api/notifications     # Get user notifications
-PUT    /api/notifications/:id # Mark as read
-DELETE /api/notifications/:id # Delete notification
-```
-
----
-
-## Security Considerations
-
-### Authentication
-- JWT tokens with expiration
-- Secure password hashing (bcrypt)
-- HTTPS in production
-
-### Authorization
-- Role-based access control (Student vs Investor)
-- Resource ownership validation
-
-### Data Protection
-- Input validation with Zod schemas
-- XSS prevention
-- CORS configuration
-
----
-
-## Performance Optimizations
-
-### Frontend
-- Code splitting with React.lazy()
-- Image optimization
-- CSS minification
-- Tree shaking
-
-### Backend (Future)
-- Database indexing
-- Query optimization
-- Response caching
-- Rate limiting
-
----
-
-## Deployment Architecture
-
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Vercel    │────▶│   Railway   │────▶│   MongoDB   │
-│  (Frontend) │     │  (Backend)  │     │   Atlas     │
-└─────────────┘     └─────────────┘     └─────────────┘
-       │                   │
-       └───────┬───────────┘
-               ▼
-        ┌─────────────┐
-        │   Cloudinary│
-        │   (Images)  │
-        └─────────────┘
-```
-
----
-
-## Monitoring & Logging (Future)
-
-- **Error Tracking**: Sentry
-- **Analytics**: Mixpanel or Amplitude
-- **Logging**: Winston + LogRocket
-
----
-
-## Version Control
-
-- **Branching**: Git Flow
-  - `main` - Production
-  - `develop` - Development
-  - `feature/*` - New features
-  - `bugfix/*` - Bug fixes
-
----
-
-*Last Updated: January 2026*
+- JWT auth keeps the first version simple
+- Posts and projects are separate collections so the feed can stay light
+- Socket rooms are keyed by user id for direct messaging
+- The web Vite server proxies `/api` and `/uploads` to port 5000 in development

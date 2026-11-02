@@ -48,30 +48,32 @@ const FeedPage: React.FC = () => {
         const fetchPosts = async () => {
             try {
                 setIsLoading(true);
-                let url = '/projects?';
-                if (selectedCategory !== 'all') url += `category=${selectedCategory}&`;
-                if (selectedStage !== 'all') url += `stage=${selectedStage}&`;
-                if (searchQuery) url += `search=${searchQuery}&`;
+                const response = await api.get('/posts');
 
-                const response = await api.get(url);
-
-
-                const adaptedPosts = response.data.map((p: any) => ({
-                    ...p,
-                    id: p._id || p.id,
-                    likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
-                    likedBy: Array.isArray(p.likes) ? p.likes : [],
-                    comments: (p.comments || []).map((c: any) => ({
-                        ...c,
-                        id: c._id || c.id,
-                        author: c.author ? { ...c.author, id: c.author._id || c.author.id } : null
-                    })),
-                    author: {
-                        ...p.author,
-                        id: p.author?._id || p.author?.id
-                    }
-                }));
-
+                const adaptedPosts = response.data
+                    .map((p: any) => ({
+                        ...p,
+                        id: p._id || p.id,
+                        title: p.title || '',
+                        content: p.content || '',
+                        media: p.media || [],
+                        likes: Array.isArray(p.likes) ? p.likes.length : (p.likes || 0),
+                        likedBy: Array.isArray(p.likes) ? p.likes : [],
+                        comments: (p.comments || []).map((c: any) => ({
+                            ...c,
+                            id: c._id || c.id,
+                            author: c.author ? { ...c.author, id: c.author._id || c.author.id } : null
+                        })),
+                        author: {
+                            ...p.author,
+                            id: p.author?._id || p.author?.id
+                        }
+                    }))
+                    .filter((p: any) => {
+                        const haystack = `${p.title} ${p.content} ${p.location || ''}`.toLowerCase();
+                        const matchesSearch = !searchQuery || haystack.includes(searchQuery.toLowerCase());
+                        return matchesSearch;
+                    });
 
                 let sortedPosts = [...adaptedPosts];
                 switch (sortBy) {
@@ -99,7 +101,7 @@ const FeedPage: React.FC = () => {
 
     const handleLike = async (postId: string) => {
         try {
-            const response = await api.put(`/projects/${postId}/like`);
+            const response = await api.put(`/posts/${postId}/like`);
             const updatedLikes = response.data;
 
             setPosts(currentPosts => currentPosts.map(post => {
@@ -117,29 +119,8 @@ const FeedPage: React.FC = () => {
         }
     };
     const handleRepost = async (postId: string) => {
-        try {
-            const response = await api.put(`/projects/${postId}/repost`);
-            const { reposted } = response.data;
-
-            setPosts(currentPosts => currentPosts.map(post => {
-                if (post.id === postId) {
-                    const newReposts = reposted
-                        ? [...(post.reposts || []), user?.id]
-                        : (post.reposts || []).filter((id: string) => id !== user?.id);
-                    return {
-                        ...post,
-                        reposts: newReposts
-                    };
-                }
-                return post;
-            }));
-
-            if (!reposted) {
-                setPosts(currentPosts => currentPosts.filter(p => !(p.repostOf && (p.repostOf._id === postId || p.repostOf.id === postId) && p.author.id === user?.id)));
-            }
-        } catch (error) {
-            console.error("Failed to repost", error);
-        }
+        // Posts API does not support repost yet; keep UI handler no-op safe.
+        console.warn('Repost is not available for posts yet', postId);
     };
 
     const handleDeletePost = (postId: string) => {
